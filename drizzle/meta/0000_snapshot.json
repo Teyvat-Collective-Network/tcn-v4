@@ -1,0 +1,604 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "92182cb3-223b-4c82-810c-53eae01ddc0e",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "attributes": {
+      "name": "attributes",
+      "columns": {
+        "type": {
+          "name": "type",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "emoji": {
+          "name": "emoji",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "pk_type_id": {
+          "name": "pk_type_id",
+          "columns": [
+            "type",
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "character_attributes": {
+      "name": "character_attributes",
+      "columns": {
+        "character": {
+          "name": "character",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "character_attributes_character_characters_id_fk": {
+          "name": "character_attributes_character_characters_id_fk",
+          "tableFrom": "character_attributes",
+          "tableTo": "characters",
+          "columnsFrom": [
+            "character"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "fk_attribute": {
+          "name": "fk_attribute",
+          "tableFrom": "character_attributes",
+          "tableTo": "attributes",
+          "columnsFrom": [
+            "type",
+            "id"
+          ],
+          "columnsTo": [
+            "type",
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "character_attributes_character_type_id_unique": {
+          "name": "character_attributes_character_type_id_unique",
+          "columns": [
+            "character",
+            "type",
+            "id"
+          ]
+        }
+      }
+    },
+    "characters": {
+      "name": "characters",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "short": {
+          "name": "short",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "characters_id": {
+          "name": "characters_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "global_bans": {
+      "name": "global_bans",
+      "columns": {
+        "channel": {
+          "name": "channel",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "until": {
+          "name": "until",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "global_bans_channel_global_channels_id_fk": {
+          "name": "global_bans_channel_global_channels_id_fk",
+          "tableFrom": "global_bans",
+          "tableTo": "global_channels",
+          "columnsFrom": [
+            "channel"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pk_channel_user": {
+          "name": "pk_channel_user",
+          "columns": [
+            "channel",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "global_channels": {
+      "name": "global_channels",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "public": {
+          "name": "public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "logs": {
+          "name": "logs",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "global_channels_id": {
+          "name": "global_channels_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "global_filter": {
+      "name": "global_filter",
+      "columns": {
+        "channel": {
+          "name": "channel",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "match": {
+          "name": "match",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created": {
+          "name": "created",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "global_filter_channel_global_channels_id_fk": {
+          "name": "global_filter_channel_global_channels_id_fk",
+          "tableFrom": "global_filter",
+          "tableTo": "global_channels",
+          "columnsFrom": [
+            "channel"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pk_channel_plugin": {
+          "name": "pk_channel_plugin",
+          "columns": [
+            "channel",
+            "match"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "global_mods": {
+      "name": "global_mods",
+      "columns": {
+        "channel": {
+          "name": "channel",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "global_mods_channel_global_channels_id_fk": {
+          "name": "global_mods_channel_global_channels_id_fk",
+          "tableFrom": "global_mods",
+          "tableTo": "global_channels",
+          "columnsFrom": [
+            "channel"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pk_channel_user": {
+          "name": "pk_channel_user",
+          "columns": [
+            "channel",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "global_plugins": {
+      "name": "global_plugins",
+      "columns": {
+        "channel": {
+          "name": "channel",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "plugin": {
+          "name": "plugin",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "global_plugins_channel_global_channels_id_fk": {
+          "name": "global_plugins_channel_global_channels_id_fk",
+          "tableFrom": "global_plugins",
+          "tableTo": "global_channels",
+          "columnsFrom": [
+            "channel"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pk_channel_plugin": {
+          "name": "pk_channel_plugin",
+          "columns": [
+            "channel",
+            "plugin"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "guild_staff": {
+      "name": "guild_staff",
+      "columns": {
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guild_staff_guild_guilds_id_fk": {
+          "name": "guild_staff_guild_guilds_id_fk",
+          "tableFrom": "guild_staff",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "guild_staff_user_users_id_fk": {
+          "name": "guild_staff_user_users_id_fk",
+          "tableFrom": "guild_staff",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pk_guild_user": {
+          "name": "pk_guild_user",
+          "columns": [
+            "guild",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "guilds": {
+      "name": "guilds",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "invite": {
+          "name": "invite",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "owner": {
+          "name": "owner",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "advisor": {
+          "name": "advisor",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "delegated": {
+          "name": "delegated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guilds_id_characters_id_fk": {
+          "name": "guilds_id_characters_id_fk",
+          "tableFrom": "guilds",
+          "tableTo": "characters",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {
+        "guilds_id": {
+          "name": "guilds_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "observer": {
+          "name": "observer",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "staff": {
+          "name": "staff",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "owner": {
+          "name": "owner",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "advisor": {
+          "name": "advisor",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "observer_since": {
+          "name": "observer_since",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "global_nickname": {
+          "name": "global_nickname",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "users_id": {
+          "name": "users_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `global_mod` boolean NOT NULL;

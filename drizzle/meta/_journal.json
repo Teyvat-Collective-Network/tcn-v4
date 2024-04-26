@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1714155619342,
+      "tag": "0000_massive_inhumans",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1714155987626,
+      "tag": "0001_busy_hedge_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714173714292,
+      "tag": "0002_fearless_kid_colt",
+      "breakpoints": true
+    }
+  ]
+}

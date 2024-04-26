@@ -1,0 +1,26 @@
+{
+    "type": "module",
+    "dependencies": {
+        "@trpc/client": "11.0.0-rc.354",
+        "@trpc/server": "11.0.0-rc.354",
+        "discord.js": "^14.14.1",
+        "dotenv": "^16.4.5",
+        "drizzle-orm": "^0.30.8",
+        "mysql2": "^3.9.4",
+        "zod": "^3.23.4"
+    },
+    "devDependencies": {
+        "@types/node": "^20.12.7",
+        "drizzle-kit": "^0.20.14",
+        "tsx": "^4.7.2"
+    },
+    "scripts": {
+        "migrate": "pnpm drizzle-kit generate:mysql && pnpm tsx migrate.ts",
+        "backend": "pnpm tsx src/backend/main.ts",
+        "bot": "pnpm tsx src/bot/main.ts",
+        "web:dev": "cd src/web && pnpm run dev",
+        "web:build": "cd src/web && pnpm run build",
+        "web:start": "cd src/web && pnpm run build && pnpm start",
+        "web": "cd src/web && pnpm start"
+    }
+}
