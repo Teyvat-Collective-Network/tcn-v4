@@ -75,11 +75,11 @@ export function Menu({ root }: { root: string }) {
                         </button>
                     </div>
                     <div className="flex flex-col">
-                        <button className="px-4 py-1 hidden dark:flex items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("light")}>
+                        <button className="px-4 py-2 hidden dark:flex items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("light")}>
                             <FaSun></FaSun>
                             Switch to Light Mode
                         </button>
-                        <button className="px-4 py-1 flex dark:hidden items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("dark")}>
+                        <button className="px-4 py-2 flex dark:hidden items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("dark")}>
                             <FaMoon></FaMoon>
                             Switch to Dark Mode
                         </button>
@@ -93,7 +93,7 @@ export function Menu({ root }: { root: string }) {
                                 <a
                                     key={link}
                                     href={link}
-                                    className={`px-4 py-1 flex items-center gap-2 ${root === link ? "bg-foreground/10" : "hover:bg-foreground/5"}`}
+                                    className={`px-4 py-2 flex items-center gap-2 ${root === link ? "bg-foreground/10" : "hover:bg-foreground/5"}`}
                                 >
                                     {icon({})} {title}
                                 </a>

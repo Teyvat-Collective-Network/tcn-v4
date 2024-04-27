@@ -39,7 +39,7 @@ export default function Documentation() {
                     <p>These are the rules for the general public global channel.</p>
                 </Panel>
             </a>
-            <a href="/quickstart/exit-procedure">
+            <a href="/docs/exit-procedure">
                 <Panel className="h-full prose hover:scale-[98%] active:scale-[95%] transition-transform">
                     <h2>Exit Procedure</h2>
                     <p>
