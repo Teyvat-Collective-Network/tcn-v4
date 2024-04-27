@@ -3,11 +3,10 @@
 import Image from "next/image";
 import { useState } from "react";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { Nav } from "../../components/nav";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Panel } from "../../components/ui/panel";
-import { Switch } from "../../components/ui/switch";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Panel } from "../../../components/ui/panel";
+import { Switch } from "../../../components/ui/switch";
 
 function fuzzy(string: string, query: string): boolean {
     const lower = query.toLowerCase();
@@ -27,10 +26,14 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
     const [query, setQuery] = useState<string>("");
 
     return (
-        <Nav root="/">
+        <>
             <div className="prose">
                 <h1>Our Members &amp; Partners</h1>
                 <p>The TCN has member servers and external third-party partners with which we exchange mutual benefits.</p>
+                <p>
+                    Note that the TCN has <u>no restriction</u> on how many servers may join for one character! We encourage you to apply even if we already
+                    have a server for your server&apos;s character and have had &quot;duplicate servers&quot; peacefully co-exist before.
+                </p>
                 <div className="flex items-center gap-4">
                     <p>Show TCN members</p>
                     <Switch checked={showExternal} onCheckedChange={setShowExternal}></Switch>
@@ -41,7 +44,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
             <br />
             {showExternal ? (
                 <>
-                    <Panel className="flex items-center gap-8 p-8">
+                    <Panel className="flex items-center gap-8">
                         <Image
                             src="https://genshinwizard.com/wp-content/uploads/2022/09/cropped-genshinwizard_logo-192x192.png"
                             alt="Genshin Wizard Icon"
@@ -58,7 +61,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                         </div>
                     </Panel>
                     <br />
-                    <Panel className="flex items-center gap-8 p-8">
+                    <Panel className="flex items-center gap-8">
                         <Image src="https://i.imgur.com/pwzRnxW.png" alt="Genshin Impact Tavern Icon" width={180} height={180} className="rounded"></Image>
                         <div className="flex flex-col gap-2 prose">
                             <h2>Genshin Impact Tavern</h2>
@@ -73,7 +76,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                         </div>
                     </Panel>
                     <br />
-                    <Panel className="flex items-center gap-8 p-8">
+                    <Panel className="flex items-center gap-8">
                         <Image src="https://daedalusbot.xyz/favicon.ico" alt="Daedalus Icon" width={180} height={180} className="rounded"></Image>
                         <div className="flex flex-col gap-2 prose">
                             <h2>Daedalus</h2>
@@ -113,6 +116,6 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                     </div>
                 </>
             )}
-        </Nav>
+        </>
     );
 }

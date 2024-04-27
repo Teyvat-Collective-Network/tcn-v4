@@ -86,3 +86,8 @@ a.link {
 .prose {
     @apply prose-stone dark:prose-invert;
 }
+
+.prose code::before,
+.prose code::after {
+    content: "";
+}

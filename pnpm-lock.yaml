@@ -23,6 +23,9 @@ importers:
       drizzle-orm:
         specifier: ^0.30.8
         version: 0.30.8(mysql2@3.9.4)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       mysql2:
         specifier: ^3.9.4
         version: 3.9.4
@@ -30,6 +33,9 @@ importers:
         specifier: ^3.23.4
         version: 3.23.4
     devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.0
+        version: 4.17.0
       '@types/node':
         specifier: ^20.12.7
         version: 20.12.7
@@ -372,6 +378,9 @@ packages:
 
   '@trpc/server@11.0.0-rc.354':
     resolution: {integrity: sha512-45QgalVFW3+JnFqrfTWKRuqkDTOtl9tnPps6DG6kf2lwULwSW3v55+YpMWc6ZSrkZdBXGMON0bBR/Ab4hU0zbA==, tarball: https://registry.npmjs.org/@trpc/server/-/server-11.0.0-rc.354.tgz}
+
+  '@types/lodash@4.17.0':
+    resolution: {integrity: sha512-t7dhREVv6dbNj0q17X12j7yDG4bD/DHYX7o5/DbDxobP0HnGPgpRz2Ej77aL7TZT3DSw13fqUTj8J4mMnqa7WA==, tarball: https://registry.npmjs.org/@types/lodash/-/lodash-4.17.0.tgz}
 
   '@types/node@20.12.7':
     resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==, tarball: https://registry.npmjs.org/@types/node/-/node-20.12.7.tgz}
@@ -977,6 +986,8 @@ snapshots:
       '@trpc/server': 11.0.0-rc.354
 
   '@trpc/server@11.0.0-rc.354': {}
+
+  '@types/lodash@4.17.0': {}
 
   '@types/node@20.12.7':
     dependencies:

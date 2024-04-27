@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import React from "react";
 import { FaBuildingColumns, FaEarthAmericas, FaIdBadge, FaShieldHalved } from "react-icons/fa6";
 import { useUserContext } from "../context/user";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -9,6 +11,7 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 
 export function TopBar({ root }: { root: string }) {
     const user = useUserContext();
+    const pathname = usePathname();
 
     const sites = [
         { url: "/", name: "Home", description: "Home/landing page for the TCN — learn about the network here" },
@@ -38,7 +41,7 @@ export function TopBar({ root }: { root: string }) {
                             <NavigationMenuContent>
                                 <div className="p-4 w-96">
                                     {sites.map(({ url, name, description }, index) => (
-                                        <>
+                                        <React.Fragment key={index}>
                                             {index === 0 ? null : <hr />}
                                             <NavigationMenuLink href={url} key={url}>
                                                 <div className="px-4 py-2 rounded hover:bg-foreground/5 transition-colors">
@@ -48,7 +51,7 @@ export function TopBar({ root }: { root: string }) {
                                                     <p>{description}</p>
                                                 </div>
                                             </NavigationMenuLink>
-                                        </>
+                                        </React.Fragment>
                                     ))}
                                 </div>
                             </NavigationMenuContent>
@@ -101,7 +104,10 @@ export function TopBar({ root }: { root: string }) {
                                                     {user.observer ? <FaShieldHalved title="Observer"></FaShieldHalved> : null}
                                                 </div>
                                                 <hr />
-                                                <NavigationMenuLink className="px-4 py-2 rounded hover:bg-foreground/5 transition-colors" href="/auth/logout">
+                                                <NavigationMenuLink
+                                                    className="px-4 py-2 rounded hover:bg-foreground/5 transition-colors"
+                                                    href={`/auth/logout?redirect=${pathname}`}
+                                                >
                                                     Log Out
                                                 </NavigationMenuLink>{" "}
                                             </div>

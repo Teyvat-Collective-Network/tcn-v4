@@ -4,13 +4,17 @@ import { useTheme } from "next-themes";
 import { useState } from "react";
 import {
     FaBars,
+    FaBook,
+    FaBookBookmark,
     FaBuildingColumns,
     FaCircleInfo,
+    FaDoorOpen,
     FaEarthAmericas,
     FaHandshake,
     FaHouse,
     FaList,
     FaMoon,
+    FaPhone,
     FaScrewdriverWrench,
     FaSun,
     FaXmark,
@@ -34,7 +38,18 @@ export function Menu({ root }: { root: string }) {
 
     links.push(null);
 
-    if (root) links.push(["/about", "About Us", FaCircleInfo], ["/partners", "Partners", FaHandshake]);
+    if (root === "/")
+        links.push(
+            ["/about", "About Us", FaCircleInfo],
+            ["/partners", "Partners", FaHandshake],
+            ["/join", "Join", FaDoorOpen],
+            ["/constitution", "Constitution", FaBuildingColumns],
+            ["/contact", "Contact Us", FaPhone],
+            ["/quickstart", "Quickstart", FaBookBookmark],
+            ["/docs", "Documentation", FaBook],
+        );
+
+    if (root === "/forms") links.push(["/apply", "Apply to Join", FaDoorOpen]);
 
     return (
         <>
@@ -60,22 +75,14 @@ export function Menu({ root }: { root: string }) {
                         </button>
                     </div>
                     <div className="flex flex-col">
-                        <a
-                            href="javascript:void(0)"
-                            className="px-4 py-1 hidden dark:flex items-center gap-2 hover:bg-foreground/5"
-                            onClick={() => setTheme("light")}
-                        >
+                        <button className="px-4 py-1 hidden dark:flex items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("light")}>
                             <FaSun></FaSun>
                             Switch to Light Mode
-                        </a>
-                        <a
-                            href="javascript:void(0)"
-                            className="px-4 py-1 flex dark:hidden items-center gap-2 hover:bg-foreground/5"
-                            onClick={() => setTheme("dark")}
-                        >
+                        </button>
+                        <button className="px-4 py-1 flex dark:hidden items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("dark")}>
                             <FaMoon></FaMoon>
                             Switch to Dark Mode
-                        </a>
+                        </button>
                         <hr />
                         {links.map((item, i) => {
                             if (item === null) return <hr key={i}></hr>;
@@ -83,7 +90,11 @@ export function Menu({ root }: { root: string }) {
                             const [link, title, icon] = item;
 
                             return (
-                                <a key={link} href={link} className="px-4 py-1 flex items-center gap-2 hover:bg-foreground/5">
+                                <a
+                                    key={link}
+                                    href={link}
+                                    className={`px-4 py-1 flex items-center gap-2 ${root === link ? "bg-foreground/10" : "hover:bg-foreground/5"}`}
+                                >
                                     {icon({})} {title}
                                 </a>
                             );

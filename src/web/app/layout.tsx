@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Rubik } from "next/font/google";
 import { ThemeProvider } from "../components/theme-provider";
+import { TagsWrapper } from "../context/tags";
 import { UserWrapper } from "../context/user";
 import getUser from "../lib/get-user";
 import "./globals.css";
@@ -42,7 +43,9 @@ export default async function RootLayout({
             <body className={rubik.className}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                     <UserWrapper user={user}>
-                        <div className="min-h-screen mb-12 flex flex-col">{children}</div>
+                        <TagsWrapper>
+                            <div className="min-h-screen mb-12 flex flex-col">{children}</div>
+                        </TagsWrapper>
                     </UserWrapper>
                 </ThemeProvider>
             </body>

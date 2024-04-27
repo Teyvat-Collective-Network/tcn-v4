@@ -1,6 +1,6 @@
 "use server";
 
-import { trpc } from "../../lib/trpc";
+import { trpc } from "../../../lib/trpc";
 import PartnersClient from "./client";
 
 export default async function Partners() {
