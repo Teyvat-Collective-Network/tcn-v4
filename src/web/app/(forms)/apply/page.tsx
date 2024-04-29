@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FormLogin } from "../../../components/form-login";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Panel } from "../../../components/ui/panel";
@@ -30,7 +31,7 @@ export default function Apply() {
         );
 
     return (
-        <>
+        <FormLogin>
             <Panel className="prose">
                 <h3>By submitting this form, you confirm all of the following:</h3>
                 <ul>
@@ -140,6 +141,6 @@ export default function Apply() {
             >
                 Submit!
             </Button>
-        </>
+        </FormLogin>
     );
 }

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "92182cb3-223b-4c82-810c-53eae01ddc0e",
+  "id": "15a0d124-0814-4b53-958e-781bb2ecff34",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attributes": {
@@ -49,12 +49,419 @@
       },
       "uniqueConstraints": {}
     },
+    "ban_tasks": {
+      "name": "ban_tasks",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "member": {
+          "name": "member",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('pending','banned','skipped','errored')",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_guild_message": {
+          "name": "idx_guild_message",
+          "columns": [
+            "guild",
+            "message"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "ban_tasks_guild_guilds_id_fk": {
+          "name": "ban_tasks_guild_guilds_id_fk",
+          "tableFrom": "ban_tasks",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "ban_tasks_message_banshares_message_fk": {
+          "name": "ban_tasks_message_banshares_message_fk",
+          "tableFrom": "ban_tasks",
+          "tableTo": "banshares",
+          "columnsFrom": [
+            "message"
+          ],
+          "columnsTo": [
+            "message"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "ban_tasks_id": {
+          "name": "ban_tasks_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "banlists": {
+      "name": "banlists",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "banlists_key": {
+          "name": "banlists_key",
+          "columns": [
+            "key"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "banshare_crossposts": {
+      "name": "banshare_crossposts",
+      "columns": {
+        "message": {
+          "name": "message",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "channel": {
+          "name": "channel",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "executed": {
+          "name": "executed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "banshare_crossposts_message_banshares_message_fk": {
+          "name": "banshare_crossposts_message_banshares_message_fk",
+          "tableFrom": "banshare_crossposts",
+          "tableTo": "banshares",
+          "columnsFrom": [
+            "message"
+          ],
+          "columnsTo": [
+            "message"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "banshare_crossposts_guild_guilds_id_fk": {
+          "name": "banshare_crossposts_guild_guilds_id_fk",
+          "tableFrom": "banshare_crossposts",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pk_message_guild": {
+          "name": "pk_message_guild",
+          "columns": [
+            "message",
+            "guild"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "banshare_ids": {
+      "name": "banshare_ids",
+      "columns": {
+        "message": {
+          "name": "message",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "banshare_ids_message_banshares_message_fk": {
+          "name": "banshare_ids_message_banshares_message_fk",
+          "tableFrom": "banshare_ids",
+          "tableTo": "banshares",
+          "columnsFrom": [
+            "message"
+          ],
+          "columnsTo": [
+            "message"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pk_message_user": {
+          "name": "pk_message_user",
+          "columns": [
+            "message",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "banshare_settings": {
+      "name": "banshare_settings",
+      "columns": {
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "channel": {
+          "name": "channel",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "autoban": {
+          "name": "autoban",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "('{}')"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "banshare_settings_guild_guilds_id_fk": {
+          "name": "banshare_settings_guild_guilds_id_fk",
+          "tableFrom": "banshare_settings",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "banshare_settings_guild": {
+          "name": "banshare_settings_guild",
+          "columns": [
+            "guild"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "banshares": {
+      "name": "banshares",
+      "columns": {
+        "message": {
+          "name": "message",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "author": {
+          "name": "author",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "varchar(498)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "evidence": {
+          "name": "evidence",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "severity": {
+          "name": "severity",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('pending','published','rejected','rescinded')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "urgent": {
+          "name": "urgent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created": {
+          "name": "created",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reminded": {
+          "name": "reminded",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "locked": {
+          "name": "locked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "id_display": {
+          "name": "id_display",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "username_display": {
+          "name": "username_display",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "banshares_message": {
+          "name": "banshares_message",
+          "columns": [
+            "message"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
     "character_attributes": {
       "name": "character_attributes",
       "columns": {
         "character": {
           "name": "character",
-          "type": "varchar(20)",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -122,7 +529,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(20)",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -467,9 +874,23 @@
           "notNull": true,
           "autoincrement": false
         },
+        "mascot": {
+          "name": "mascot",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "invite": {
           "name": "invite",
           "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -505,12 +926,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "guilds_id_characters_id_fk": {
-          "name": "guilds_id_characters_id_fk",
+        "guilds_mascot_characters_id_fk": {
+          "name": "guilds_mascot_characters_id_fk",
           "tableFrom": "guilds",
           "tableTo": "characters",
           "columnsFrom": [
-            "id"
+            "mascot"
           ],
           "columnsTo": [
             "id"
@@ -522,6 +943,70 @@
       "compositePrimaryKeys": {
         "guilds_id": {
           "name": "guilds_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "pending_banshare_crossposts": {
+      "name": "pending_banshare_crossposts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pending_banshare_crossposts_message_banshares_message_fk": {
+          "name": "pending_banshare_crossposts_message_banshares_message_fk",
+          "tableFrom": "pending_banshare_crossposts",
+          "tableTo": "banshares",
+          "columnsFrom": [
+            "message"
+          ],
+          "columnsTo": [
+            "message"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "pending_banshare_crossposts_guild_banshare_settings_guild_fk": {
+          "name": "pending_banshare_crossposts_guild_banshare_settings_guild_fk",
+          "tableFrom": "pending_banshare_crossposts",
+          "tableTo": "banshare_settings",
+          "columnsFrom": [
+            "guild"
+          ],
+          "columnsTo": [
+            "guild"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pending_banshare_crossposts_id": {
+          "name": "pending_banshare_crossposts_id",
           "columns": [
             "id"
           ]
@@ -548,6 +1033,13 @@
         },
         "staff": {
           "name": "staff",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "global_mod": {
+          "name": "global_mod",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,

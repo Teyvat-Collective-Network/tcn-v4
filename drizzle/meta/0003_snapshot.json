@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a42f7392-44e8-4d2f-b69b-41cbb1b7033d",
-  "prevId": "15a0d124-0814-4b53-958e-781bb2ecff34",
+  "id": "46063c6b-7abf-4957-b14c-8c043475c5f2",
+  "prevId": "b961ad4b-2a61-4192-adc8-5ad722e042d1",
   "tables": {
     "attributes": {
       "name": "attributes",
@@ -194,14 +194,14 @@
           "name": "channel",
           "type": "varchar(20)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "location": {
           "name": "location",
           "type": "varchar(20)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "executor": {
@@ -403,6 +403,13 @@
           "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "hub_post": {
+          "name": "hub_post",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "author": {
@@ -1053,6 +1060,70 @@
       "compositePrimaryKeys": {
         "pending_banshare_crossposts_id": {
           "name": "pending_banshare_crossposts_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "rescinded_banshare_log_tasks": {
+      "name": "rescinded_banshare_log_tasks",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "rescinded_banshare_log_tasks_guild_guilds_id_fk": {
+          "name": "rescinded_banshare_log_tasks_guild_guilds_id_fk",
+          "tableFrom": "rescinded_banshare_log_tasks",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "rescinded_banshare_log_tasks_message_banshares_message_fk": {
+          "name": "rescinded_banshare_log_tasks_message_banshares_message_fk",
+          "tableFrom": "rescinded_banshare_log_tasks",
+          "tableTo": "banshares",
+          "columnsFrom": [
+            "message"
+          ],
+          "columnsTo": [
+            "message"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "rescinded_banshare_log_tasks_id": {
+          "name": "rescinded_banshare_log_tasks_id",
           "columns": [
             "id"
           ]

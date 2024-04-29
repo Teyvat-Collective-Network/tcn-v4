@@ -17,6 +17,7 @@ import {
     FaPhone,
     FaScrewdriverWrench,
     FaSun,
+    FaTowerBroadcast,
     FaXmark,
 } from "react-icons/fa6";
 import { IconType } from "react-icons/lib";
@@ -49,7 +50,7 @@ export function Menu({ root }: { root: string }) {
             ["/docs", "Documentation", FaBook],
         );
 
-    if (root === "/forms") links.push(["/apply", "Apply to Join", FaDoorOpen]);
+    if (root === "/forms") links.push(["/apply", "Apply to Join", FaDoorOpen], ["/banshare", "Submit a Banshare", FaTowerBroadcast]);
 
     return (
         <>

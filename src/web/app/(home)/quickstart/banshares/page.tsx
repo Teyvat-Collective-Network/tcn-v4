@@ -51,7 +51,9 @@ export default function QuickstartBanshares() {
                 <code>/banshares log disable</code> to remove a logging channel.
             </p>
             <p>
-                Use <code>/banshares settings</code> to modify your server&apos;s settings, including enabling autoban.
+                Use <code>/banshares autoban</code> to modify your server&apos;s autoban settings and <code>/banshares daedalus enable</code> or{" "}
+                <code>/banshares daedalus disable</code> to disable the Daedalus integration (which automatically adds user history for banshared users when
+                they are banned).
             </p>
             <h2>Severity</h2>
             <p>
@@ -59,7 +61,7 @@ export default function QuickstartBanshares() {
                 P2, where P0 is the highest and P2 is the lowest. DM is a special classification used for DM scams. You can choose to not receive these
                 banshares at all in the settings.
             </p>
-            <p>The approximate definitions for thtese severities are:</p>
+            <p>The approximate definitions for these severities are:</p>
             <ul>
                 <li>
                     <b>P0:</b> The offense is either extremely severe or all servers should immediately ban them and/or have no reason not to ban them (e.g.

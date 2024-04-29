@@ -1,0 +1,1 @@
+ALTER TABLE `banshare_settings` ADD `daedalus` boolean DEFAULT false NOT NULL;

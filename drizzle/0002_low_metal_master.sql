@@ -1,0 +1,1 @@
+ALTER TABLE `banshares` ADD `hub_post` varchar(20);

@@ -81,6 +81,11 @@ export function TopBar({ root }: { root: string }) {
                                                 TCN Constitution
                                             </a>
                                         </li>
+                                        <li>
+                                            <a href="/banshare" className="link">
+                                                Submit a Banshare
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </NavigationMenuContent>

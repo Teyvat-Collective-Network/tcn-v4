@@ -159,6 +159,25 @@ export default function DocsBanshares() {
                     the team to review that much evidence. In those cases, trust is placed on the author to ensure that the list of users is correct.
                 </li>
             </ul>
+            <Section tag="h2" id="lifecycle">
+                Lifecycle of a Banshare
+            </Section>
+            <ol>
+                <li>
+                    A banshare is submitted to the form and posted to <b>#ban-share-logs</b> in HQ.
+                </li>
+                <li>
+                    Any council member may lock the banshare, preventing it from being published or rejected. This is to allow time to type up a message
+                    regarding the banshare.
+                </li>
+                <li>Once concerns have been addressed (or if there are none), an observer will choose to either publish or reject the banshare.</li>
+                <li>If a banshare is published, it will be sent to all subscribed servers (including the TCN Hub).</li>
+                <li>
+                    An observer can rescind a banshare after it has been published in case of issues or overturning the banshare, in which case a rescind notice
+                    will be sent to all servers (but users will not be automatically unbanned in any situation). If this occurs quickly enough, ongoing autobans
+                    will be canceled.
+                </li>
+            </ol>
         </Prose>
     );
 }

@@ -44,7 +44,7 @@ export default async function RootLayout({
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                     <UserWrapper user={user}>
                         <TagsWrapper>
-                            <div className="min-h-screen mb-12 flex flex-col">{children}</div>
+                            <div className="min-h-screen pb-12 flex flex-col">{children}</div>
                         </TagsWrapper>
                     </UserWrapper>
                 </ThemeProvider>
