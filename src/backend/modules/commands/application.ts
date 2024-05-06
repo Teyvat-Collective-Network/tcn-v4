@@ -29,7 +29,14 @@ export default {
                     name: "vote",
                     description: "the type of vote to start",
                     required: true,
-                    choices: [{ name: "Decline Observation & Reject", value: "decline-observation" }],
+                    choices: [
+                        { name: "Decline Observation & Reject", value: "decline-observation" },
+                        { name: "Cancel Ongoing Observation & Reject", value: "cancel-observation" },
+                        { name: "Induction (Standard)", value: "induction/normal" },
+                        { name: "Induction (Unconfirmed Character)", value: "induction/pre-approve" },
+                        { name: "Induction (Tiebreak Induct / Pre-Approve)", value: "induction/positive-tiebreak" },
+                        { name: "Induction (Tiebreak Reject / Extend)", value: "induction/negative-tiebreak" },
+                    ],
                 },
             ],
         },
@@ -114,6 +121,84 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
                 );
 
                 thread.send(`A vote to decline observation for this applicant has been started. Please vote [here](<${message.url}>).`);
+            } catch (error) {
+                await res.editReply(template.error(`Error setting up vote: ${error}`));
+                console.error(error);
+            }
+        } else if (type === "cancel-observation") {
+            if (state === "voting-to-cancel") throw "The council is already voting to cancel this applicant's observation.";
+            if (state !== "observing") throw "This applicant is not under observation.";
+
+            const res = await promptConfirm(
+                interaction,
+                `Start a vote to cancel observation for and reject **${escapeMarkdown(application.name)}** (\`${
+                    application.guild
+                }\`)?\n- This will initialize a two-day, minor, restricted vote to reject the server, canceling their ongoing observation.\n- If a vote to cancel observation already failed, you **can** run another one.`,
+            );
+
+            await res.update(template.info("Setting up vote..."));
+
+            try {
+                const { ref, message } = await newPoll("cancel-observation", async (ref) => {
+                    await db.insert(tables.applicationPolls).values({ ref, thread: thread.id });
+                    return await channels.voteHere.send(await renderPoll(ref));
+                });
+
+                await res.editReply(template.ok(`Poll #${ref} posted: ${message.url}`));
+
+                thread.setAppliedTags([applicationThreadStatusToTag["voting-to-cancel"]]);
+
+                channels.logs.send(
+                    `A vote to cancel the ongoing observation for **[${escapeMarkdown(application.name)}](<${application.url}>)** was started by ${
+                        interaction.user
+                    }.`,
+                );
+
+                thread.send(`A vote to cancel the ongoing observation for this applicant has been started. Please vote [here](<${message.url}>).`);
+            } catch (error) {
+                await res.editReply(template.error(`Error setting up vote: ${error}`));
+                console.error(error);
+            }
+        } else if (type.startsWith("induction/")) {
+            const mode = type.slice(10);
+
+            if (state === "voting") throw "The council is already voting on this server's induction.";
+            if (state !== "observing" && state !== "observation-finished")
+                throw "This applicant is not in the right state (should be observing or observation finished).";
+
+            const res = await promptConfirm(
+                interaction,
+                `Start an induction vote for **${escapeMarkdown(application.name)}** (\`${
+                    application.guild
+                }\`)?\n- This will initialize a two-day, minor, restricted vote for the server.\n${
+                    {
+                        normal: "- This will be a normal induction vote with options to induct, reject, and extend observation.",
+                        "pre-approve":
+                            "- This will be an induction vote with the standard options to induct, reject, and extend observation and the option to pre-approve the server.\n- This poll type only applies for servers whose mascot character is not a confirmed playable character yet.",
+                        "positive-tiebreak":
+                            "- This will be a tiebreaker vote between inducting and pre-approving.\n- This poll type only applies for servers whose mascot character is not a confirmed playable character and whose initial vote tied between these two options.",
+                        "negative-tiebreak":
+                            "- This will be a tiebreaker vote between rejecting and extending observation.\n- This poll type only applies for servers whose initial vote tied between these two options.",
+                    }[mode]
+                }`,
+            );
+
+            await res.update(template.info("Setting up vote..."));
+
+            try {
+                const { ref, message } = await newPoll("induction", async (ref) => {
+                    await db.insert(tables.applicationPolls).values({ ref, thread: thread.id });
+                    await db.insert(tables.inductionPolls).values({ ref, mode: mode as any });
+                    return await channels.voteHere.send(await renderPoll(ref));
+                });
+
+                await res.editReply(template.ok(`Poll #${ref} posted: ${message.url}`));
+
+                thread.setAppliedTags([applicationThreadStatusToTag.voting]);
+
+                channels.logs.send(`A vote for **[${escapeMarkdown(application.name)}](<${application.url}>)** was started by ${interaction.user}.`);
+
+                thread.send(`A vote for this applicant has been started. Please vote [here](<${message.url}>).`);
             } catch (error) {
                 await res.editReply(template.error(`Error setting up vote: ${error}`));
                 console.error(error);

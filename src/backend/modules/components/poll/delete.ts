@@ -14,7 +14,11 @@ export default async function (interaction: ButtonInteraction, type: string) {
     const res = await promptConfirm(
         interaction,
         `Really delete this poll? It will be removed from the database as well and its data and all of its votes will be irreversibly lost. DM reminders will be canceled. ${
-            { "decline-observation": "The applicant's status will be returned to **pending**." }[type] ?? ""
+            {
+                "decline-observation": "The applicant's status will be returned to **pending**.",
+                "cancel-observation": "The applicant's status will be returned to **observing**.",
+                induction: "The applicant's status will be returned to **observation finished**.",
+            }[type] ?? ""
         }`,
     );
 
@@ -25,14 +29,18 @@ export default async function (interaction: ButtonInteraction, type: string) {
 
     await res.update(template.info(`Deleting poll #${id}...`));
 
-    if (["decline-observation"].includes(type)) {
+    if (["decline-observation", "cancel-observation", "induction"].includes(type)) {
         const data = await db.query.applicationPolls.findFirst({ columns: { thread: true }, where: eq(tables.applicationPolls.ref, id) });
 
         if (data) {
             const channel = await bot.channels.fetch(data.thread).catch(() => null);
 
             if (channel?.isThread() && channel.parent?.type === ChannelType.GuildForum && channel.parent === channels.applicants)
-                await channel.setAppliedTags([applicationThreadStatusToTag[{ "decline-observation": "pending" }[type]!]]);
+                await channel.setAppliedTags([
+                    applicationThreadStatusToTag[
+                        { "decline-observation": "pending", "cancel-observation": "observing", induction: "observation-finished" }[type]!
+                    ],
+                ]);
         }
     }
 

@@ -7,7 +7,7 @@ import tables from "../../db/tables.js";
 import { getQuorum, getVoters } from "../../lib/api-lib.js";
 import { applicationThreadStatusToTag } from "../../lib/applications.js";
 import { loop } from "../../lib/loop.js";
-import { getDeclineObservationResults, renderPoll, unrestrictedTypes } from "../../lib/polls.js";
+import { getCancelObservationResults, getDeclineObservationResults, getInductionResults, renderPoll, unrestrictedTypes } from "../../lib/polls.js";
 import { DMReminderTask, dmReminderQueue, qoptions } from "../../queue.js";
 
 // DM Reminders
@@ -89,7 +89,7 @@ loop(async () => {
             const link = `[poll #${id}](<${msg.url}>)`;
             channels.logs.send(`Closed ${link}.`);
 
-            if (["decline-observation"].includes(type))
+            if (["decline-observation", "cancel-observation", "induction"].includes(type))
                 try {
                     const data = await db.query.applicationPolls.findFirst({ columns: { thread: true }, where: eq(tables.applicationPolls.ref, id) });
                     if (!data) throw "Could not fetch application poll data.";
@@ -118,6 +118,59 @@ loop(async () => {
                         } else {
                             await channel.setAppliedTags([applicationThreadStatusToTag.pending]);
                             await channel.send(`The council did not reach quorum on whether to reject this applicant without observation: ${msg.url}`);
+                        }
+                    else if (type === "cancel-observation")
+                        if (valid) {
+                            const { verdict } = await getCancelObservationResults(id);
+
+                            await channel.setAppliedTags([
+                                verdict === "cancel" ? applicationThreadStatusToTag.rejected : applicationThreadStatusToTag.observing,
+                            ]);
+
+                            await channel.send(
+                                {
+                                    cancel: `The council voted to cancel this applicant's observation and reject them immediately: ${msg.url}`,
+                                    continue: `The council voted to continue observing this applicant: ${msg.url}`,
+                                    tie: `The council voted on canceling this applicant's observation but reached a tie: ${msg.url}`,
+                                }[verdict],
+                            );
+                        } else {
+                            await channel.setAppliedTags([applicationThreadStatusToTag.observing]);
+                            await channel.send(`The council did not reach quorum on whether to cancel this applicant's observation: ${msg.url}`);
+                        }
+                    else if (type === "induction")
+                        if (valid) {
+                            const poll = await db.query.inductionPolls.findFirst({ columns: { mode: true }, where: eq(tables.inductionPolls.ref, id) });
+                            if (!poll) throw `Could not fetch induction poll data for poll #${id}.`;
+
+                            const { verdict } = await getInductionResults(id, poll.mode);
+
+                            await channel.setAppliedTags([
+                                verdict === "induct"
+                                    ? applicationThreadStatusToTag.inducted
+                                    : verdict === "preapprove"
+                                    ? applicationThreadStatusToTag["pre-approved"]
+                                    : verdict === "reject"
+                                    ? applicationThreadStatusToTag.rejected
+                                    : verdict === "extend"
+                                    ? applicationThreadStatusToTag.pending
+                                    : applicationThreadStatusToTag["observation-finished"],
+                            ]);
+
+                            await channel.send(
+                                {
+                                    induct: `The council voted to induct this applicant: ${msg.url}`,
+                                    preapprove: `The council voted to pre-approve this applicant: ${msg.url}`,
+                                    reject: `The council voted to reject this applicant: ${msg.url}`,
+                                    extend: `The council voted to extend this applicant's observation: ${msg.url}`,
+                                    tie: `The council's vote tied between the positive and negative options: ${msg.url}`,
+                                    "positive-tie": `The council's vote tied between inducting and pre-approving: ${msg.url}`,
+                                    "negative-tie": `The council's vote tied between rejecting and extending observation: ${msg.url}`,
+                                }[verdict],
+                            );
+                        } else {
+                            await channel.setAppliedTags([applicationThreadStatusToTag["observation-finished"]]);
+                            await channel.send(`The council did not reach quorum on this applicant's induction: ${msg.url}`);
                         }
                 } catch (error) {
                     channels.logs.send(`Error resolving application status for ${link}. Please fix this manually. Error: ${error}`);

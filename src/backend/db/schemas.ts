@@ -56,7 +56,7 @@ export const applications = mysqlTable("applications", {
 
 export const polls = mysqlTable("polls", {
     id: int("id").autoincrement().primaryKey(),
-    type: mysqlEnum("type", ["decline-observation"]).notNull(),
+    type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction"]).notNull(),
     message: varchar("message", { length: 20 }).notNull(),
     reminder: bigint("reminder", { mode: "number" }),
     deadline: bigint("deadline", { mode: "number" }).notNull(),
@@ -86,6 +86,13 @@ export const applicationPolls = mysqlTable("application_polls", {
         .notNull(),
 });
 
+export const inductionPolls = mysqlTable("induction_polls", {
+    ref: int("ref")
+        .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .primaryKey(),
+    mode: mysqlEnum("mode", ["normal", "pre-approve", "positive-tiebreak", "negative-tiebreak"]).notNull(),
+});
+
 export const declineObservationVotes = mysqlTable(
     "decline_observation_votes",
     {
@@ -98,4 +105,30 @@ export const declineObservationVotes = mysqlTable(
     (t) => ({
         pk_ref_user: primaryKey({ columns: [t.ref, t.user] }),
     }),
+);
+
+export const cancelObservationVotes = mysqlTable(
+    "cancel_observation_votes",
+    {
+        ref: int("ref")
+            .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        vote: mysqlEnum("vote", ["cancel", "continue", "abstain"]).notNull(),
+    },
+    (t) => ({
+        pk_ref_user: primaryKey({ columns: [t.ref, t.user] }),
+    }),
+);
+
+export const inductionVotes = mysqlTable(
+    "induction_votes",
+    {
+        ref: int("ref")
+            .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        vote: mysqlEnum("vote", ["induct", "preapprove", "reject", "extend", "abstain"]).notNull(),
+    },
+    (t) => ({ pk_ref_user: primaryKey({ columns: [t.ref, t.user] }) }),
 );
