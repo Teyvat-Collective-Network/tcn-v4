@@ -15,7 +15,7 @@ export function TopBar({ root }: { root: string }) {
 
     const sites = [
         { url: "/", name: "Home", description: "Home/landing page for the TCN — learn about the network here" },
-        { url: "/forms", name: "Forms", description: "TCN forms — apply, submit banshares, or appeal your ban here" },
+        { url: "/forms", name: "Forms", description: "TCN forms — apply to the TCN or submit banshares here" },
     ];
 
     if (user?.council) sites.push({ url: "/council", name: "Council", description: "Section for the TCN Council" });
@@ -100,9 +100,12 @@ export function TopBar({ root }: { root: string }) {
                                                 <div className="px-4 py-2 flex items-center gap-4">
                                                     <Avatar className="w-12 h-12">
                                                         <AvatarImage src={user.image}></AvatarImage>
-                                                        <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                                                        <AvatarFallback>{user.tag.charAt(0).toUpperCase()}</AvatarFallback>
                                                     </Avatar>
-                                                    <span className="text-xl font-semibold">{user.name}</span>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-xl font-semibold">{user.name}</span>
+                                                        <span className="text-md font-light opacity-50">@{user.tag}</span>
+                                                    </div>
                                                     {user.staff ? <FaIdBadge title="Network Staff"></FaIdBadge> : null}
                                                     {user.globalMod ? <FaEarthAmericas title="Global Mod"></FaEarthAmericas> : null}
                                                     {user.council ? <FaBuildingColumns title="TCN Council"></FaBuildingColumns> : null}

@@ -7,19 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Panel } from "../../../components/ui/panel";
 import { Switch } from "../../../components/ui/switch";
-
-function fuzzy(string: string, query: string): boolean {
-    const lower = query.toLowerCase();
-    string = string.toLowerCase();
-
-    let index = 0;
-    for (const char of lower) {
-        if ((index = string.indexOf(char, index)) === -1) return false;
-        index++;
-    }
-
-    return true;
-}
+import { fuzzy } from "../../../lib/fuzzy";
 
 export default function PartnersClient({ servers }: { servers: { id: string; mascot: string; name: string; invite: string; image: string }[] }) {
     const [showExternal, setShowExternal] = useState<boolean>(false);

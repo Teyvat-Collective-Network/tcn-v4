@@ -27,6 +27,7 @@ export function FormLogin({ children }: React.PropsWithChildren) {
                     </p>
                 )}
             </Panel>
+            <br />
             {user ? (
                 <>
                     <br />

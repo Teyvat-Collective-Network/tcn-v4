@@ -3,11 +3,10 @@
     "dependencies": {
         "@trpc/client": "11.0.0-rc.354",
         "@trpc/server": "11.0.0-rc.354",
-        "crypto": "^1.0.1",
+        "bullmq": "^5.7.6",
         "discord.js": "^14.14.1",
         "dotenv": "^16.4.5",
         "drizzle-orm": "^0.30.8",
-        "lodash": "^4.17.21",
         "mysql2": "^3.9.4",
         "zod": "^3.23.4"
     },

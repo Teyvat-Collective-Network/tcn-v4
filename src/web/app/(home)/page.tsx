@@ -1,10 +1,10 @@
 "use server";
 
 import { Panel } from "../../components/ui/panel";
-import { trpc } from "../../lib/trpc";
+import { api } from "../../lib/trpc";
 
 export default async function Home() {
-    const count = await trpc.getServerCount.query();
+    const count = await api.getServerCount.query();
 
     return (
         <div className="grid gap-4 lg:grid-cols-10">

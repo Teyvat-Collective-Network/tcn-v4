@@ -3,10 +3,10 @@
 import { Button } from "../../../components/ui/button";
 import { Prose } from "../../../components/ui/prose";
 import UserMention from "../../../components/ui/user-mention";
-import { trpc } from "../../../lib/trpc";
+import { api } from "../../../lib/trpc";
 
 export default async function Contact() {
-    const users = await trpc.getObserverList.query();
+    const users = await api.getObserverList.query();
 
     return (
         <Prose>

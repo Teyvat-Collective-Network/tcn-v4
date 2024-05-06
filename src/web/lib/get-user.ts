@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { bot, trpc } from "./trpc";
+import { api } from "./trpc";
 import { User } from "./types";
 
 export async function getToken(): Promise<string | undefined> {
@@ -28,9 +28,5 @@ export default async function getUser(token?: string): Promise<User | null> {
     const id = await getId(token);
     if (id === null) return null;
 
-    const discord = await bot.userGet.query(id).catch(() => null);
-    if (discord === null) return null;
-
-    const network = await trpc.getBasicUserInfo.query(id);
-    return { ...discord, ...network };
+    return await api.getUser.query(id);
 }

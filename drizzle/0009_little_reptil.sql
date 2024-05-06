@@ -1,0 +1,1 @@
+ALTER TABLE `applications` ADD `invite` text NOT NULL;

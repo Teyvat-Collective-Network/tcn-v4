@@ -1,6 +1,7 @@
 export type User = {
     id: string;
     name: string;
+    tag: string;
     image: string;
     staff: boolean;
     globalMod: boolean;

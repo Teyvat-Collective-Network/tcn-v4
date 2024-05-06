@@ -11,14 +11,6 @@ export default function FormsHome() {
                 <h2>Banshare Form</h2>
                 <p>Submit banshares here (you must be a staff member in a TCN server).</p>
             </LandingPanel>
-            <LandingPanel href="/global-ban-appeal">
-                <h2>Global Ban Appeal</h2>
-                <p>Appeal your global chat ban here.</p>
-            </LandingPanel>
-            <LandingPanel href="/banshare-appeal">
-                <h2>Banshare Appeal</h2>
-                <p>If you&apos;ve been banshared in the TCN, you may appeal it here.</p>
-            </LandingPanel>
         </LandingPage>
     );
 }

@@ -7,7 +7,10 @@ import {
     FaBook,
     FaBookBookmark,
     FaBuildingColumns,
+    FaCalendarWeek,
     FaCircleInfo,
+    FaClipboardList,
+    FaClockRotateLeft,
     FaDoorOpen,
     FaEarthAmericas,
     FaHandshake,
@@ -16,6 +19,7 @@ import {
     FaMoon,
     FaPhone,
     FaScrewdriverWrench,
+    FaServer,
     FaSun,
     FaTowerBroadcast,
     FaXmark,
@@ -52,6 +56,16 @@ export function Menu({ root }: { root: string }) {
 
     if (root === "/forms") links.push(["/apply", "Apply to Join", FaDoorOpen], ["/banshare", "Submit a Banshare", FaTowerBroadcast]);
 
+    if (root === "/admin")
+        links.push(
+            ["/admin/onboarding", "Observer Onboarding", FaDoorOpen],
+            ["/admin/observation-guide", "Observation Guide", FaClipboardList],
+            ["/admin/servers", "Manage Servers", FaServer],
+        );
+
+    if (root === "/council")
+        links.push(["/membership-changes", "Membership Changes", FaClockRotateLeft], ["/observer-terms", "Observer Terms", FaCalendarWeek]);
+
     return (
         <>
             <div className="z-10 hidden md:block fixed pl-4 pt-4">
@@ -86,7 +100,7 @@ export function Menu({ root }: { root: string }) {
                         </button>
                         <hr />
                         {links.map((item, i) => {
-                            if (item === null) return <hr key={i}></hr>;
+                            if (item === null) return <hr key={i} className="my-2"></hr>;
 
                             const [link, title, icon] = item;
 

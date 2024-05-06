@@ -1,0 +1,1 @@
+ALTER TABLE `applications` MODIFY COLUMN `url` varchar(128) NOT NULL;
