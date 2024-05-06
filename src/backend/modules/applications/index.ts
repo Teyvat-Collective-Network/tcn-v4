@@ -27,6 +27,7 @@ async function repostDeletedApplicationThreads() {
                 application.goals,
                 application.history,
                 application.additional,
+                application.name,
             );
 
             await db

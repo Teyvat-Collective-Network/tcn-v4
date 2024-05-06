@@ -34,15 +34,18 @@ export async function createApplicationThread(
     goals: string,
     history: string,
     additional: string,
+    name?: string,
 ) {
+    name ??= guild.name;
+
     return await channels.applicants.threads.create({
-        name: guild.name.slice(0, 80),
+        name: name.slice(0, 80),
         message: {
             content: `${invite}`,
             embeds: [
                 {
                     title: "New Application",
-                    description: `<@${user}> applied for **${escapeMarkdown(guild.name)}**. The server has ${
+                    description: `<@${user}> applied for **${escapeMarkdown(name)}**. The server has ${
                         invite.memberCount
                     } members and was created on ${timeinfo(guild.createdAt)}}.`,
                     color: 0x2b2d31,
