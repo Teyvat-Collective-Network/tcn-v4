@@ -58,10 +58,7 @@ export default function DocsBanshares() {
                     send reminders more frequently if it is not addressed.
                 </li>
             </ul>
-            <p>
-                If your ID list is long (more than about 20 users), you may wish to use <b>Submit Without Validation</b>. This checks if the IDs look valid but
-                does not check if they correspond to valid Discord users, since fetching all of the users would take a long time.
-            </p>
+            <p>If your ID list is longer than 20 users, the bot will not validate the users to avoid taking too long to get your banshare up for review.</p>
             <Section tag="h2" id="severity">
                 Severity
             </Section>

@@ -95,7 +95,7 @@ export default function AdminServersNewClient({
                     >
                         <FaPencil></FaPencil>
                     </Button>
-                    <div className="prose">{owner ? <UserMention id={owner}></UserMention> : <span className="opacity-50">(none)</span>}</div>
+                    {owner ? <UserMention id={owner}></UserMention> : <span className="opacity-50">(none)</span>}
                 </div>
                 <b>Advisor:</b>
                 <div className="flex items-center gap-4">
@@ -111,7 +111,7 @@ export default function AdminServersNewClient({
                     >
                         <FaPencil></FaPencil>
                     </Button>
-                    <div className="prose">{advisor ? <UserMention id={advisor}></UserMention> : <span className="opacity-50">(none)</span>}</div>
+                    {advisor ? <UserMention id={advisor}></UserMention> : <span className="opacity-50">(none)</span>}
                 </div>
                 <b>Delegated:</b>
                 <div className="flex items-center gap-4">

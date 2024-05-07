@@ -75,12 +75,12 @@ export function cmdKey(interaction: ChatInputCommandInteraction) {
     return group ? `${group}/${sub}` : sub ? `${sub}` : "";
 }
 
-export function greyButton(label: string): BaseMessageOptions {
+export function greyButton(label: string, style: Exclude<ButtonStyle, ButtonStyle.Link> = ButtonStyle.Secondary): BaseMessageOptions {
     return {
         components: [
             {
                 type: ComponentType.ActionRow,
-                components: [{ type: ComponentType.Button, customId: ".", style: ButtonStyle.Secondary, label, disabled: true }],
+                components: [{ type: ComponentType.Button, customId: ".", style, label, disabled: true }],
             },
         ],
     };

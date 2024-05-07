@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { bigint, boolean, int, mysqlEnum, mysqlTable, primaryKey, text, varchar } from "drizzle-orm/mysql-core";
+import { bigint, boolean, index, int, mysqlEnum, mysqlTable, primaryKey, text, varchar } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
     id: varchar("id", { length: 20 }).primaryKey(),
@@ -133,6 +133,43 @@ export const inductionVotes = mysqlTable(
             .notNull(),
         user: varchar("user", { length: 20 }).notNull(),
         vote: mysqlEnum("vote", ["induct", "preapprove", "reject", "extend", "abstain"]).notNull(),
+    },
+    (t) => ({ pk_ref_user: primaryKey({ columns: [t.ref, t.user] }) }),
+);
+
+export const banlists = mysqlTable("banlists", {
+    uuid: varchar("uuid", { length: 36 }).primaryKey(),
+    content: text("content").notNull(),
+});
+
+export const banshares = mysqlTable(
+    "banshares",
+    {
+        id: int("id").autoincrement().primaryKey(),
+        message: varchar("message", { length: 20 }).notNull(),
+        author: varchar("author", { length: 20 }).notNull(),
+        display: varchar("display", { length: 1024 }).notNull(),
+        usernames: varchar("usernames", { length: 1024 }).notNull(),
+        reason: varchar("reason", { length: 498 }).notNull(),
+        evidence: varchar("evidence", { length: 1000 }).notNull(),
+        server: varchar("server", { length: 20 }).notNull(),
+        severity: varchar("severity", { length: 8 }).notNull(),
+        urgent: boolean("urgent").notNull(),
+        reminded: bigint("reminded", { mode: "number" }).notNull(),
+        status: mysqlEnum("status", ["pending", "locked", "rejected", "published", "rescinded"]).notNull(),
+    },
+    (t) => ({
+        idx_message: index("idx_message").on(t.message),
+    }),
+);
+
+export const banshareIds = mysqlTable(
+    "banshare_ids",
+    {
+        ref: int("ref")
+            .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
     },
     (t) => ({ pk_ref_user: primaryKey({ columns: [t.ref, t.user] }) }),
 );
