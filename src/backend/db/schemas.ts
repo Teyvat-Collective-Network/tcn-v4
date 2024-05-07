@@ -19,6 +19,10 @@ export const guilds = mysqlTable("guilds", {
     owner: varchar("owner", { length: 20 }).notNull(),
     advisor: varchar("advisor", { length: 20 }),
     delegated: boolean("delegated").notNull(),
+    roleColor: int("role_color").notNull(),
+    roleName: varchar("role_name", { length: 80 }).notNull(),
+    hqRole: varchar("hq_role", { length: 20 }).notNull(),
+    hubRole: varchar("hub_role", { length: 20 }).notNull(),
 });
 
 export const guildStaff = mysqlTable(

@@ -1,5 +1,15 @@
-import { BaseMessageOptions, ButtonStyle, ChatInputCommandInteraction, Colors, ComponentType, InteractionReplyOptions, RepliableInteraction } from "discord.js";
+import {
+    BaseMessageOptions,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    Colors,
+    ComponentType,
+    InteractionReplyOptions,
+    Invite,
+    RepliableInteraction,
+} from "discord.js";
 import { and, eq, or } from "drizzle-orm";
+import bot from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 
@@ -13,6 +23,18 @@ export const template = {
     info: (body: string, ephemeral?: boolean) => embed("Info", body, Colors.Blue, ephemeral),
     warning: (body: string, ephemeral?: boolean) => embed("Warning", body, Colors.Gold, ephemeral),
 };
+
+export async function validateInvite(invite: string | Invite | null, guild?: string) {
+    const data = typeof invite === "string" ? await bot.fetchInvite(invite).catch(() => null) : invite;
+
+    if (!data) return "Invalid invite!";
+    if (!data.guild) return "That invite does not point to a server. Make sure you haven't entered a group DM invite.";
+    if (guild && data.guild.id !== guild) return "That invite points to the wrong server.";
+    if (!!data.expiresAt) return "That invite is not permanent. Please generate an invite that will not expire.";
+    if (data.code === data.guild.vanityURLCode) return "That invite is the server's vanity URL. Please generate a permanent invite that isn't the vanity.";
+
+    return null;
+}
 
 export async function reply(interaction: RepliableInteraction, data: InteractionReplyOptions) {
     if (interaction.replied) return await interaction.followUp(data);

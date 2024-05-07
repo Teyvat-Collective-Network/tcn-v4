@@ -8,7 +8,7 @@ import { getQuorum, getVoters } from "../../lib/api-lib.js";
 import { applicationThreadStatusToTag } from "../../lib/applications.js";
 import { loop } from "../../lib/loop.js";
 import { getCancelObservationResults, getDeclineObservationResults, getInductionResults, renderPoll, unrestrictedTypes } from "../../lib/polls.js";
-import { DMReminderTask, dmReminderQueue, qoptions } from "../../queue.js";
+import { DMReminderTask, dmReminderQueue, qoptions, repostDeletedOpenPollsQueue } from "../../queue.js";
 
 // DM Reminders
 loop(async function () {
@@ -159,7 +159,7 @@ loop(async () => {
 
                             await channel.send(
                                 {
-                                    induct: `The council voted to induct this applicant: ${msg.url}`,
+                                    induct: `The council voted to induct this applicant: ${msg.url} (observers: use [this link](<${process.env.DOMAIN}/admin/servers/new?origin=${channel.id}>) to add the server)`,
                                     preapprove: `The council voted to pre-approve this applicant: ${msg.url}`,
                                     reject: `The council voted to reject this applicant: ${msg.url}`,
                                     extend: `The council voted to extend this applicant's observation: ${msg.url}`,
@@ -208,9 +208,7 @@ async function repostDeletedOpenPolls() {
     }
 }
 
-const queue = new Queue("tcn:repost-deleted-open-polls", qoptions);
-
 new Worker("tcn:repost-deleted-open-polls", repostDeletedOpenPolls, qoptions);
 
-loop(async () => queue.add("", null), 300000);
-bot.on(Events.MessageDelete, (message) => void (message.channel === channels.voteHere && queue.add("", null)));
+loop(async () => repostDeletedOpenPollsQueue.add("", null), 300000);
+bot.on(Events.MessageDelete, (message) => void (message.channel === channels.voteHere && repostDeletedOpenPollsQueue.add("", null)));

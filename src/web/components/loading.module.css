@@ -1,0 +1,23 @@
+@keyframes dash {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.outer {
+    animation: dash 1.5s infinite cubic-bezier(0.6, 0.4, 0.4, 0.6);
+    stroke-dasharray: 300;
+    stroke-dashoffset: 200;
+    transform-origin: center;
+}
+
+.inner {
+    animation: dash 2.5s reverse infinite cubic-bezier(0.75, 0.25, 0.25, 0.75);
+    stroke-dasharray: 220;
+    stroke-dashoffset: 60;
+    transform-origin: center;
+}
+
+.loading {
+    font-size: 120%;
+}

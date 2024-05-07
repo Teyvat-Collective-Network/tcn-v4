@@ -4,6 +4,7 @@ import "./modules/applications";
 import "./modules/commands";
 import "./modules/components";
 import "./modules/polls";
+import "./modules/rolesync";
 import { appRouter } from "./server.js";
 
 process.on("uncaughtException", (error) => {

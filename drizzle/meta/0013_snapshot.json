@@ -1,0 +1,717 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "3c24807b-6161-44d5-9498-d0ef701d286c",
+  "prevId": "65ab575e-2b70-41cf-b4bf-78af8f5d198b",
+  "tables": {
+    "application_polls": {
+      "name": "application_polls",
+      "columns": {
+        "ref": {
+          "name": "ref",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "thread": {
+          "name": "thread",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "application_polls_ref_polls_id_fk": {
+          "name": "application_polls_ref_polls_id_fk",
+          "tableFrom": "application_polls",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "ref"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "application_polls_thread_applications_thread_fk": {
+          "name": "application_polls_thread_applications_thread_fk",
+          "tableFrom": "application_polls",
+          "tableTo": "applications",
+          "columnsFrom": [
+            "thread"
+          ],
+          "columnsTo": [
+            "thread"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "application_polls_ref": {
+          "name": "application_polls_ref",
+          "columns": [
+            "ref"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "applications": {
+      "name": "applications",
+      "columns": {
+        "thread": {
+          "name": "thread",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "invite": {
+          "name": "invite",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "experience": {
+          "name": "experience",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "goals": {
+          "name": "goals",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "history": {
+          "name": "history",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "additional": {
+          "name": "additional",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "applications_thread": {
+          "name": "applications_thread",
+          "columns": [
+            "thread"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "cancel_observation_votes": {
+      "name": "cancel_observation_votes",
+      "columns": {
+        "ref": {
+          "name": "ref",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "vote": {
+          "name": "vote",
+          "type": "enum('cancel','continue','abstain')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cancel_observation_votes_ref_polls_id_fk": {
+          "name": "cancel_observation_votes_ref_polls_id_fk",
+          "tableFrom": "cancel_observation_votes",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "ref"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "cancel_observation_votes_ref_user_pk": {
+          "name": "cancel_observation_votes_ref_user_pk",
+          "columns": [
+            "ref",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "characters": {
+      "name": "characters",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "short": {
+          "name": "short",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "element": {
+          "name": "element",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "characters_id": {
+          "name": "characters_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "decline_observation_votes": {
+      "name": "decline_observation_votes",
+      "columns": {
+        "ref": {
+          "name": "ref",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "vote": {
+          "name": "vote",
+          "type": "enum('decline','proceed','abstain')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "decline_observation_votes_ref_polls_id_fk": {
+          "name": "decline_observation_votes_ref_polls_id_fk",
+          "tableFrom": "decline_observation_votes",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "ref"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "decline_observation_votes_ref_user_pk": {
+          "name": "decline_observation_votes_ref_user_pk",
+          "columns": [
+            "ref",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "guild_staff": {
+      "name": "guild_staff",
+      "columns": {
+        "guild": {
+          "name": "guild",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guild_staff_guild_guilds_id_fk": {
+          "name": "guild_staff_guild_guilds_id_fk",
+          "tableFrom": "guild_staff",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "guild_staff_guild_user_pk": {
+          "name": "guild_staff_guild_user_pk",
+          "columns": [
+            "guild",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "guilds": {
+      "name": "guilds",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mascot": {
+          "name": "mascot",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "invite": {
+          "name": "invite",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "owner": {
+          "name": "owner",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "advisor": {
+          "name": "advisor",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "delegated": {
+          "name": "delegated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role_color": {
+          "name": "role_color",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role_name": {
+          "name": "role_name",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hq_role": {
+          "name": "hq_role",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hub_role": {
+          "name": "hub_role",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guilds_mascot_characters_id_fk": {
+          "name": "guilds_mascot_characters_id_fk",
+          "tableFrom": "guilds",
+          "tableTo": "characters",
+          "columnsFrom": [
+            "mascot"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "guilds_id": {
+          "name": "guilds_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "induction_polls": {
+      "name": "induction_polls",
+      "columns": {
+        "ref": {
+          "name": "ref",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mode": {
+          "name": "mode",
+          "type": "enum('normal','pre-approve','positive-tiebreak','negative-tiebreak')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "induction_polls_ref_polls_id_fk": {
+          "name": "induction_polls_ref_polls_id_fk",
+          "tableFrom": "induction_polls",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "ref"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "induction_polls_ref": {
+          "name": "induction_polls_ref",
+          "columns": [
+            "ref"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "induction_votes": {
+      "name": "induction_votes",
+      "columns": {
+        "ref": {
+          "name": "ref",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "vote": {
+          "name": "vote",
+          "type": "enum('induct','preapprove','reject','extend','abstain')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "induction_votes_ref_polls_id_fk": {
+          "name": "induction_votes_ref_polls_id_fk",
+          "tableFrom": "induction_votes",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "ref"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "induction_votes_ref_user_pk": {
+          "name": "induction_votes_ref_user_pk",
+          "columns": [
+            "ref",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "polls": {
+      "name": "polls",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "type": {
+          "name": "type",
+          "type": "enum('decline-observation','cancel-observation','induction')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reminder": {
+          "name": "reminder",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "deadline": {
+          "name": "deadline",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "closed": {
+          "name": "closed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "truly_closed": {
+          "name": "truly_closed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "polls_id": {
+          "name": "polls_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "observer": {
+          "name": "observer",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "observer_since": {
+          "name": "observer_since",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "global_nickname": {
+          "name": "global_nickname",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "null"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "users_id": {
+          "name": "users_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "vote_tracker": {
+      "name": "vote_tracker",
+      "columns": {
+        "poll": {
+          "name": "poll",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "vote_tracker_poll_polls_id_fk": {
+          "name": "vote_tracker_poll_polls_id_fk",
+          "tableFrom": "vote_tracker",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "poll"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "vote_tracker_poll_user_pk": {
+          "name": "vote_tracker_poll_user_pk",
+          "columns": [
+            "poll",
+            "user"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

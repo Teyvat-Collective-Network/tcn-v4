@@ -11,6 +11,9 @@ export default function AdminHome() {
                 <h2>Observation Guide</h2>
                 <p>Check out this guide for some tips and advice on conducting observations.</p>
             </LandingPanel>
+            <LandingPanel href="/admin/servers">
+                <h2>Manage Servers</h2>
+            </LandingPanel>
         </LandingPage>
     );
 }

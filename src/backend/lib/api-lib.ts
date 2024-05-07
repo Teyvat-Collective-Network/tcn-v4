@@ -6,8 +6,8 @@ import { majorTypes, unrestrictedTypes } from "./polls.js";
 export async function getVoters(unrestricted: boolean) {
     const guilds = await db.query.guilds.findMany({ columns: { owner: true, advisor: true, delegated: true } });
 
-    if (unrestricted) return guilds.flatMap((guild) => [guild.owner, guild.advisor || []].flat());
-    else return guilds.map((guild) => (guild.delegated ? guild.advisor! : guild.owner)).filter((id) => id);
+    if (unrestricted) return [...new Set(guilds.flatMap((guild) => [guild.owner, guild.advisor || []].flat()))];
+    else return [...new Set(guilds.map((guild) => (guild.delegated ? guild.advisor! : guild.owner)).filter((id) => id))];
 }
 
 export async function getTurnoutAndQuorum(id: number, type: string): Promise<[number, boolean]> {
