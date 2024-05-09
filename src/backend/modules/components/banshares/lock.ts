@@ -6,10 +6,10 @@ import tables from "../../../db/tables.js";
 import { renderBanshareControls } from "../../../lib/banshares.js";
 
 export default async function (interaction: ButtonInteraction) {
-    await interaction.deferUpdate();
-
     const banshare = await db.query.banshares.findFirst({ columns: { id: true }, where: eq(tables.banshares.message, interaction.message.id) });
     if (!banshare) throw "Could not fetch this banshare.";
+
+    await interaction.deferUpdate();
 
     const [{ affectedRows }] = await db
         .update(tables.banshares)

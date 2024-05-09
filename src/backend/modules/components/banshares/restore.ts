@@ -17,11 +17,11 @@ export default async function (interaction: ButtonInteraction) {
     const [{ affectedRows }] = await db
         .update(tables.banshares)
         .set({ status: "pending" })
-        .where(and(eq(tables.banshares.id, banshare.id), eq(tables.banshares.status, "locked")));
+        .where(and(eq(tables.banshares.id, banshare.id), eq(tables.banshares.status, "rejected")));
 
-    if (affectedRows === 0) throw "This banshare is not locked; your action may have coincided with a slightly earlier one.";
+    if (affectedRows === 0) throw "This banshare is no longer rejected.";
 
     await interaction.editReply({ components: await renderBanshareControls(banshare.id) });
 
-    await channels.logs.send(`${interaction.message.url} was unlocked by ${interaction.user}.`);
+    await channels.logs.send(`${interaction.message.url} was restored by ${interaction.user}.`);
 }

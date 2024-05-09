@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { bigint, boolean, index, int, mysqlEnum, mysqlTable, primaryKey, text, varchar } from "drizzle-orm/mysql-core";
+import { bigint, boolean, index, int, mysqlEnum, mysqlTable, primaryKey, text, unique, varchar } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
     id: varchar("id", { length: 20 }).primaryKey(),
@@ -172,4 +172,72 @@ export const banshareIds = mysqlTable(
         user: varchar("user", { length: 20 }).notNull(),
     },
     (t) => ({ pk_ref_user: primaryKey({ columns: [t.ref, t.user] }) }),
+);
+
+export const banshareSettings = mysqlTable("banshare_settings", {
+    guild: varchar("guild", { length: 20 })
+        .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .primaryKey(),
+    channel: varchar("channel", { length: 20 }),
+    logs: varchar("logs", { length: 20 }),
+});
+
+export const banshareActionSettings = mysqlTable(
+    "banshare_action_settings",
+    {
+        guild: varchar("guild", { length: 20 })
+            .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        severity: varchar("severity", { length: 8 }).notNull(),
+        member: boolean("member").notNull(),
+        ban: boolean("ban").notNull(),
+    },
+    (t) => ({
+        pk_guild_severity_member: primaryKey({ columns: [t.guild, t.severity, t.member] }),
+    }),
+);
+
+export const banshareCrossposts = mysqlTable(
+    "banshare_crossposts",
+    {
+        ref: int("ref")
+            .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        guild: varchar("guild", { length: 20 })
+            .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        channel: varchar("channel", { length: 20 }).notNull(),
+        message: varchar("message", { length: 20 }).notNull(),
+        executor: varchar("executor", { length: 20 }),
+    },
+    (t) => ({
+        pk_ref_guild: primaryKey({ columns: [t.ref, t.guild] }),
+    }),
+);
+
+export const banshareHubPosts = mysqlTable("banshare_hub_posts", {
+    ref: int("ref")
+        .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .primaryKey(),
+    channel: varchar("channel", { length: 20 }).notNull(),
+    message: varchar("message", { length: 20 }).notNull(),
+});
+
+export const banTasks = mysqlTable(
+    "ban_tasks",
+    {
+        id: int("id").autoincrement().primaryKey(),
+        ref: int("ref")
+            .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        guild: varchar("guild", { length: 20 })
+            .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        status: mysqlEnum("status", ["pending", "skipped", "banned", "failed", "hold"]).notNull(),
+        member: boolean("member"),
+    },
+    (t) => ({
+        unq_ref_guild_user: unique("idx_ref_guild_user").on(t.ref, t.guild, t.user),
+    }),
 );

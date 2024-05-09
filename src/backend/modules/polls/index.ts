@@ -1,4 +1,3 @@
-import { Queue, Worker } from "bullmq";
 import { ChannelType, Events } from "discord.js";
 import { and, eq, inArray, lt } from "drizzle-orm";
 import bot, { channels } from "../../bot.js";
@@ -8,7 +7,7 @@ import { getQuorum, getVoters } from "../../lib/api-lib.js";
 import { applicationThreadStatusToTag } from "../../lib/applications.js";
 import { loop } from "../../lib/loop.js";
 import { getCancelObservationResults, getDeclineObservationResults, getInductionResults, renderPoll, unrestrictedTypes } from "../../lib/polls.js";
-import { DMReminderTask, dmReminderQueue, qoptions, repostDeletedOpenPollsQueue } from "../../queue.js";
+import { DMReminderTask, dmReminderQueue, makeWorker, repostDeletedOpenPollsQueue } from "../../queue.js";
 
 // DM Reminders
 loop(async function () {
@@ -41,25 +40,21 @@ loop(async function () {
         }
 }, 10000);
 
-new Worker<DMReminderTask>(
-    "tcn:dm-reminders",
-    async ({ data: { id, url, user } }) => {
-        const link = `[poll #${id}](<${url}>)`;
+makeWorker<DMReminderTask>("tcn:dm-reminders", async ({ id, url, user }) => {
+    const link = `[poll #${id}](<${url}>)`;
 
-        try {
-            await (await bot.users.fetch(user)).send(`You have not voted on ${link} yet. Please do so at your earliest convenience.`);
-            channels.logs.send(`Sent a reminder to <@${user}> to vote on ${link}.`);
-        } catch {
-            await channels.logs.send(`Error reminding <@${user}> to vote on ${link}. Pinging them in ${channels.voteHere}.`);
+    try {
+        await (await bot.users.fetch(user)).send(`You have not voted on ${link} yet. Please do so at your earliest convenience.`);
+        channels.logs.send(`Sent a reminder to <@${user}> to vote on ${link}.`);
+    } catch {
+        await channels.logs.send(`Error reminding <@${user}> to vote on ${link}. Pinging them in ${channels.voteHere}.`);
 
-            await channels.voteHere.send({
-                content: `<@${user}> Please vote on ${link}. (Enable DMs in this server to receive these reminders as DMs instead.)`,
-                allowedMentions: { users: [user] },
-            });
-        }
-    },
-    qoptions,
-);
+        await channels.voteHere.send({
+            content: `<@${user}> Please vote on ${link}. (Enable DMs in this server to receive these reminders as DMs instead.)`,
+            allowedMentions: { users: [user] },
+        });
+    }
+});
 
 // Close Polls
 loop(async () => {
@@ -208,7 +203,7 @@ async function repostDeletedOpenPolls() {
     }
 }
 
-new Worker("tcn:repost-deleted-open-polls", repostDeletedOpenPolls, qoptions);
+makeWorker("tcn:repost-deleted-open-polls", repostDeletedOpenPolls);
 
 loop(async () => repostDeletedOpenPollsQueue.add("", null), 300000);
 bot.on(Events.MessageDelete, (message) => void (message.channel === channels.voteHere && repostDeletedOpenPollsQueue.add("", null)));

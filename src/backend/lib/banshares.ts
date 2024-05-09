@@ -101,13 +101,25 @@ export async function renderBanshareControls(id: number): Promise<BaseMessageOpt
             },
         ];
 
-    if (banshare.status === "rejected") return greyButton("Rejected", ButtonStyle.Danger).components;
+    if (banshare.status === "rejected")
+        return [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    { type: ComponentType.Button, customId: ".", style: ButtonStyle.Danger, label: "Rejected", disabled: true },
+                    { type: ComponentType.Button, customId: ":banshares/restore", style: ButtonStyle.Primary, label: "Restore" },
+                ],
+            },
+        ];
 
     if (banshare.status === "published")
         return [
             {
                 type: ComponentType.ActionRow,
-                components: [{ type: ComponentType.Button, customId: ":banshares/rescind", style: ButtonStyle.Danger, label: "Rescind" }],
+                components: [
+                    { type: ComponentType.Button, customId: ".", style: ButtonStyle.Success, label: "Published", disabled: true },
+                    { type: ComponentType.Button, customId: ":banshares/rescind", style: ButtonStyle.Danger, label: "Rescind" },
+                ],
             },
         ];
 

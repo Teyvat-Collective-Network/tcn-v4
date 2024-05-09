@@ -2,8 +2,9 @@ import { Events } from "discord.js";
 import bot, { HQ, HUB, channels } from "../../bot.js";
 import { reply, template } from "../../lib/bot-lib.js";
 import application, { handleApplication } from "./application.js";
+import banshares, { handleBanshares } from "./banshares.js";
 
-await bot.application.commands.set([]);
+await bot.application.commands.set([banshares]);
 await HQ.commands.set([application]);
 await HUB.commands.set([]);
 
@@ -13,6 +14,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
             switch (interaction.commandName) {
                 case "application":
                     await handleApplication(interaction);
+                    break;
+                case "banshares":
+                    await handleBanshares(interaction);
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";

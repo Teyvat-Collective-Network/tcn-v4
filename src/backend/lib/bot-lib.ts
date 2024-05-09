@@ -68,6 +68,12 @@ export async function ensureCouncil(interaction: RepliableInteraction) {
     if (!valid) throw "Permission denied: you must be a voter.";
 }
 
+export async function ensureTCN(interaction: RepliableInteraction) {
+    if (!interaction.guild) throw "This command can only be used in a server.";
+    if (!(await db.query.guilds.findFirst({ columns: { id: true }, where: eq(tables.guilds.id, interaction.guild.id) })))
+        throw "This command is restricted to TCN servers.";
+}
+
 export function cmdKey(interaction: ChatInputCommandInteraction) {
     const group = interaction.options.getSubcommandGroup(false);
     const sub = interaction.options.getSubcommand(false);
@@ -114,6 +120,7 @@ export async function promptConfirm(interaction: RepliableInteraction, body: str
             },
         ],
         ephemeral: true,
+        fetchReply: true,
     });
 
     const button = await message

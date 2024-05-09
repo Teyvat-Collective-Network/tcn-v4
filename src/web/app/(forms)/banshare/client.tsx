@@ -123,7 +123,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                     <h2>Evidence &amp; Context</h2>
                     <p>
                         Upload images to a hosting service e.g.{" "}
-                        <a href="https://imgur.com" className="link" target="_blank">
+                        <a href="https://imgur.com" className="link" target="_blank" tabIndex={-1}>
                             Imgur
                         </a>
                         . Discord media links are not allowed as they will expire. You may create and link a document if you need more than the available space.
@@ -147,7 +147,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                     <h2>Severity</h2>
                     <p>
                         The severity is used to determine autobanning. P0 indicates the greatest threat. Refer to the{" "}
-                        <a href="/docs/banshares#severity" className="link" target="_blank">
+                        <a href="/docs/banshares#severity" className="link" target="_blank" tabIndex={-1}>
                             info page
                         </a>{" "}
                         for more information.

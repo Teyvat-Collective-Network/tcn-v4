@@ -1,4 +1,3 @@
-import { Worker } from "bullmq";
 import { Events } from "discord.js";
 import { eq } from "drizzle-orm";
 import bot, { channels } from "../../bot.js";
@@ -7,7 +6,7 @@ import tables from "../../db/tables.js";
 import { createApplicationThread } from "../../lib/applications.js";
 import { loop } from "../../lib/loop.js";
 import { reloadApplicationPolls } from "../../lib/polls.js";
-import { qoptions, repostDeletedApplicationThreadsQueue } from "../../queue.js";
+import { makeWorker, repostDeletedApplicationThreadsQueue } from "../../queue.js";
 
 async function repostDeletedApplicationThreads() {
     const applications = await db.query.applications.findMany();
@@ -53,7 +52,7 @@ async function repostDeletedApplicationThreads() {
     }
 }
 
-new Worker("tcn:repost-deleted-application-threads", repostDeletedApplicationThreads, qoptions);
+makeWorker("tcn:repost-deleted-application-threads", repostDeletedApplicationThreads);
 
 loop(async () => repostDeletedApplicationThreadsQueue.add("", null), 300000);
 bot.on(Events.ThreadDelete, (thread) => void (thread.parent === channels.applicants && repostDeletedApplicationThreadsQueue.add("", null)));

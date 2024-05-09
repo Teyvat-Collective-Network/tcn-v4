@@ -1,0 +1,1 @@
+ALTER TABLE `banshare_crossposts` ADD `executor` varchar(20);

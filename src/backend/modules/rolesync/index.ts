@@ -1,11 +1,10 @@
-import { Worker } from "bullmq";
 import { Events, Guild, GuildMember, Role } from "discord.js";
 import { eq, or } from "drizzle-orm";
 import bot, { HQ, HUB, roles } from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
 import { loop } from "../../lib/loop.js";
-import { fixUserRolesQueue, qoptions } from "../../queue.js";
+import { fixUserRolesQueue, makeWorker } from "../../queue.js";
 
 async function createRole(color: number, name: string, guild: Guild, anchor: Role, end: Role) {
     const roles = await guild.roles.fetch();
@@ -86,103 +85,95 @@ async function fixRoles(guild: { id: string; roleColor: number; roleName: string
     }
 }
 
-new Worker<string>(
-    "tcn:fix-guild-roles",
-    async ({ data: id }) => {
-        const guild = await db.query.guilds.findFirst({
-            columns: { id: true, roleColor: true, roleName: true, hqRole: true, hubRole: true, owner: true, advisor: true },
-            where: eq(tables.guilds.id, id),
-        });
+makeWorker<string>("tcn:fix-guild-roles", async (id) => {
+    const guild = await db.query.guilds.findFirst({
+        columns: { id: true, roleColor: true, roleName: true, hqRole: true, hubRole: true, owner: true, advisor: true },
+        where: eq(tables.guilds.id, id),
+    });
 
-        if (guild) await fixRoles(guild);
-    },
-    qoptions,
-);
+    if (guild) await fixRoles(guild);
+});
 
-new Worker<string>(
-    "tcn:fix-user-roles",
-    async ({ data: id }) => {
-        const guilds = await db.query.guilds.findMany({
-            columns: { id: true, owner: true, advisor: true, delegated: true, hqRole: true, hubRole: true, roleColor: true, roleName: true },
-            where: or(eq(tables.guilds.owner, id), eq(tables.guilds.advisor, id)),
-        });
+makeWorker<string>("tcn:fix-user-roles", async (id) => {
+    const guilds = await db.query.guilds.findMany({
+        columns: { id: true, owner: true, advisor: true, delegated: true, hqRole: true, hubRole: true, roleColor: true, roleName: true },
+        where: or(eq(tables.guilds.owner, id), eq(tables.guilds.advisor, id)),
+    });
 
-        for (const guild of guilds)
-            try {
-                if (!(await HQ.roles.fetch(guild.hqRole))) throw 0;
-                if (!(await HUB.roles.fetch(guild.hubRole))) throw 0;
-            } catch {
-                await fixRoles(guild);
-            }
-
-        const user = await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, id) });
-
-        // TODO: global mod role
-
-        const owner = guilds.some((guild) => guild.owner === id);
-        const advisor = guilds.some((guild) => guild.advisor === id);
-        const voter = guilds.some((guild) => (guild.delegated ? guild.advisor : guild.owner) === id);
-        const observer = user?.observer ?? false;
-        const staff = !!(await db.query.guildStaff.findFirst({ where: eq(tables.guildStaff.user, id) }));
-
-        const hqMember = await HQ.members.fetch(id).catch(() => null);
-        const hubMember = await HUB.members.fetch(id).catch(() => null);
-
-        const hqAdd: string[] = [];
-        const hqRemove: string[] = [];
-        const hubAdd: string[] = [];
-        const hubRemove: string[] = [];
-
-        function check(condition: boolean, hqRole?: string, hubRole?: string) {
-            if (condition) {
-                if (hqRole) hqAdd.push(hqRole);
-                if (hubRole) hubAdd.push(hubRole);
-            } else {
-                if (hqRole) hqRemove.push(hqRole);
-                if (hubRole) hubRemove.push(hubRole);
-            }
+    for (const guild of guilds)
+        try {
+            if (!(await HQ.roles.fetch(guild.hqRole))) throw 0;
+            if (!(await HUB.roles.fetch(guild.hubRole))) throw 0;
+        } catch {
+            await fixRoles(guild);
         }
 
-        check(owner, process.env.ROLE_SERVER_OWNERS, process.env.ROLE_HUB_OWNERS);
-        check(advisor, process.env.ROLE_COUNCIL_ADVISORS, process.env.ROLE_HUB_ADVISORS);
-        check(voter, process.env.ROLE_VOTERS);
-        check(observer, process.env.ROLE_OBSERVERS, process.env.ROLE_HUB_OBSERVERS);
-        check(staff, undefined, process.env.ROLE_NETWORK_STAFF);
+    const user = await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, id) });
 
-        for (const guild of guilds) {
-            hqAdd.push(guild.hqRole);
-            hubAdd.push(guild.hubRole);
+    // TODO: global mod role
+
+    const owner = guilds.some((guild) => guild.owner === id);
+    const advisor = guilds.some((guild) => guild.advisor === id);
+    const voter = guilds.some((guild) => (guild.delegated ? guild.advisor : guild.owner) === id);
+    const observer = user?.observer ?? false;
+    const staff = !!(await db.query.guildStaff.findFirst({ where: eq(tables.guildStaff.user, id) }));
+
+    const hqMember = await HQ.members.fetch(id).catch(() => null);
+    const hubMember = await HUB.members.fetch(id).catch(() => null);
+
+    const hqAdd: string[] = [];
+    const hqRemove: string[] = [];
+    const hubAdd: string[] = [];
+    const hubRemove: string[] = [];
+
+    function check(condition: boolean, hqRole?: string, hubRole?: string) {
+        if (condition) {
+            if (hqRole) hqAdd.push(hqRole);
+            if (hubRole) hubAdd.push(hubRole);
+        } else {
+            if (hqRole) hqRemove.push(hqRole);
+            if (hubRole) hubRemove.push(hubRole);
         }
+    }
 
-        if (hqMember)
-            hqRemove.push(
-                ...(await HQ.roles.fetch())
-                    .filter((role) => role.position < roles.hqMainsAnchor.position && role.position > roles.hqMainsEnd.position && !hqAdd.includes(role.id))
-                    .map((role) => role.id),
-            );
+    check(owner, process.env.ROLE_SERVER_OWNERS, process.env.ROLE_HUB_OWNERS);
+    check(advisor, process.env.ROLE_COUNCIL_ADVISORS, process.env.ROLE_HUB_ADVISORS);
+    check(voter, process.env.ROLE_VOTERS);
+    check(observer, process.env.ROLE_OBSERVERS, process.env.ROLE_HUB_OBSERVERS);
+    check(staff, undefined, process.env.ROLE_NETWORK_STAFF);
 
-        if (hubMember)
-            hubRemove.push(
-                ...(await HUB.roles.fetch())
-                    .filter((role) => role.position < roles.hqMainsAnchor.position && role.position > roles.hqMainsEnd.position && !hqAdd.includes(role.id))
-                    .map((role) => role.id),
-            );
+    for (const guild of guilds) {
+        hqAdd.push(guild.hqRole);
+        hubAdd.push(guild.hubRole);
+    }
 
-        async function resolve(member: GuildMember | null, toAdd: string[], toRemove: string[]) {
-            if (!member) return;
+    if (hqMember)
+        hqRemove.push(
+            ...(await HQ.roles.fetch())
+                .filter((role) => role.position < roles.hqMainsAnchor.position && role.position > roles.hqMainsEnd.position && !hqAdd.includes(role.id))
+                .map((role) => role.id),
+        );
 
-            const add = toAdd.filter((role) => !member.roles.cache.has(role));
-            if (add.length > 0) await member.roles.add(add);
+    if (hubMember)
+        hubRemove.push(
+            ...(await HUB.roles.fetch())
+                .filter((role) => role.position < roles.hqMainsAnchor.position && role.position > roles.hqMainsEnd.position && !hqAdd.includes(role.id))
+                .map((role) => role.id),
+        );
 
-            const remove = toRemove.filter((role) => member.roles.cache.has(role));
-            if (remove.length > 0) await member.roles.remove(remove);
-        }
+    async function resolve(member: GuildMember | null, toAdd: string[], toRemove: string[]) {
+        if (!member) return;
 
-        await resolve(hqMember, hqAdd, hqRemove);
-        await resolve(hubMember, hubAdd, hubRemove);
-    },
-    qoptions,
-);
+        const add = toAdd.filter((role) => !member.roles.cache.has(role));
+        if (add.length > 0) await member.roles.add(add);
+
+        const remove = toRemove.filter((role) => member.roles.cache.has(role));
+        if (remove.length > 0) await member.roles.remove(remove);
+    }
+
+    await resolve(hqMember, hqAdd, hqRemove);
+    await resolve(hubMember, hubAdd, hubRemove);
+});
 
 loop(async () => {
     const guilds = await db.query.guilds.findMany({
