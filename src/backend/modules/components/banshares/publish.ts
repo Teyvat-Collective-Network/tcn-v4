@@ -3,7 +3,7 @@ import { and, eq, isNotNull } from "drizzle-orm";
 import { channels } from "../../../bot.js";
 import { db } from "../../../db/db.js";
 import tables from "../../../db/tables.js";
-import { renderBanshare, renderBanshareControls } from "../../../lib/banshares.js";
+import { renderBanshare, renderBanshareControls, updateBanshareDashboard } from "../../../lib/banshares.js";
 import { ensureObserver, promptConfirm, template } from "../../../lib/bot-lib.js";
 import { bansharePublishQueue } from "../../../queue.js";
 
@@ -43,4 +43,6 @@ export default async function (interaction: ButtonInteraction) {
 
     const settings = await db.query.banshareSettings.findMany({ columns: { guild: true }, where: isNotNull(tables.banshareSettings.channel) });
     await bansharePublishQueue.addBulk(settings.map((setting) => ({ name: "", data: { id: banshare.id, guild: setting.guild } })));
+
+    updateBanshareDashboard();
 }

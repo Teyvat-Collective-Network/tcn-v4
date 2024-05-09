@@ -106,6 +106,13 @@ export default proc
             await db.update(tables.banshares).set({ message: message.id }).where(eq(tables.banshares.id, insertId));
             updateBanshareDashboard();
 
+            const role = urgent ? process.env.ROLE_OBSERVERS! : process.env.ROLE_BANSHARE_PING!;
+
+            channels.execManagement.send({
+                content: `<@&${role}> [A banshare](<${message.url}>) was just submitted for review.`,
+                allowedMentions: { roles: [role] },
+            });
+
             return null;
         }),
     );

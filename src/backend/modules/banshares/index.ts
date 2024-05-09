@@ -1,5 +1,5 @@
 import { ButtonStyle, ComponentType, Events } from "discord.js";
-import { and, count, eq, not, or } from "drizzle-orm";
+import { and, count, eq, lt, not, or } from "drizzle-orm";
 import bot, { channels } from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -7,6 +7,32 @@ import { renderBanshare, renderHQBanshare, updateBanshareDashboard } from "../..
 import { greyButton } from "../../lib/bot-lib.js";
 import { loop } from "../../lib/loop.js";
 import { BansharePublishTask, BanshareRescindTask, banshareActionQueue, makeWorker } from "../../queue.js";
+
+loop(async () => {
+    const [{ overdue }] = await db
+        .select({ overdue: count() })
+        .from(tables.banshares)
+        .where(
+            and(
+                eq(tables.banshares.status, "pending"),
+                or(
+                    and(eq(tables.banshares.urgent, false), lt(tables.banshares.reminded, Date.now() - 21600000)),
+                    and(eq(tables.banshares.urgent, true), lt(tables.banshares.reminded, Date.now() - 7200000)),
+                ),
+            ),
+        );
+
+    if (overdue === 0) return;
+
+    const [{ affectedRows: pending }] = await db.update(tables.banshares).set({ reminded: Date.now() }).where(eq(tables.banshares.status, "pending"));
+
+    await channels.execManagement.send({
+        content: `<@&${process.env.ROLE_OBSERVERS}> ${overdue} banshare${overdue === 1 ? " is" : "s are"} overdue (${pending} total pending). Please visit ${
+            channels.banshareDashboard
+        } for a list of pending banshares.`,
+        allowedMentions: { roles: [process.env.ROLE_OBSERVERS!] },
+    });
+}, 60000);
 
 loop(async () => {
     const banshares = await db.query.banshares.findMany({

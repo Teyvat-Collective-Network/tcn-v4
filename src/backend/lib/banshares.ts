@@ -137,7 +137,7 @@ export async function updateBanshareDashboard() {
     const text =
         banshares.length === 0
             ? "No pending banshares at this time."
-            : `The following banshares are pending:\n${banshares.map((banshare) => `${channels.banshareDashboard.url}/${banshare.message}`).join("\n")}`;
+            : `The following banshares are pending:\n${banshares.map((banshare) => `${channels.banshareLogs.url}/${banshare.message}`).join("\n")}`;
 
     if (messages)
         try {
