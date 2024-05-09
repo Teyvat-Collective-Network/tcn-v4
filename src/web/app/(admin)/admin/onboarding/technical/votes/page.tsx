@@ -46,6 +46,7 @@ export default function OnboardingTechnicalVotes() {
                 </a>{" "}
                 for more information.
             </p>
+            {/* TODO: */}
             <a href="/admin/onboarding/technical/elections">
                 <Button className="flex items-center gap-2">
                     Elections <FaAngleRight></FaAngleRight>
