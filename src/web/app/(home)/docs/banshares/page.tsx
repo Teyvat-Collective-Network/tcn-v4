@@ -161,7 +161,7 @@ export default function DocsBanshares() {
             </Section>
             <ol>
                 <li>
-                    A banshare is submitted to the form and posted to <b>#ban-share-logs</b> in HQ.
+                    A banshare is submitted to the form and posted to <b>#banshare-logs</b> in HQ.
                 </li>
                 <li>
                     Any council member may lock the banshare, preventing it from being published or rejected. This is to allow time to type up a message
