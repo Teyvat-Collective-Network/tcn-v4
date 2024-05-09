@@ -9,7 +9,11 @@ import "./modules/rolesync";
 import { appRouter } from "./server.js";
 
 process.on("uncaughtException", (error) => {
-    channels.logs.send(`Uncaught Exception: \`\`\`\n${error}\n\`\`\``);
+    channels.logs.send({
+        content: `<@&${process.env.ROLE_TECH_TEAM}> Uncaught Exception: \`\`\`\n${`${error}`.slice(0, 1960)}\n\`\`\``,
+        allowedMentions: { roles: [process.env.ROLE_TECH_TEAM!] },
+    });
+
     console.error(error);
 });
 

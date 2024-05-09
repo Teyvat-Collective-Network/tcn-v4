@@ -236,6 +236,7 @@ export const banTasks = mysqlTable(
         user: varchar("user", { length: 20 }).notNull(),
         status: mysqlEnum("status", ["pending", "skipped", "banned", "failed", "hold"]).notNull(),
         member: boolean("member"),
+        autoban: boolean("autoban").notNull(),
     },
     (t) => ({
         unq_ref_guild_user: unique("idx_ref_guild_user").on(t.ref, t.guild, t.user),

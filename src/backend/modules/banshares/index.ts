@@ -115,7 +115,7 @@ makeWorker<BansharePublishTask>("tcn:banshare-publish", async ({ id, guild }) =>
 
     const member = banMembers ? (banNonMembers ? null : true) : false;
 
-    await db.insert(tables.banTasks).values(users.map((user) => ({ ref: id, guild, user, status: "pending", member } as const)));
+    await db.insert(tables.banTasks).values(users.map((user) => ({ ref: id, guild, user, status: "pending", member, autoban: true } as const)));
 
     await banshareActionQueue.add("", null);
 });
@@ -129,6 +129,7 @@ makeWorker("tcn:banshare-action", async () => {
                 guild: tables.banTasks.guild,
                 user: tables.banTasks.user,
                 member: tables.banTasks.member,
+                autoban: tables.banTasks.autoban,
                 reason: tables.banshares.reason,
                 status: tables.banshares.status,
             })
@@ -139,7 +140,7 @@ makeWorker("tcn:banshare-action", async () => {
 
         if (!task) return;
 
-        if (task.status === "rescinded")
+        if (task.autoban && task.status === "rescinded")
             await db
                 .update(tables.banTasks)
                 .set({ status: "skipped" })

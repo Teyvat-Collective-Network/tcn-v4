@@ -24,7 +24,7 @@ export default async function (interaction: ButtonInteraction) {
 
     await db
         .insert(tables.banTasks)
-        .values(entries.map((entry) => ({ ref: banshare.ref, guild: interaction.guild!.id, user: entry.user, status: "pending" } as const)))
+        .values(entries.map((entry) => ({ ref: banshare.ref, guild: interaction.guild!.id, user: entry.user, status: "pending", autoban: false } as const)))
         .onDuplicateKeyUpdate({ set: { ref: banshare.ref } });
 
     await banshareActionQueue.add("", null);

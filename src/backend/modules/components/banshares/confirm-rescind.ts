@@ -7,11 +7,11 @@ import { renderBanshareControls } from "../../../lib/banshares.js";
 import { ensureObserver, template } from "../../../lib/bot-lib.js";
 import { banshareRescindQueue } from "../../../queue.js";
 
-export default async function (modal: ModalSubmitInteraction) {
-    await modal.deferReply({ ephemeral: true });
-    await ensureObserver(modal);
+export default async function (interaction: ModalSubmitInteraction) {
+    await interaction.deferReply({ ephemeral: true });
+    await ensureObserver(interaction);
 
-    const banshare = await db.query.banshares.findFirst({ columns: { id: true }, where: eq(tables.banshares.message, modal.message!.id) });
+    const banshare = await db.query.banshares.findFirst({ columns: { id: true }, where: eq(tables.banshares.message, interaction.message!.id) });
     if (!banshare) throw "Could not fetch this banshare.";
 
     const [{ affectedRows }] = await db
@@ -21,13 +21,14 @@ export default async function (modal: ModalSubmitInteraction) {
 
     if (affectedRows === 0) throw "This banshare has already been rescinded.";
 
-    const explanation = modal.fields.getTextInputValue("explanation");
+    const explanation = interaction.fields.getTextInputValue("explanation");
 
-    await modal.editReply(template.ok("This banshare is being rescinded. You may dismiss this message."));
+    await interaction.editReply(template.ok("This banshare is being rescinded. You may dismiss this message."));
+    channels.logs.send(`${interaction.message?.url} was rescinded by ${interaction.user}.`);
 
     try {
-        await modal.message?.reply(`This banshare is being rescinded by an observer. The following explanation was given:\n\n>>> ${explanation}`);
-        await modal.message?.edit({ components: await renderBanshareControls(banshare.id) });
+        await interaction.message?.reply(`This banshare is being rescinded by an observer. The following explanation was given:\n\n>>> ${explanation}`);
+        await interaction.message?.edit({ components: await renderBanshareControls(banshare.id) });
     } catch {}
 
     try {
