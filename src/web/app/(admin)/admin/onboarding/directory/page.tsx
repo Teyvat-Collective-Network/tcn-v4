@@ -125,7 +125,7 @@ export default function OnboardingGuideDirectory() {
                     </Mention>{" "}
                     &mdash; pinged when banshares are submitted to{" "}
                     <Mention>
-                        <FaHashtag></FaHashtag> ban-share-logs
+                        <FaHashtag></FaHashtag> banshare-logs
                     </Mention>{" "}
                     (urgent banshares will ping all observers).
                 </li>
