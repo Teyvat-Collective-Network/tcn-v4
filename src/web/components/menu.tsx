@@ -62,7 +62,7 @@ export function Menu({ root }: { root: string }) {
             ["/admin/servers", "Manage Servers", FaServer],
         );
 
-    if (root === "/council") links.push(["/audit-log", "Audit Log", FaClipboardList], ["/observer-terms", "Observer Terms", FaCalendarWeek]);
+    if (root === "/council") links.push(["/audit-logs", "Audit Log", FaClipboardList], ["/observer-terms", "Observer Terms", FaCalendarWeek]);
 
     return (
         <>

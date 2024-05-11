@@ -21,7 +21,7 @@ export default async function Contact() {
             <h2>Observers</h2>
             <p>The following are all of the TCN observers (admins).</p>
             <ul>
-                {users.map((id) => (
+                {users.map(({ id }) => (
                     <li key={id}>
                         <UserMention id={id}></UserMention> &mdash; <code>{id}</code>
                     </li>

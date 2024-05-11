@@ -7,6 +7,10 @@ export default function CouncilHome() {
                 <h2>Audit Logs</h2>
                 <p>View the audit logs here.</p>
             </LandingPanel>
+            <LandingPanel href="/observer-terms">
+                <h2>Observer Terms</h2>
+                <p>View the list of observers and their current term start and end dates here.</p>
+            </LandingPanel>
         </LandingPage>
     );
 }
