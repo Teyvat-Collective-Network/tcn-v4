@@ -19,7 +19,7 @@ export async function renderBanshare(id: number): Promise<BaseMessageOptions["em
 
     return [
         {
-            title: "Banshare",
+            title: `Banshare #${id}`,
             color: 0x2b2d31,
             fields: [
                 { name: "ID(s)", value: banshare.display },

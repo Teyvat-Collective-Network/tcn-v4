@@ -117,7 +117,16 @@ export function TopBar({ root }: { root: string }) {
                                                     href={`/auth/logout?redirect=${pathname}`}
                                                 >
                                                     Log Out
-                                                </NavigationMenuLink>{" "}
+                                                </NavigationMenuLink>
+                                                <NavigationMenuLink
+                                                    className="px-4 py-2 rounded hover:bg-foreground/5 transition-colors"
+                                                    href={"javascript:void(0)"}
+                                                    onClick={() =>
+                                                        alert("To log out everywhere, go to your user settings in Discord and deauthorize the TCN application.")
+                                                    }
+                                                >
+                                                    Log Out Everywhere
+                                                </NavigationMenuLink>
                                             </div>
                                         ) : (
                                             <p>

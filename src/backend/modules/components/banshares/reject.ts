@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { channels } from "../../../bot.js";
 import { db } from "../../../db/db.js";
 import tables from "../../../db/tables.js";
+import { audit } from "../../../lib/audit.js";
 import { renderBanshareControls, updateBanshareDashboard } from "../../../lib/banshares.js";
 import { ensureObserver } from "../../../lib/bot-lib.js";
 
@@ -24,6 +25,7 @@ export default async function (interaction: ButtonInteraction) {
     await interaction.editReply({ components: await renderBanshareControls(banshare.id) });
 
     await channels.logs.send(`${interaction.message.url} was rejected by ${interaction.user}.`);
+    await audit(interaction.user.id, "banshares/reject", null, banshare.id, [interaction.message.id]);
 
     updateBanshareDashboard();
 }

@@ -2,6 +2,7 @@ import { StringSelectMenuInteraction } from "discord.js";
 import { eq } from "drizzle-orm";
 import { db } from "../../../../db/db.js";
 import tables from "../../../../db/tables.js";
+import { audit } from "../../../../lib/audit.js";
 import { ensureObserver, ensureVoter, template } from "../../../../lib/bot-lib.js";
 import { registerVote, renderPoll, renderVote, verifyTypeAndFetchPollID } from "../../../../lib/polls.js";
 
@@ -21,6 +22,7 @@ export default async function (interaction: StringSelectMenuInteraction) {
         await interaction.message.edit(await renderPoll(id));
 
         await interaction.editReply(template.ok("Poll edited."));
+        await audit(interaction.user.id, `polls/update/${vote}`, null, id, [interaction.message.id]);
 
         return;
     }

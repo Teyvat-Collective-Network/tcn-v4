@@ -3,6 +3,7 @@ import { z } from "zod";
 import bot from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
+import { audit } from "../lib/audit.js";
 import { validateInvite } from "../lib/bot-lib.js";
 import trpcify from "../lib/trpcify.js";
 import zs from "../lib/zs.js";
@@ -12,6 +13,7 @@ import { proc } from "../trpc.js";
 export default proc
     .input(
         z.object({
+            actor: zs.snowflake,
             id: zs.snowflake,
             mascot: zs.id,
             name: z.string().trim().min(1).max(80),
@@ -25,7 +27,7 @@ export default proc
     )
     .output(z.string().nullable())
     .query(
-        trpcify(async ({ id, mascot, name, invite, owner, advisor, delegated, roleColor, roleName }) => {
+        trpcify(async ({ actor, id, mascot, name, invite, owner, advisor, delegated, roleColor, roleName }) => {
             const data = await bot.fetchInvite(invite).catch(() => null);
 
             if (!!(await db.query.guilds.findFirst({ where: eq(tables.guilds.id, id) }))) return "This guild is already in the network.";
@@ -48,6 +50,8 @@ export default proc
                     hqRole: "not initialized",
                     hubRole: "not initialized",
                 });
+
+                await audit(actor, "guilds/create", id, { mascot, name, invite, owner, advisor, delegated, roleColor, roleName });
 
                 await fixGuildRolesQueue.add("", id);
             } catch {

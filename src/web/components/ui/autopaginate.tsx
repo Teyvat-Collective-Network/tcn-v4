@@ -10,7 +10,7 @@ export default function AutoPaginate({
     page: number;
     pages: number;
     setPage: (value: SetStateAction<number>) => void;
-    update?: () => unknown;
+    update?: (page: number) => unknown;
 }) {
     const show: (number | null)[] = [];
 
@@ -31,12 +31,7 @@ export default function AutoPaginate({
             <PaginationContent className="cursor-pointer">
                 {page === 1 ? null : (
                     <PaginationItem>
-                        <PaginationPrevious
-                            onClick={() => {
-                                setPage((x) => x - 1);
-                                update?.();
-                            }}
-                        ></PaginationPrevious>
+                        <PaginationPrevious onClick={() => setPage((x) => (update?.(x - 1), x - 1))}></PaginationPrevious>
                     </PaginationItem>
                 )}
                 {show.map((n, i) => (
@@ -47,8 +42,8 @@ export default function AutoPaginate({
                             <PaginationLink
                                 onClick={() => {
                                     if (page === n) return;
+                                    update?.(n);
                                     setPage(n);
-                                    update?.();
                                 }}
                                 isActive={page === n}
                             >
@@ -59,12 +54,7 @@ export default function AutoPaginate({
                 ))}
                 {page === pages ? null : (
                     <PaginationItem>
-                        <PaginationNext
-                            onClick={() => {
-                                setPage((x) => x + 1);
-                                update?.();
-                            }}
-                        ></PaginationNext>
+                        <PaginationNext onClick={() => setPage((x) => (update?.(x + 1), x + 1))}></PaginationNext>
                     </PaginationItem>
                 )}
             </PaginationContent>

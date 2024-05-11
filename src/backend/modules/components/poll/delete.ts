@@ -4,6 +4,7 @@ import bot, { channels } from "../../../bot.js";
 import { db } from "../../../db/db.js";
 import tables from "../../../db/tables.js";
 import { applicationThreadStatusToTag } from "../../../lib/applications.js";
+import { audit } from "../../../lib/audit.js";
 import { ensureObserver, promptConfirm, template } from "../../../lib/bot-lib.js";
 import { verifyTypeAndFetchPollID } from "../../../lib/polls.js";
 
@@ -46,8 +47,11 @@ export default async function (interaction: ButtonInteraction, type: string) {
 
     interaction.message.delete();
 
+    const data = await db.query.polls.findFirst({ where: eq(tables.polls.id, id) });
     await db.delete(tables.polls).where(eq(tables.polls.id, id));
 
     await res.editReply(template.ok(`Poll #${id} has been deleted.`));
     channels.logs.send(`Poll #${id} (type: ${type}) was deleted by ${interaction.user}.`);
+
+    await audit(interaction.user.id, "polls/delete", null, data, [interaction.message.id]);
 }

@@ -3,6 +3,7 @@ import { and, eq, not } from "drizzle-orm";
 import { HUB, channels } from "../../../bot.js";
 import { db } from "../../../db/db.js";
 import tables from "../../../db/tables.js";
+import { audit } from "../../../lib/audit.js";
 import { renderBanshareControls } from "../../../lib/banshares.js";
 import { ensureObserver, template } from "../../../lib/bot-lib.js";
 import { banshareRescindQueue } from "../../../queue.js";
@@ -27,8 +28,8 @@ export default async function (interaction: ModalSubmitInteraction) {
     channels.logs.send(`${interaction.message?.url} was rescinded by ${interaction.user}.`);
 
     try {
-        await interaction.message?.reply(`This banshare is being rescinded by an observer. The following explanation was given:\n\n>>> ${explanation}`);
-        await interaction.message?.edit({ components: await renderBanshareControls(banshare.id) });
+        await interaction.message!.reply(`This banshare is being rescinded by an observer. The following explanation was given:\n\n>>> ${explanation}`);
+        await interaction.message!.edit({ components: await renderBanshareControls(banshare.id) });
     } catch {}
 
     try {
@@ -60,4 +61,6 @@ export default async function (interaction: ModalSubmitInteraction) {
     await banshareRescindQueue.addBulk(
         posts.map((post) => ({ name: "", data: { id: banshare.id, guild: post.guild, channel: post.channel, message: post.message, explanation } })),
     );
+
+    await audit(interaction.user.id, "banshares/rescind", null, { banshare: banshare.id, explanation }, [interaction.message!.id]);
 }

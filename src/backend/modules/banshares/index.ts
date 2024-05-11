@@ -50,6 +50,7 @@ loop(async () => {
             const { id } = await channels.banshareLogs.send(await renderHQBanshare(banshare.id));
 
             await db.update(tables.banshares).set({ message: id }).where(eq(tables.banshares.id, banshare.id));
+            await db.update(tables.auditEntryTargets).set({ target: id }).where(eq(tables.auditEntryTargets.target, banshare.message));
 
             updated = true;
         } catch {}
@@ -64,6 +65,7 @@ bot.on(Events.MessageDelete, async (message) => {
 
     const { id } = await channels.banshareLogs.send(await renderHQBanshare(banshare.id));
     await db.update(tables.banshares).set({ message: id }).where(eq(tables.banshares.id, banshare.id));
+    await db.update(tables.auditEntryTargets).set({ target: id }).where(eq(tables.auditEntryTargets.target, message.id));
 
     await updateBanshareDashboard();
 });

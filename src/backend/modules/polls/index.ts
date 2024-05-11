@@ -186,6 +186,7 @@ async function repostDeletedOpenPolls() {
         try {
             const newMessage = await channels.voteHere.send(await renderPoll(poll.id));
             await db.update(tables.polls).set({ message: newMessage.id }).where(eq(tables.polls.id, poll.id));
+            await db.update(tables.auditEntryTargets).set({ target: newMessage.id }).where(eq(tables.auditEntryTargets.target, message));
 
             channels.logs.send({
                 content: `<@&${process.env.ROLE_TECH_TEAM}> Recreated deleted [poll #${poll.id}](<${newMessage.url}>).`,

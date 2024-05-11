@@ -2,6 +2,7 @@ import { ButtonInteraction, ButtonStyle, PermissionFlagsBits } from "discord.js"
 import { eq } from "drizzle-orm";
 import { db } from "../../../db/db.js";
 import tables from "../../../db/tables.js";
+import { audit } from "../../../lib/audit.js";
 import { greyButton, template } from "../../../lib/bot-lib.js";
 import { banshareActionQueue } from "../../../queue.js";
 
@@ -30,4 +31,5 @@ export default async function (interaction: ButtonInteraction) {
     await banshareActionQueue.add("", null);
 
     await interaction.editReply(template.ok("Banshare is being executed. You may dismiss this message."));
+    await audit(interaction.user.id, "banshares/execute", interaction.guild!.id, banshare.ref, [interaction.message.id]);
 }

@@ -1,0 +1,1 @@
+ALTER TABLE `audit_logs` MODIFY COLUMN `type` varchar(64) NOT NULL;

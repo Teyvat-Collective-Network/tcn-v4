@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { bigint, boolean, index, int, mysqlEnum, mysqlTable, primaryKey, text, unique, varchar } from "drizzle-orm/mysql-core";
+import { bigint, boolean, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, unique, varchar } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
     id: varchar("id", { length: 20 }).primaryKey(),
@@ -240,5 +240,35 @@ export const banTasks = mysqlTable(
     },
     (t) => ({
         unq_ref_guild_user: unique("idx_ref_guild_user").on(t.ref, t.guild, t.user),
+    }),
+);
+
+export const auditLogs = mysqlTable(
+    "audit_logs",
+    {
+        id: int("id").autoincrement().primaryKey(),
+        time: bigint("time", { mode: "number" }).notNull(),
+        actor: varchar("actor", { length: 20 }).notNull(),
+        type: varchar("type", { length: 64 }).notNull(),
+        guild: varchar("guild", { length: 20 }),
+        data: json("data"),
+    },
+    (t) => ({
+        idx_actor_guild_type: index("idx_actor_guild_type").on(t.actor, t.guild, t.type),
+        idx_guild_type: index("idx_guild_type").on(t.guild, t.type),
+        idx_type: index("idx_type").on(t.type),
+    }),
+);
+
+export const auditEntryTargets = mysqlTable(
+    "audit_entry_targets",
+    {
+        target: varchar("target", { length: 20 }).notNull(),
+        ref: int("ref")
+            .references(() => auditLogs.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+    },
+    (t) => ({
+        idx_target: index("idx_target").on(t.target),
     }),
 );

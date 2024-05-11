@@ -1,6 +1,8 @@
 "use server";
 
+import getUser from "../../../../lib/get-user";
 import { api } from "../../../../lib/trpc";
+import { withUserId } from "../../../../lib/with-user";
 
 export async function getCharacters() {
     return await api.getCharacters.query();
@@ -15,15 +17,18 @@ export async function getServer(id: string) {
 }
 
 export async function setMascot(guild: string, mascot: string) {
-    return await api.setMascot.mutate({ guild, mascot }).catch(() => false);
+    const user = await getUser();
+    if (!user?.observer) return false;
+
+    return await api.setMascot.mutate({ actor: user.id, guild, mascot }).catch(() => false);
 }
 
 export async function saveName(guild: string, name: string) {
-    return await api.setName.mutate({ guild, name });
+    return await withUserId(async (actor) => await api.setName.mutate({ actor, guild, name }));
 }
 
 export async function setInvite(guild: string, invite: string) {
-    return await api.setInvite.mutate({ guild, invite });
+    return await withUserId(async (actor) => await api.setInvite.mutate({ actor, guild, invite }));
 }
 
 export async function validateInvite(guild: string, invite: string) {
@@ -31,17 +36,17 @@ export async function validateInvite(guild: string, invite: string) {
 }
 
 export async function setOwner(guild: string, owner: string) {
-    return await api.setOwner.mutate({ guild, owner });
+    return await withUserId(async (actor) => await api.setOwner.mutate({ actor, guild, owner }));
 }
 
 export async function setAdvisor(guild: string, advisor: string) {
-    return await api.setAdvisor.mutate({ guild, advisor });
+    return await withUserId(async (actor) => await api.setAdvisor.mutate({ actor, guild, advisor }));
 }
 
 export async function swapRepresentatives(guild: string) {
-    return await api.swapRepresentatives.mutate(guild);
+    return await withUserId(async (actor) => await api.swapRepresentatives.mutate({ actor, guild }));
 }
 
 export async function setDelegated(guild: string, delegated: boolean) {
-    return await api.setDelegated.mutate({ guild, delegated });
+    return await withUserId(async (actor) => api.setDelegated.mutate({ actor, guild, delegated }));
 }

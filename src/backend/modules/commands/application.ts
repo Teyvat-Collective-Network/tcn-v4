@@ -11,6 +11,7 @@ import { channels } from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
 import { applicationThreadStatusToTag, applicationThreadTagToStatus } from "../../lib/applications.js";
+import { audit } from "../../lib/audit.js";
 import { cmdKey, ensureObserver, promptConfirm, template } from "../../lib/bot-lib.js";
 import { newPoll, reloadApplicationPolls, renderPoll } from "../../lib/polls.js";
 
@@ -92,6 +93,7 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
 
     if (key === "start-vote") {
         const type = interaction.options.getString("vote", true);
+        let success = false;
 
         if (type === "decline-observation") {
             if (state === "voting-to-decline") throw "The council is already voting to decline observing this applicant.";
@@ -121,6 +123,8 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
                 );
 
                 thread.send(`A vote to decline observation for this applicant has been started. Please vote [here](<${message.url}>).`);
+
+                success = true;
             } catch (error) {
                 await res.editReply(template.error(`Error setting up vote: ${error}`));
                 console.error(error);
@@ -155,6 +159,8 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
                 );
 
                 thread.send(`A vote to cancel the ongoing observation for this applicant has been started. Please vote [here](<${message.url}>).`);
+
+                success = true;
             } catch (error) {
                 await res.editReply(template.error(`Error setting up vote: ${error}`));
                 console.error(error);
@@ -199,11 +205,15 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
                 channels.logs.send(`A vote for **[${escapeMarkdown(application.name)}](<${application.url}>)** was started by ${interaction.user}.`);
 
                 thread.send(`A vote for this applicant has been started. Please vote [here](<${message.url}>).`);
+
+                success = true;
             } catch (error) {
                 await res.editReply(template.error(`Error setting up vote: ${error}`));
                 console.error(error);
             }
         }
+
+        if (success) await audit(interaction.user.id, "applications/vote", application.guild, type);
     } else if (key === "nuke") {
         const reason = interaction.options.getString("reason", true);
 
@@ -216,7 +226,7 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
 
         try {
             await db.delete(tables.applications).where(eq(tables.applications.thread, thread.id));
-            await thread.delete();
+            thread.delete();
 
             channels.logs.send({
                 content: `An application submitted by <@${application.user}> for **${escapeMarkdown(application.name)}** (\`${
@@ -235,6 +245,8 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
                     },
                 ],
             });
+
+            await audit(interaction.user.id, "applications/nuke", application.guild, { reason, application });
         } catch (error) {
             await res.editReply(template.error(`Error nuking application: ${error}`));
             console.error(error);
@@ -248,5 +260,6 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
         reloadApplicationPolls(thread.id);
 
         await interaction.editReply(template.ok("Renamed this applicant."));
+        await audit(interaction.user.id, "applications/rename", application.guild, [application.name, name]);
     }
 }

@@ -3,6 +3,7 @@ import { and, eq, or } from "drizzle-orm";
 import { channels } from "../../../bot.js";
 import { db } from "../../../db/db.js";
 import tables from "../../../db/tables.js";
+import { audit } from "../../../lib/audit.js";
 import { renderHQBanshare, severities } from "../../../lib/banshares.js";
 import { ensureObserver } from "../../../lib/bot-lib.js";
 
@@ -26,4 +27,5 @@ export default async function (interaction: ButtonInteraction, severity: string)
     await interaction.editReply(await renderHQBanshare(banshare.id));
 
     await channels.logs.send(`${interaction.message.url} was moved to the ${severities[severity]} severity by ${interaction.user}.`);
+    await audit(interaction.user.id, "banshares/update/severity", null, { banshare: banshare.id, severity }, [interaction.message.id]);
 }

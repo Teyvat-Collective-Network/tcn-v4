@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { channels } from "../../../bot.js";
 import { db } from "../../../db/db.js";
 import tables from "../../../db/tables.js";
+import { audit } from "../../../lib/audit.js";
 import { ensureObserver, promptConfirm, template } from "../../../lib/bot-lib.js";
 import { renderPoll, verifyTypeAndFetchPollID } from "../../../lib/polls.js";
 
@@ -33,4 +34,6 @@ export default async function (interaction: ButtonInteraction, type: string) {
 
     await res.editReply(template.ok(`The deadline for poll #${id} has been reset.`));
     channels.logs.send(`Poll #${id} (type: ${type}) deadline was reset by ${interaction.user}.`);
+
+    await audit(interaction.user.id, "polls/reset-deadline", null, id, [interaction.message.id]);
 }

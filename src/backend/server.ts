@@ -1,8 +1,10 @@
 import "dotenv/config";
 import addGuild from "./actions/add-guild.js";
+import getAuditLogs from "./actions/get-audit-logs.js";
 import getCharacters from "./actions/get-characters.js";
 import getGuild from "./actions/get-guild.js";
 import getGuildsForBanshare from "./actions/get-guilds-for-banshare.js";
+import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
 import getInvite from "./actions/get-invite.js";
 import getObserverList from "./actions/get-observer-list.js";
 import getPartialGuildFromThread from "./actions/get-partial-guild-from-thread.js";
@@ -25,9 +27,11 @@ import { router } from "./trpc.js";
 
 export const appRouter = router({
     addGuild,
+    getAuditLogs,
     getCharacters,
     getGuild,
     getGuildsForBanshare,
+    getGuildsForDropdown,
     getInvite,
     getObserverList,
     getPartialGuildFromThread,

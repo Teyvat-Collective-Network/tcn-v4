@@ -10,7 +10,6 @@ import {
     FaCalendarWeek,
     FaCircleInfo,
     FaClipboardList,
-    FaClockRotateLeft,
     FaDoorOpen,
     FaEarthAmericas,
     FaHandshake,
@@ -63,8 +62,7 @@ export function Menu({ root }: { root: string }) {
             ["/admin/servers", "Manage Servers", FaServer],
         );
 
-    if (root === "/council")
-        links.push(["/membership-changes", "Membership Changes", FaClockRotateLeft], ["/observer-terms", "Observer Terms", FaCalendarWeek]);
+    if (root === "/council") links.push(["/audit-log", "Audit Log", FaClipboardList], ["/observer-terms", "Observer Terms", FaCalendarWeek]);
 
     return (
         <>

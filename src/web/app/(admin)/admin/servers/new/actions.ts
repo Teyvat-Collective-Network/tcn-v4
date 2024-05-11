@@ -1,6 +1,7 @@
 "use server";
 
 import { api } from "../../../../../lib/trpc";
+import { withUserId } from "../../../../../lib/with-user";
 
 export async function addGuild(
     id: string,
@@ -13,5 +14,5 @@ export async function addGuild(
     roleColor: number,
     roleName: string,
 ) {
-    return await api.addGuild.query({ id, mascot, name, invite, owner, advisor, delegated, roleColor, roleName });
+    return await withUserId(async (actor) => await api.addGuild.query({ actor, id, mascot, name, invite, owner, advisor, delegated, roleColor, roleName }));
 }

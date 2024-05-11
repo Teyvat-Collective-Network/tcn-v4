@@ -1,7 +1,14 @@
-import { ApplicationCommandDataResolvable, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ChatInputCommandInteraction } from "discord.js";
+import {
+    ApplicationCommandDataResolvable,
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    ChannelType,
+    ChatInputCommandInteraction
+} from "discord.js";
 import { and, eq } from "drizzle-orm";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
+import { audit } from "../../lib/audit.js";
 import { severities } from "../../lib/banshares.js";
 import { cmdKey, ensureObserver, ensureTCN, template } from "../../lib/bot-lib.js";
 
@@ -98,6 +105,8 @@ export async function handleBanshares(interaction: ChatInputCommandInteraction) 
 
             await interaction.editReply(template.ok(`Banshares will now be sent to ${channel}.`));
         }
+
+        await audit(interaction.user.id, "banshares/set-channel", interaction.guild.id, channel?.id ?? null);
     } else if (key === "set-logs") {
         const channel = interaction.options.getChannel("channel", false);
 
@@ -112,6 +121,8 @@ export async function handleBanshares(interaction: ChatInputCommandInteraction) 
 
             await interaction.editReply(template.ok(`Banshare logs will now be sent to ${channel}.`));
         }
+
+        await audit(interaction.user.id, "banshares/set-logs", interaction.guild.id, channel?.id ?? null);
     } else if (key === "autoban") {
         const severity = interaction.options.getString("severity", false);
         const memberMode = interaction.options.getInteger("member-mode", false);
@@ -180,6 +191,8 @@ export async function handleBanshares(interaction: ChatInputCommandInteraction) 
                     } updated to ${ban ? "Ban" : "Don't Ban"}.`,
                 ),
             );
+
+            await audit(interaction.user.id, "banshares/autoban", interaction.guild.id, { severity, memberMode, ban });
         }
     }
 }
