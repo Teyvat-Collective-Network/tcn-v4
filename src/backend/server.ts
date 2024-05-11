@@ -12,12 +12,16 @@ import getPartnerList from "./actions/get-partner-list.js";
 import getServerCount from "./actions/get-server-count.js";
 import getServerListForAdmin from "./actions/get-server-list-for-admin.js";
 import getTag from "./actions/get-tag.js";
+import getUserForAdmin from "./actions/get-user-for-admin.js";
 import getUser from "./actions/get-user.js";
+import refreshTerm from "./actions/refresh-term.js";
 import setAdvisor from "./actions/set-advisor.js";
 import setDelegated from "./actions/set-delegated.js";
+import setGlobalNickname from "./actions/set-global-nickname.js";
 import setInvite from "./actions/set-invite.js";
 import setMascot from "./actions/set-mascot.js";
 import setName from "./actions/set-name.js";
+import setObserver from "./actions/set-observer.js";
 import setOwner from "./actions/set-owner.js";
 import submitApplication from "./actions/submit-application.js";
 import submitBanshare from "./actions/submit-banshare.js";
@@ -39,12 +43,16 @@ export const appRouter = router({
     getServerCount,
     getServerListForAdmin,
     getTag,
+    getUserForAdmin,
     getUser,
+    refreshTerm,
     setAdvisor,
     setDelegated,
+    setGlobalNickname,
     setInvite,
     setMascot,
     setName,
+    setObserver,
     setOwner,
     submitApplication,
     submitBanshare,

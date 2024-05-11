@@ -21,6 +21,7 @@ import {
     FaServer,
     FaSun,
     FaTowerBroadcast,
+    FaUserGroup,
     FaXmark,
 } from "react-icons/fa6";
 import { IconType } from "react-icons/lib";
@@ -60,6 +61,7 @@ export function Menu({ root }: { root: string }) {
             ["/admin/onboarding", "Observer Onboarding", FaDoorOpen],
             ["/admin/observation-guide", "Observation Guide", FaClipboardList],
             ["/admin/servers", "Manage Servers", FaServer],
+            ["/admin/users", "Manage Users", FaUserGroup],
         );
 
     if (root === "/council") links.push(["/audit-logs", "Audit Log", FaClipboardList], ["/observer-terms", "Observer Terms", FaCalendarWeek]);

@@ -39,6 +39,10 @@ const types: { label: string; value: string; hide?: boolean }[] = [
     { label: "Rescind Banshare", value: "banshares/rescind", hide: true },
     { label: "Add Pre-Approve Option", value: "polls/update/add-preapprove", hide: true },
     { label: "Remove Pre-Approve Option", value: "polls/update/remove-preapprove", hide: true },
+    { label: "Promote Observer", value: "users/promote" },
+    { label: "Demote Observer", value: "users/demote" },
+    { label: "Refresh Term", value: "users/refresh-term" },
+    { label: "Change Global Nickname", value: "users/update/global-nickname" },
 ];
 const typeNames = Object.fromEntries(types.map((x) => [x.value, x.label]));
 
@@ -323,6 +327,23 @@ export default function AuditLogsClient({
                                         <>added the pre-approve option to poll #{entry.data}.</>
                                     ) : entry.type === "polls/update/remove-preapprove" ? (
                                         <>removed the pre-approve option from poll #{entry.data}.</>
+                                    ) : entry.type === "users/promote" ? (
+                                        <>
+                                            promoted <UserMention id={entry.data}></UserMention> to observer.
+                                        </>
+                                    ) : entry.type === "users/demote" ? (
+                                        <>
+                                            demoted <UserMention id={entry.data}></UserMention> from observer.
+                                        </>
+                                    ) : entry.type === "users/refresh-term" ? (
+                                        <>
+                                            refreshed <UserMention id={entry.data}></UserMention>&apos;s term as observer.
+                                        </>
+                                    ) : entry.type === "users/update/global-nickname" ? (
+                                        <>
+                                            changed <UserMention id={entry.data.user}></UserMention>&apos;s global nickname to{" "}
+                                            <b>{entry.data.name || "(none)"}</b>.
+                                        </>
                                     ) : null}
                                 </p>
                                 {entry.type === "applications/nuke" ? (

@@ -14,6 +14,9 @@ export default function AdminHome() {
             <LandingPanel href="/admin/servers">
                 <h2>Manage Servers</h2>
             </LandingPanel>
+            <LandingPanel href="/admin/users">
+                <h2>Manage Users</h2>
+            </LandingPanel>
         </LandingPage>
     );
 }
