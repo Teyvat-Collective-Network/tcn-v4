@@ -87,7 +87,7 @@ export const applications = mysqlTable("applications", {
 
 export const polls = mysqlTable("polls", {
     id: int("id").autoincrement().primaryKey(),
-    type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction", "election"]).notNull(),
+    type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction", "election", "proposal", "selection"]).notNull(),
     message: varchar("message", { length: 20 }).notNull(),
     reminder: bigint("reminder", { mode: "number" }),
     deadline: bigint("deadline", { mode: "number" }).notNull(),
@@ -108,6 +108,23 @@ export const voteTracker = mysqlTable(
     }),
 );
 
+export const proposalPolls = mysqlTable("proposal_polls", {
+    ref: int("ref")
+        .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .primaryKey(),
+    question: varchar("question", { length: 1024 }).notNull(),
+});
+
+export const selectionPolls = mysqlTable("selection_polls", {
+    ref: int("ref")
+        .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .primaryKey(),
+    question: varchar("question", { length: 1024 }).notNull(),
+    options: json("options").notNull(),
+    minimum: int("minimum").notNull(),
+    maximum: int("maximum").notNull(),
+});
+
 export const applicationPolls = mysqlTable("application_polls", {
     ref: int("ref")
         .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
@@ -123,6 +140,34 @@ export const inductionPolls = mysqlTable("induction_polls", {
         .primaryKey(),
     mode: mysqlEnum("mode", ["normal", "pre-approve", "positive-tiebreak", "negative-tiebreak"]).notNull(),
 });
+
+export const proposalVotes = mysqlTable(
+    "proposal_votes",
+    {
+        ref: int("ref")
+            .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        vote: mysqlEnum("vote", ["accept", "reject", "abstain"]).notNull(),
+    },
+    (t) => ({
+        pk_ref_user: primaryKey({ columns: [t.ref, t.user] }),
+    }),
+);
+
+export const selectionVotes = mysqlTable(
+    "selection_votes",
+    {
+        ref: int("ref")
+            .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        vote: json("vote").notNull(),
+    },
+    (t) => ({
+        pk_ref_user: primaryKey({ columns: [t.ref, t.user] }),
+    }),
+);
 
 export const declineObservationVotes = mysqlTable(
     "decline_observation_votes",

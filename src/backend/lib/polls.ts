@@ -7,7 +7,7 @@ import { englishList, shuffle, timeinfo } from "../lib.js";
 import { getTurnoutAndQuorum, getVoters } from "./api-lib.js";
 import { template } from "./bot-lib.js";
 
-export const unrestrictedTypes: string[] = [];
+export const unrestrictedTypes: string[] = ["election"];
 export const majorTypes: string[] = ["cancel-observation"];
 
 export async function verifyTypeAndFetchPollID(message: string, type: string): Promise<number> {
@@ -24,7 +24,7 @@ export async function registerVote(id: number, user: string) {
 }
 
 export async function newPoll(
-    type: "decline-observation" | "cancel-observation" | "induction" | "election",
+    type: "decline-observation" | "cancel-observation" | "induction" | "election" | "proposal" | "selection",
     fn: (ref: number) => Promise<Message>,
     config?: { reminder?: number; deadline?: number },
 ) {
@@ -123,6 +123,16 @@ export async function renderDescription(id: number, type: string): Promise<strin
         if (!data) return `Failed to fetch poll #${id} (type: ${type}).`;
 
         return `Please vote in the Wave ${data.wave} Election.`;
+    } else if (type === "proposal") {
+        const data = await db.query.proposalPolls.findFirst({ columns: { question: true }, where: eq(tables.proposalPolls.ref, id) });
+        if (!data) return `Failed to fetch poll #${id} (type: ${type}).`;
+
+        return data.question;
+    } else if (type === "selection") {
+        const data = await db.query.selectionPolls.findFirst({ columns: { question: true }, where: eq(tables.selectionPolls.ref, id) });
+        if (!data) return `Failed to fetch poll #${id} (type: ${type}).`;
+
+        return data.question;
     }
 
     return `Unknown Poll Type / Unexpected Error: \`${type}\`.`;
@@ -263,6 +273,32 @@ export async function getElectionResults(id: number): Promise<{ winners: string[
     return { winners: shuffle(results.slice(0, poll.seats)), ties: [], runnerups: shuffle(results.slice(poll.seats)) };
 }
 
+export async function getProposalResults(id: number): Promise<{ verdict: "tie" | "accept" | "reject"; accept: number; reject: number; abstain: number }> {
+    const votes = await filterVotes(await db.query.proposalVotes.findMany({ where: eq(tables.proposalVotes.ref, id) }), "proposal");
+
+    const tally = { accept: 0, reject: 0, abstain: 0 };
+
+    for (const vote of votes) tally[vote.vote]++;
+
+    return addVerdict(tally, "accept", "reject");
+}
+
+export async function getSelectionResults(id: number): Promise<{ results: Record<string, number>; abstain: number }> {
+    const poll = await db.query.selectionPolls.findFirst({ columns: { options: true }, where: eq(tables.selectionPolls.ref, id) });
+    if (!poll) return { results: {}, abstain: 0 };
+
+    const votes = await filterVotes(await db.query.selectionVotes.findMany({ where: eq(tables.selectionVotes.ref, id) }), "selection");
+
+    const results = Object.fromEntries((poll.options as string[]).map((option) => [option, 0]));
+    let abstain = 0;
+
+    for (const { vote } of votes as { vote: string[] }[])
+        if (vote.length === 0) abstain++;
+        else for (const option of vote) results[option]++;
+
+    return { results, abstain };
+}
+
 export async function renderResults(id: number, type: string): Promise<string> {
     if (type === "decline-observation") {
         const { verdict, decline, proceed, abstain } = await getDeclineObservationResults(id);
@@ -362,6 +398,20 @@ export async function renderResults(id: number, type: string): Promise<string> {
             return `This election was won by ${englishList(winners.map((id) => `<@${id}>`))} and also resulted in a tie ${
                 ties.length === 2 ? "between" : "amongst"
             } ${englishList(ties.map((id) => `<@${id}>`))}.`;
+    } else if (type === "proposal") {
+        const { verdict, accept, reject, abstain } = await getProposalResults(id);
+
+        return verdict === "tie"
+            ? `The council's vote tied with ${accept} in favor of accepting and ${reject} against. ${abstainInfo(abstain)}`
+            : verdict === "accept"
+            ? `The council voted ${accept} : ${reject} to accept this proposal. ${abstainInfo(abstain)}`
+            : `The council voted ${reject} : ${accept} to reject this proposal. ${abstainInfo(abstain)}`;
+    } else if (type === "selection") {
+        const { results, abstain } = await getSelectionResults(id);
+
+        return `${Object.entries(results)
+            .map(([option, votes]) => `- ${votes} vote${votes === 1 ? "" : "s"} for: ${option}`)
+            .join("\n")}\n\n${abstainInfo(abstain)}`;
     }
 
     return `Unknown Poll Type / Unexpected Error: \`${type}\`.`;
@@ -535,6 +585,72 @@ export async function renderComponents(id: number, type: string, disabled: boole
             ];
     }
 
+    if (type === "proposal")
+        return [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        type: ComponentType.Button,
+                        customId: ":poll/proposal:accept",
+                        style: ButtonStyle.Success,
+                        label: "Accept",
+                        disabled,
+                    },
+                    {
+                        type: ComponentType.Button,
+                        customId: ":poll/proposal:reject",
+                        style: ButtonStyle.Danger,
+                        label: "Reject",
+                        disabled,
+                    },
+                    {
+                        type: ComponentType.Button,
+                        customId: ":poll/proposal:abstain",
+                        style: ButtonStyle.Secondary,
+                        label: "Abstain",
+                        disabled,
+                    },
+                ],
+            },
+        ];
+
+    if (type === "selection") {
+        const poll = await db.query.selectionPolls.findFirst({
+            columns: { options: true, minimum: true, maximum: true },
+            where: eq(tables.selectionPolls.ref, id),
+        });
+
+        if (poll)
+            return [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.StringSelect,
+                            customId: ":poll/selection/menu",
+                            options: (poll.options as string[]).map((option) => ({ label: option, value: option })),
+                            minValues: poll.minimum,
+                            maxValues: poll.maximum,
+                            disabled,
+                        },
+                    ],
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            customId: ":poll/selection/abstain",
+                            style: ButtonStyle.Secondary,
+                            label: "Abstain",
+                            disabled,
+                        },
+                    ],
+                },
+            ];
+    }
+
     return [
         {
             type: ComponentType.ActionRow,
@@ -635,6 +751,42 @@ export async function renderVote(id: number, user: string, type: string): Promis
                 .join("\n")}\n\n${countered.length > 0 ? `You also voted against ${englishList(countered.map((id) => `<@${id}>`))}. ` : ""}${
                 candidates.length === countered.length + ranked.length ? "" : "You abstained for all other candidates."
             }`;
+    } else if (type === "proposal") {
+        const vote = await db.query.proposalVotes.findFirst({
+            columns: { vote: true },
+            where: and(eq(tables.proposalVotes.ref, id), eq(tables.proposalVotes.user, user)),
+        });
+
+        if (!vote) return "You have not voted on this poll.";
+
+        return {
+            accept: "You have voted to accept this proposal.",
+            reject: "You have voted to reject this proposal.",
+            abstain: "You have abstained on this proposal.",
+        }[vote.vote];
+    } else if (type === "selection") {
+        const poll = await db.query.selectionPolls.findFirst({ columns: { options: true }, where: eq(tables.selectionPolls.ref, id) });
+        if (!poll) return "Error fetching selection poll data.";
+
+        const options = poll.options as string[];
+        const position = Object.fromEntries(options.map((option, i) => [option, i]));
+
+        const entry = await db.query.selectionVotes.findFirst({
+            columns: { vote: true },
+            where: and(eq(tables.selectionVotes.ref, id), eq(tables.selectionVotes.user, user)),
+        });
+
+        if (!entry) return "You have not voted on this poll.";
+
+        const vote = entry.vote as string[];
+
+        if (vote.length === 0) return "You have abstained for all options in this poll.";
+        if (vote.length === 1) return `You have voted for: ${vote[0]}`;
+
+        return `You have voted for the following options:\n\n${vote
+            .sort((x, y) => position[x] - position[y])
+            .map((option) => `- ${option}`)
+            .join("\n")}`;
     }
 
     throw "Invalid poll type or the vote render handler is broken.";
