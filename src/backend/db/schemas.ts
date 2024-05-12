@@ -306,7 +306,7 @@ export const electionHistory = mysqlTable(
             .references(() => elections.wave, { onDelete: "cascade", onUpdate: "cascade" })
             .notNull(),
         user: varchar("user", { length: 20 }).notNull(),
-        status: mysqlEnum("status", ["nominated", "accepted", "declined", "elected", "runner-up"]).notNull(),
+        status: mysqlEnum("status", ["nominated", "accepted", "declined", "elected", "tied", "runner-up"]).notNull(),
         rerunning: boolean("rerunning").notNull(),
     },
     (t) => ({

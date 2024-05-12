@@ -5,8 +5,16 @@ import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
 import { getQuorum, getVoters } from "../../lib/api-lib.js";
 import { applicationThreadStatusToTag } from "../../lib/applications.js";
+import { electionThreadStatusToTag } from "../../lib/elections.js";
 import { loop } from "../../lib/loop.js";
-import { getCancelObservationResults, getDeclineObservationResults, getInductionResults, renderPoll, unrestrictedTypes } from "../../lib/polls.js";
+import {
+    getCancelObservationResults,
+    getDeclineObservationResults,
+    getElectionResults,
+    getInductionResults,
+    renderPoll,
+    unrestrictedTypes,
+} from "../../lib/polls.js";
 import { DMReminderTask, dmReminderQueue, makeWorker, repostDeletedOpenPollsQueue } from "../../queue.js";
 
 // DM Reminders
@@ -144,12 +152,12 @@ loop(async () => {
                                 verdict === "induct"
                                     ? applicationThreadStatusToTag.inducted
                                     : verdict === "preapprove"
-                                      ? applicationThreadStatusToTag["pre-approved"]
-                                      : verdict === "reject"
-                                        ? applicationThreadStatusToTag.rejected
-                                        : verdict === "extend"
-                                          ? applicationThreadStatusToTag.pending
-                                          : applicationThreadStatusToTag["observation-finished"],
+                                    ? applicationThreadStatusToTag["pre-approved"]
+                                    : verdict === "reject"
+                                    ? applicationThreadStatusToTag.rejected
+                                    : verdict === "extend"
+                                    ? applicationThreadStatusToTag.pending
+                                    : applicationThreadStatusToTag["observation-finished"],
                             ]);
 
                             await channel.send(
@@ -169,6 +177,41 @@ loop(async () => {
                         }
                 } catch (error) {
                     channels.logs.send(`Error resolving application status for ${link}. Please fix this manually. Error: ${error}`);
+                    console.error(error);
+                }
+            else if (type === "election")
+                try {
+                    const [data] = await db
+                        .select({ thread: tables.electionPolls.thread, wave: tables.elections.wave })
+                        .from(tables.electionPolls)
+                        .innerJoin(tables.elections, eq(tables.electionPolls.thread, tables.elections.channel))
+                        .where(eq(tables.electionPolls.ref, id));
+
+                    if (!data) throw "Could not fetch election poll data.";
+
+                    const channel = await bot.channels.fetch(data.thread);
+                    if (!channel?.isThread() || channel.parent?.type !== ChannelType.GuildForum || channel.parent !== channels.elections)
+                        throw "Found invalid applicant thread.";
+
+                    const valid = await getQuorum(id, type);
+
+                    if (valid) {
+                        await channel.setAppliedTags([electionThreadStatusToTag.done]);
+                        const { winners, ties, runnerups } = await getElectionResults(id);
+
+                        for (const [list, status] of [
+                            [winners, "elected"],
+                            [ties, "tied"],
+                            [runnerups, "runner-up"],
+                        ] as const)
+                            if (list.length > 0)
+                                await db
+                                    .update(tables.electionHistory)
+                                    .set({ status })
+                                    .where(and(eq(tables.electionHistory.wave, data.wave), inArray(tables.electionHistory.user, list)));
+                    }
+                } catch (error) {
+                    channels.logs.send(`Error resolving election status for ${link}. Please fix this manually. Error: ${error}`);
                     console.error(error);
                 }
         } catch (error) {

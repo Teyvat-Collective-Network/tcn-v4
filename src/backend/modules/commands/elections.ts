@@ -176,7 +176,7 @@ export async function handleElections(interaction: ChatInputCommandInteraction) 
         const user = interaction.options.getUser("user", true).id;
         const rerunning = (await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, user) }))?.observer ?? false;
 
-        await db.insert(tables.electionHistory).values({ wave: election.wave, user, rerunning, status }).onDuplicateKeyUpdate({ set: { status } });
+        await db.insert(tables.electionHistory).values({ wave: election.wave, user, rerunning, status }).onDuplicateKeyUpdate({ set: { rerunning, status } });
         await db.delete(tables.electionStatements).where(and(eq(tables.electionStatements.wave, election.wave), eq(tables.electionStatements.user, user)));
 
         await interaction.editReply(
@@ -262,14 +262,18 @@ export async function handleElectionMarkAsStatement(interaction: MessageContextM
 
     if (state !== "nominating") throw "This election is no longer in the nominating phase.";
 
+    const user = interaction.targetMessage.author.id;
+
+    const rerunning = (await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, user) }))?.observer ?? false;
+
     await db
         .insert(tables.electionHistory)
-        .values({ wave: election.wave, user: interaction.targetMessage.author.id, rerunning: false, status: "accepted" })
-        .onDuplicateKeyUpdate({ set: { status: "accepted" } });
+        .values({ wave: election.wave, user, rerunning, status: "accepted" })
+        .onDuplicateKeyUpdate({ set: { rerunning, status: "accepted" } });
 
     await db
         .insert(tables.electionStatements)
-        .values({ wave: election.wave, user: interaction.targetMessage.author.id, message: interaction.targetId })
+        .values({ wave: election.wave, user, message: interaction.targetId })
         .onDuplicateKeyUpdate({ set: { message: interaction.targetId } });
 
     await interaction.editReply(template.ok(`Marked ${interaction.targetMessage.author} as having accepted their nomination and saved their statement.`));
