@@ -9,6 +9,7 @@ import getGuild from "./actions/get-guild.js";
 import getGuildsForBanshare from "./actions/get-guilds-for-banshare.js";
 import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
 import getInvite from "./actions/get-invite.js";
+import getMonitor from "./actions/get-monitor.js";
 import getObserverList from "./actions/get-observer-list.js";
 import getPartialGuildFromThread from "./actions/get-partial-guild-from-thread.js";
 import getPartnerList from "./actions/get-partner-list.js";
@@ -45,6 +46,7 @@ export const appRouter = router({
     getGuildsForBanshare,
     getGuildsForDropdown,
     getInvite,
+    getMonitor,
     getObserverList,
     getPartialGuildFromThread,
     getPartnerList,

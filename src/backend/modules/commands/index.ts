@@ -1,6 +1,7 @@
 import { Events } from "discord.js";
 import bot, { HQ, HUB, channels } from "../../bot.js";
 import { reply, template } from "../../lib/bot-lib.js";
+import admin, { handleAdmin } from "./admin.js";
 import application, { handleApplication } from "./application.js";
 import banshares, { handleBanshares } from "./banshares.js";
 import elections, { handleElectionMarkAsStatement, handleElections } from "./elections.js";
@@ -8,7 +9,7 @@ import polls, { handlePoll } from "./polls.js";
 import staff, { handleStaff } from "./staff.js";
 import testing, { handleTesting } from "./testing.js";
 
-await bot.application.commands.set([banshares, staff]);
+await bot.application.commands.set([banshares, staff, admin]);
 await HQ.commands.set([application, ...elections, ...testing, polls]);
 await HUB.commands.set([]);
 
@@ -35,6 +36,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 case "poll":
                     await handlePoll(interaction);
+                    break;
+                case "admin":
+                    await handleAdmin(interaction);
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";

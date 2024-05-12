@@ -39,7 +39,7 @@ export default async function RootLayout({
     const user = await getUser();
 
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en" className="antialiased" suppressHydrationWarning>
             <body className={rubik.className}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                     <UserWrapper user={user}>

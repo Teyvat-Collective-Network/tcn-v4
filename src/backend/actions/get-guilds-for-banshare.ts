@@ -12,7 +12,7 @@ export default proc
     .query(
         trpcify(async (id) => {
             return await db
-                .select({ id: tables.guilds.id, name: tables.guilds.name })
+                .selectDistinct({ id: tables.guilds.id, name: tables.guilds.name })
                 .from(tables.guilds)
                 .leftJoin(tables.guildStaff, eq(tables.guilds.id, tables.guildStaff.guild))
                 .where(or(eq(tables.guilds.owner, id), eq(tables.guilds.advisor, id), eq(tables.guildStaff.user, id)));

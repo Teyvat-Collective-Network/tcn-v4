@@ -8,6 +8,7 @@ import {
     FaBookBookmark,
     FaBuildingColumns,
     FaCalendarWeek,
+    FaChartLine,
     FaCheckToSlot,
     FaCircleInfo,
     FaClipboardCheck,
@@ -62,6 +63,7 @@ export function Menu({ root }: { root: string }) {
         links.push(
             ["/admin/onboarding", "Observer Onboarding", FaDoorOpen],
             ["/admin/observation-guide", "Observation Guide", FaClipboardList],
+            ["/admin/monitor", "Monitor", FaChartLine],
             ["/admin/servers", "Manage Servers", FaServer],
             ["/admin/users", "Manage Users", FaUserGroup],
             ["/admin/vote-tracker", "Vote Tracker", FaClipboardCheck],

@@ -181,22 +181,26 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
     await resolve(hubMember, hubAdd, hubRemove);
 });
 
-loop(async () => {
+export async function fixAllGuildRoles() {
     const guilds = await db.query.guilds.findMany({
         columns: { id: true, roleColor: true, roleName: true, hqRole: true, hubRole: true, owner: true, advisor: true },
     });
 
     for (const guild of guilds) await fixRoles(guild).catch(() => null);
-}, 3600000);
+}
 
-loop(async () => {
+loop(fixAllGuildRoles, 3600000);
+
+export async function fixAllUserRoles() {
     const users = new Set<string>();
 
     for (const [id] of await HQ.members.fetch()) users.add(id);
     for (const [id] of await HUB.members.fetch()) users.add(id);
 
     for (const id of users) await fixUserRolesQueue.add("", id);
-}, 86400000);
+}
+
+loop(fixAllUserRoles, 86400000);
 
 bot.on(Events.GuildMemberUpdate, async (before, after) => {
     if (after.guild !== HQ && after.guild !== HUB) return;

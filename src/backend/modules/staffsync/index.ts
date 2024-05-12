@@ -73,10 +73,12 @@ makeWorker<string>("tcn:fix-guild-staff-status", async (guild) => {
     await fixUserRolesQueue.addBulk(toUpdate.map((id) => ({ name: "", data: id })));
 });
 
-loop(async () => {
+export async function updateAllGuildStaff() {
     const entries = await db.query.guilds.findMany({ columns: { id: true } });
     await fixGuildStaffStatusQueue.addBulk(entries.map((entry) => ({ name: "", data: entry.id })));
-}, 86400000);
+}
+
+loop(updateAllGuildStaff, 86400000);
 
 bot.on(Events.GuildMemberUpdate, async (before, after) => {
     if (before.roles.cache.equals(after.roles.cache)) return;
