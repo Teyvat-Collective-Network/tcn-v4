@@ -20,7 +20,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
                 const uuid = crypto.randomUUID();
                 console.error(uuid);
                 console.error(error);
-                channels.logs.send(`An error occurred handling interaction (custom ID: \`${interaction.customId}\`) (logged under \`${uuid}\`).`);
+                channels.logs.send(
+                    `<@&${process.env.ROLE_TECH_TEAM}> An error occurred handling interaction (custom ID: \`${interaction.customId}\`) (logged under \`${uuid}\`).`,
+                );
             }
         }
     }

@@ -58,7 +58,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
             console.error(uuid);
             console.error(error);
             channels.logs.send(
-                `An error occurred handling \`${interaction.isChatInputCommand() ? "/" : ""}${interaction.commandName}\` (logged under \`${uuid}\`).`,
+                `<@&${process.env.ROLE_TECH_TEAM}> An error occurred handling \`${interaction.isChatInputCommand() ? "/" : ""}${
+                    interaction.commandName
+                }\` (logged under \`${uuid}\`).`,
             );
         }
     }

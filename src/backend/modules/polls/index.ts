@@ -43,7 +43,7 @@ loop(async function () {
 
             await channels.logs.send(`Queued ${users.length} DM reminder${users.length === 1 ? "" : "s"} for [poll #${id}](<${url}>).`);
         } catch (error) {
-            channels.logs.send(`Error queueing DM reminders for poll #${id}: ${error}`);
+            channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Error queueing DM reminders for poll #${id}: ${error}`);
             console.error(error);
         }
 }, 10000);
@@ -183,7 +183,9 @@ loop(async () => {
                             await channel.send(`The council did not reach quorum on this applicant's induction: ${msg.url}`);
                         }
                 } catch (error) {
-                    channels.logs.send(`Error resolving application status for ${link}. Please fix this manually. Error: ${error}`);
+                    channels.logs.send(
+                        `<@&${process.env.ROLE_TECH_TEAM}> Error resolving application status for ${link}. Please fix this manually. Error: ${error}`,
+                    );
                     console.error(error);
                 }
             else if (type === "election")
@@ -218,11 +220,13 @@ loop(async () => {
                                     .where(and(eq(tables.electionHistory.wave, data.wave), inArray(tables.electionHistory.user, list)));
                     }
                 } catch (error) {
-                    channels.logs.send(`Error resolving election status for ${link}. Please fix this manually. Error: ${error}`);
+                    channels.logs.send(
+                        `<@&${process.env.ROLE_TECH_TEAM}> Error resolving election status for ${link}. Please fix this manually. Error: ${error}`,
+                    );
                     console.error(error);
                 }
         } catch (error) {
-            channels.logs.send(`Error closing poll #${id} (marking as errored and abandoning): ${error}`);
+            channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Error closing poll #${id} (marking as errored and abandoning): ${error}`);
             console.error(error);
 
             await db.update(tables.polls).set({ errored: true }).where(eq(tables.polls.id, id));

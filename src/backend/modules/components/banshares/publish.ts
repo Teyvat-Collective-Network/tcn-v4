@@ -38,7 +38,7 @@ export default async function (interaction: ButtonInteraction) {
         const message = await channels.hubBanshares.send({ embeds: await renderBanshare(banshare.id) });
         await db.insert(tables.banshareHubPosts).values({ ref: banshare.id, channel: channels.hubBanshares.id, message: message.id });
     } catch (error) {
-        channels.logs.send(`Failed to publish banshare to the TCN Hub: ${error}`);
+        channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Failed to publish banshare to the TCN Hub: ${error}`);
         console.error(error);
     }
 

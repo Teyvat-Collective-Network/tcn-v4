@@ -45,7 +45,7 @@ export default proc
                 return null;
             } catch (e) {
                 console.error(e);
-                channels.logs.send(`Error processing an application (user: \`${user}\`): ${e}`);
+                channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Error processing an application (user: \`${user}\`): ${e}`);
                 return "An unexepcted error occurs. This incident has been reported. Please try again later.";
             }
         }),

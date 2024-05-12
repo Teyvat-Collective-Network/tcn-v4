@@ -98,7 +98,7 @@ export default proc
             try {
                 message = await channels.banshareLogs.send(await renderHQBanshare(insertId));
             } catch (error) {
-                channels.logs.send(`Error posting banshare: ${error}`);
+                channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Error posting banshare: ${error}`);
                 console.error(error);
                 return "Error posting your banshare. This issue has been reported.";
             }

@@ -49,7 +49,7 @@ export default async function (interaction: ModalSubmitInteraction) {
             await message.reply(`This banshare is being rescinded by an observer. The following explanation was given:\n\n>>> ${explanation}`);
         }
     } catch (error) {
-        channels.logs.send(`Failed to send rescind notice to the TCN Hub: ${error}`);
+        channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Failed to send rescind notice to the TCN Hub: ${error}`);
         console.error(error);
     }
 

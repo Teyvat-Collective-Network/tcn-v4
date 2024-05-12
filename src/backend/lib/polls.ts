@@ -804,7 +804,7 @@ export async function reloadApplicationPolls(thread: string) {
             const message = await channels.voteHere.messages.fetch(poll.message);
             await message.edit(await renderPoll(poll.id));
         } catch (error) {
-            channels.logs.send(`Error bumping poll #${poll.id} for applicant renaming: ${error}`);
+            channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Error bumping poll #${poll.id} for applicant renaming: ${error}`);
             console.error(error);
         }
 }
