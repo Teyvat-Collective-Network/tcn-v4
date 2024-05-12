@@ -5,6 +5,7 @@ import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 import trpcify from "../lib/trpcify.js";
 import zs from "../lib/zs.js";
+import { syncPartnerLists } from "../modules/autosync/index.js";
 import { fixUserRolesQueue } from "../queue.js";
 import { proc } from "../trpc.js";
 
@@ -37,6 +38,8 @@ export default proc
             await fixUserRolesQueue.addBulk(
                 [...new Set([guild.owner, guild.advisor || [], staff.map((entry) => entry.user)].flat())].map((id) => ({ name: "", data: id })),
             );
+
+            syncPartnerLists();
 
             return null;
         }),

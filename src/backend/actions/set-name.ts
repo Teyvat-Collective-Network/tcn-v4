@@ -5,6 +5,7 @@ import tables from "../db/tables.js";
 import { audit } from "../lib/audit.js";
 import trpcify from "../lib/trpcify.js";
 import zs from "../lib/zs.js";
+import { syncPartnerLists } from "../modules/autosync/index.js";
 import { proc } from "../trpc.js";
 
 export default proc
@@ -17,6 +18,8 @@ export default proc
 
             await db.update(tables.guilds).set({ name }).where(eq(tables.guilds.id, guild));
             await audit(actor, "guilds/update/name", guild, [obj.name, name]);
+
+            syncPartnerLists();
 
             return null;
         }),

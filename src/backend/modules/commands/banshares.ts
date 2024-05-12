@@ -73,6 +73,8 @@ export default {
 } satisfies ApplicationCommandDataResolvable;
 
 export async function handleBanshares(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply({ ephemeral: true });
+
     await ensureTCN(interaction);
     if (!interaction.guild) return;
 
@@ -80,8 +82,6 @@ export async function handleBanshares(interaction: ChatInputCommandInteraction) 
         await ensureObserver(interaction).catch(() => {
             throw "Only the server owner can manage banshare settings.";
         });
-
-    await interaction.deferReply({ ephemeral: true });
 
     const key = cmdKey(interaction);
 

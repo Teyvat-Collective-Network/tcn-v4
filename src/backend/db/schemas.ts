@@ -430,3 +430,19 @@ export const electionVotes = mysqlTable(
         pk_ref_user: primaryKey({ columns: [t.ref, t.user] }),
     }),
 );
+
+export const autosyncSettings = mysqlTable("autosync_settings", {
+    guild: varchar("guild", { length: 20 })
+        .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .primaryKey(),
+    location: mysqlEnum("location", ["disabled", "channel", "webhook"]).notNull(),
+    channel: varchar("channel", { length: 20 }),
+    webhook: text("webhook"),
+    message: varchar("message", { length: 20 }),
+    repost: boolean("repost").notNull().default(false),
+});
+
+export const hubPartnerListLocation = mysqlTable("hub_partner_list_location", {
+    id: int("id").primaryKey(),
+    message: varchar("message", { length: 20 }).notNull(),
+});

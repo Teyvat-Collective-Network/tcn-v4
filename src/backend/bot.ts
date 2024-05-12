@@ -30,6 +30,7 @@ export const channels = {
     banshareDashboard: await get<TextChannel>("BANSHARE_DASHBOARD"),
     voteHere: await get<TextChannel>("VOTE_HERE"),
     elections: await get<ForumChannel>("ELECTIONS"),
+    hubPartnerList: await get<TextChannel>("HUB_PARTNER_LIST"),
 };
 
 async function getRole(guild: Guild, key: string) {

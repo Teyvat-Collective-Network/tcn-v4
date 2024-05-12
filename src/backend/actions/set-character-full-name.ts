@@ -4,6 +4,7 @@ import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 import trpcify from "../lib/trpcify.js";
 import zs from "../lib/zs.js";
+import { syncPartnerLists } from "../modules/autosync/index.js";
 import { proc } from "../trpc.js";
 
 export default proc
@@ -15,6 +16,8 @@ export default proc
                 const [{ affectedRows }] = await db.update(tables.characters).set({ name }).where(eq(tables.characters.id, id));
 
                 if (affectedRows === 0) throw null;
+
+                syncPartnerLists();
 
                 return true;
             } catch {

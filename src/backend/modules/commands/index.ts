@@ -3,13 +3,15 @@ import bot, { HQ, HUB, channels } from "../../bot.js";
 import { reply, template } from "../../lib/bot-lib.js";
 import admin, { handleAdmin } from "./admin.js";
 import application, { handleApplication } from "./application.js";
+import autosync, { handleAutosync } from "./autosync.js";
 import banshares, { handleBanshares } from "./banshares.js";
 import elections, { handleElectionMarkAsStatement, handleElections } from "./elections.js";
+import partnerList, { handlePartnerList } from "./partner-list.js";
 import polls, { handlePoll } from "./polls.js";
 import staff, { handleStaff } from "./staff.js";
 import testing, { handleTesting } from "./testing.js";
 
-await bot.application.commands.set([banshares, staff, admin]);
+await bot.application.commands.set([banshares, staff, admin, partnerList, autosync]);
 await HQ.commands.set([application, ...elections, ...testing, polls]);
 await HUB.commands.set([]);
 
@@ -39,6 +41,12 @@ bot.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 case "admin":
                     await handleAdmin(interaction);
+                    break;
+                case "partner-list":
+                    await handlePartnerList(interaction);
+                    break;
+                case "autosync":
+                    await handleAutosync(interaction);
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";

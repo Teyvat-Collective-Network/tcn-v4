@@ -7,6 +7,7 @@ import { audit } from "../lib/audit.js";
 import { validateInvite } from "../lib/bot-lib.js";
 import trpcify from "../lib/trpcify.js";
 import zs from "../lib/zs.js";
+import { syncPartnerLists } from "../modules/autosync/index.js";
 import { fixGuildRolesQueue } from "../queue.js";
 import { proc } from "../trpc.js";
 
@@ -54,6 +55,7 @@ export default proc
                 await audit(actor, "guilds/create", id, { mascot, name, invite, owner, advisor, delegated, roleColor, roleName });
 
                 await fixGuildRolesQueue.add("", id);
+                syncPartnerLists();
             } catch {
                 return "An unexpected error occurred. This guild may have just been added to the network by another observer.";
             }
