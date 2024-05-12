@@ -21,6 +21,9 @@ export default function AdminHome() {
             <LandingPanel href="/admin/users">
                 <h2>Manage Users</h2>
             </LandingPanel>
+            <LandingPanel href="/admin/characters">
+                <h2>Manage Characters</h2>
+            </LandingPanel>
             <LandingPanel href="/admin/vote-tracker">
                 <h2>Vote Tracker</h2>
                 <p>View users&apos; voting history here.</p>

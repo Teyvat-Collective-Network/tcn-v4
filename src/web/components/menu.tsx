@@ -25,6 +25,7 @@ import {
     FaSun,
     FaTowerBroadcast,
     FaUserGroup,
+    FaUserSecret,
     FaXmark,
 } from "react-icons/fa6";
 import { IconType } from "react-icons/lib";
@@ -66,6 +67,7 @@ export function Menu({ root }: { root: string }) {
             ["/admin/monitor", "Monitor", FaChartLine],
             ["/admin/servers", "Manage Servers", FaServer],
             ["/admin/users", "Manage Users", FaUserGroup],
+            ["/admin/characters", "Manage Characters", FaUserSecret],
             ["/admin/vote-tracker", "Vote Tracker", FaClipboardCheck],
         );
 

@@ -63,7 +63,7 @@ export default function Monitor() {
                         index="label"
                         categories={["Queue Size"]}
                         colors={["blue"]}
-                    ></LineChart>
+                    />
                 </div>
             </Panel>
             <br />
@@ -76,7 +76,7 @@ export default function Monitor() {
                         index="label"
                         categories={["Queue Size"]}
                         colors={["blue"]}
-                    ></LineChart>
+                    />
                 </div>
             </Panel>
             <br />
@@ -89,7 +89,7 @@ export default function Monitor() {
                         index="label"
                         categories={["Queue Size"]}
                         colors={["blue"]}
-                    ></LineChart>
+                    />
                 </div>
             </Panel>
         </Prose>

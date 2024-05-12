@@ -1,6 +1,9 @@
 import "dotenv/config";
 
+import addCharacter from "./actions/add-character.js";
 import addGuild from "./actions/add-guild.js";
+import changeCharacterId from "./actions/change-character-id.js";
+import deleteCharacter from "./actions/delete-character.js";
 import exchangeDataForElection from "./actions/exchange-data-for-election.js";
 import getAuditLogs from "./actions/get-audit-logs.js";
 import getCharacters from "./actions/get-characters.js";
@@ -22,6 +25,9 @@ import getVoteTracker from "./actions/get-vote-tracker.js";
 import refreshTerm from "./actions/refresh-term.js";
 import removeGuild from "./actions/remove-guild.js";
 import setAdvisor from "./actions/set-advisor.js";
+import setCharacterElement from "./actions/set-character-element.js";
+import setCharacterFullName from "./actions/set-character-full-name.js";
+import setCharacterShortName from "./actions/set-character-short-name.js";
 import setDelegated from "./actions/set-delegated.js";
 import setGlobalNickname from "./actions/set-global-nickname.js";
 import setInvite from "./actions/set-invite.js";
@@ -37,7 +43,10 @@ import validateInvite from "./actions/validate-invite.js";
 import { router } from "./trpc.js";
 
 export const appRouter = router({
+    addCharacter,
     addGuild,
+    changeCharacterId,
+    deleteCharacter,
     exchangeDataForElection,
     getAuditLogs,
     getCharacters,
@@ -59,6 +68,9 @@ export const appRouter = router({
     refreshTerm,
     removeGuild,
     setAdvisor,
+    setCharacterElement,
+    setCharacterFullName,
+    setCharacterShortName,
     setDelegated,
     setGlobalNickname,
     setInvite,
