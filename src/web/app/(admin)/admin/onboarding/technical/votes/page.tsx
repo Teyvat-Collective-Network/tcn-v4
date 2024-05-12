@@ -46,7 +46,24 @@ export default function OnboardingTechnicalVotes() {
                 </a>{" "}
                 for more information.
             </p>
-            {/* TODO: */}
+            <h2>Elections</h2>
+            <p>
+                Votes for elections can be set up automatically. Refer to the{" "}
+                <a href="/admin/onboarding/technical/elections" className="link">
+                    election workflow page
+                </a>{" "}
+                for more information.
+            </p>
+            <h2>Proposal Votes</h2>
+            <p>
+                To start a proposal vote, use <code>/poll proposal</code>. You will be asked to provide the poll question. This will create a restricted two-day
+                minor vote.
+            </p>
+            <h2>Selection Votes</h2>
+            <p>
+                To start a selection vote, use <code>/poll selection</code>. You will be asked to provide the poll question, up to 10 options, and the minimum
+                and maximum number of options a voter must choose. This will create a restricted two-day minor vote.
+            </p>
             <a href="/admin/onboarding/technical/elections">
                 <Button className="flex items-center gap-2">
                     Elections <FaAngleRight />
