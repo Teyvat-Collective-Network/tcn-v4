@@ -10,7 +10,7 @@ export default function DocsBanshares() {
             <h1>Docs &mdash; Banshares</h1>
             <a href="/docs">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Docs Home
+                    <FaAnglesLeft /> Return to Docs Home
                 </Button>
             </a>
             <Section tag="h2" id="submitting">
@@ -69,7 +69,7 @@ export default function DocsBanshares() {
             </p>
             <Panel>
                 <h3 className="flex items-center gap-2 mt-4">
-                    <FaAngleUp color="red"></FaAngleUp> P0 (Critical)
+                    <FaAngleUp color="red" /> P0 (Critical)
                 </h3>
                 <p>The offense is either extremely severe or all servers should immediately ban them and/or have no reason not to ban them.</p>
                 <ul>
@@ -84,7 +84,7 @@ export default function DocsBanshares() {
                 </ul>
                 <hr className="my-8" />
                 <h3 className="flex items-center gap-2">
-                    <FaMinus color="yellow"></FaMinus> P1 (Medium)
+                    <FaMinus color="yellow" /> P1 (Medium)
                 </h3>
                 <p>
                     The offense is somewhat severe and almost all servers will want to immediately ban them, but individual servers may have other
@@ -98,7 +98,7 @@ export default function DocsBanshares() {
                 </ul>
                 <hr className="my-8" />
                 <h3 className="flex items-center gap-2">
-                    <FaAngleDown color="blue"></FaAngleDown> P2 (Low)
+                    <FaAngleDown color="blue" /> P2 (Low)
                 </h3>
                 <p>The offense is more nuanced and some servers may choose not to ban them. Note that very minor offenses should not even be banshared.</p>
                 <ul>
@@ -109,7 +109,7 @@ export default function DocsBanshares() {
                 </ul>
                 <hr className="my-8" />
                 <h3 className="flex items-center gap-2">
-                    <FaMessage color="grey"></FaMessage> DM Scam
+                    <FaMessage color="grey" /> DM Scam
                 </h3>
                 <p>
                     The offense is a DM scam (art scam, steam scam, etc.). These are categorized separately as some servers do not wish to receive these

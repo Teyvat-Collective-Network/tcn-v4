@@ -27,7 +27,7 @@ export function TopBar({ root }: { root: string }) {
             <div className="flex items-center justify-between my-8">
                 <a href={root}>
                     <div className="flex items-center gap-4">
-                        <Image src="/favicon.ico" alt="TCN Icon" width={80} height={80}></Image>
+                        <Image src="/favicon.ico" alt="TCN Icon" width={80} height={80} />
                         <span className="text-3xl font-semibold">
                             <div className="lg:hidden">TCN</div>
                             <div className="hidden lg:block">Teyvat Collective Network</div>
@@ -99,17 +99,17 @@ export function TopBar({ root }: { root: string }) {
                                             <div className="flex flex-col">
                                                 <div className="px-4 py-2 flex items-center gap-4">
                                                     <Avatar className="w-12 h-12">
-                                                        <AvatarImage src={user.image}></AvatarImage>
+                                                        <AvatarImage src={user.image} />
                                                         <AvatarFallback>{user.tag.charAt(0).toUpperCase()}</AvatarFallback>
                                                     </Avatar>
                                                     <div className="flex flex-col">
                                                         <span className="text-xl font-semibold">{user.name}</span>
                                                         <span className="text-md font-light opacity-50">@{user.tag}</span>
                                                     </div>
-                                                    {user.staff ? <FaIdBadge title="Network Staff"></FaIdBadge> : null}
-                                                    {user.globalMod ? <FaEarthAmericas title="Global Mod"></FaEarthAmericas> : null}
-                                                    {user.council ? <FaBuildingColumns title="TCN Council"></FaBuildingColumns> : null}
-                                                    {user.observer ? <FaShieldHalved title="Observer"></FaShieldHalved> : null}
+                                                    {user.staff ? <FaIdBadge title="Network Staff" /> : null}
+                                                    {user.globalMod ? <FaEarthAmericas title="Global Mod" /> : null}
+                                                    {user.council ? <FaBuildingColumns title="TCN Council" /> : null}
+                                                    {user.observer ? <FaShieldHalved title="Observer" /> : null}
                                                 </div>
                                                 <hr />
                                                 <NavigationMenuLink

@@ -117,7 +117,7 @@ makeWorker<BansharePublishTask>("tcn:banshare-publish", async ({ id, guild }) =>
 
     const member = banMembers ? (banNonMembers ? null : true) : false;
 
-    await db.insert(tables.banTasks).values(users.map((user) => ({ ref: id, guild, user, status: "pending", member, autoban: true } as const)));
+    await db.insert(tables.banTasks).values(users.map((user) => ({ ref: id, guild, user, status: "pending", member, autoban: true }) as const));
 
     await banshareActionQueue.add("", null);
 });

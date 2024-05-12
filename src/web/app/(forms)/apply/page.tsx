@@ -101,7 +101,7 @@ export default function Apply() {
                             Let&apos;s begin by getting an invite to your server. Please make sure it&apos;s permanent (i.e. will not expire) and not your
                             server&apos;s vanity link.
                         </p>
-                        <Input value={invite} onChange={({ currentTarget: { value } }) => setInvite(value)} placeholder="https://discord.gg/..."></Input>
+                        <Input value={invite} onChange={({ currentTarget: { value } }) => setInvite(value)} placeholder="https://discord.gg/..." />
                         <br />
                         <Button onClick={confirmInvite}>Next</Button>
                     </>
@@ -110,7 +110,7 @@ export default function Apply() {
                     <>
                         <div className="flex items-center gap-2">
                             You are applying for
-                            {inviteData.image ? <Image src={inviteData.image} alt="Could Not Load Icon" width={32} height={32}></Image> : null}
+                            {inviteData.image ? <Image src={inviteData.image} alt="Could Not Load Icon" width={32} height={32} /> : null}
                             <span>
                                 <b>{inviteData.name}</b>.
                             </span>
@@ -131,7 +131,7 @@ export default function Apply() {
                                 onChange={({ currentTarget: { value } }) => setExperience(value)}
                                 rows={4}
                                 className={experience.length > 1024 ? "border-2 border-destructive" : ""}
-                            ></Textarea>
+                            />
                             <p className="text-xs">{experience.length} / 1024</p>
                             <hr className="my-8" />
                             <h3>What are your short- and long-term goals for your server/community?</h3>
@@ -141,7 +141,7 @@ export default function Apply() {
                                 onChange={({ currentTarget: { value } }) => setGoals(value)}
                                 rows={4}
                                 className={goals.length > 1024 ? "border-2 border-destructive" : ""}
-                            ></Textarea>
+                            />
                             <p className="text-xs">{goals.length} / 1024</p>
                             <hr className="my-8" />
                             <h3>Please give us a rough outline of your server&apos;s history.</h3>
@@ -155,7 +155,7 @@ export default function Apply() {
                                 onChange={({ currentTarget: { value } }) => setHistory(value)}
                                 rows={4}
                                 className={history.length > 1024 ? "border-2 border-destructive" : ""}
-                            ></Textarea>
+                            />
                             <p className="text-xs">{history.length} / 1024</p>
                         </Panel>
                         <br />
@@ -166,7 +166,7 @@ export default function Apply() {
                                 onChange={({ currentTarget: { value } }) => setAdditional(value)}
                                 rows={4}
                                 className={additional.length > 1024 ? "border-2 border-destructive" : ""}
-                            ></Textarea>
+                            />
                             <p className="text-xs">{additional.length} / 1024</p>
                         </Panel>
                         <br />

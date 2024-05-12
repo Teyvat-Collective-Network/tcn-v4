@@ -13,18 +13,17 @@ export default function OnboardingGuideTechnical() {
                 <div className="flex items-center gap-4">
                     <a href="/admin/onboarding">
                         <Button className="flex items-center gap-2">
-                            <FaAnglesLeft></FaAnglesLeft> Return to Onboarding Home
+                            <FaAnglesLeft /> Return to Onboarding Home
                         </Button>
                     </a>
                     <a href="/admin/onboarding/hub">
                         <Button className="flex items-center gap-2">
-                            <FaAngleLeft></FaAngleLeft> TCN Hub
+                            <FaAngleLeft /> TCN Hub
                         </Button>
                     </a>
                 </div>
                 <p>
-                    All technical features are owned and operated by <UserMention id="251082987360223233"></UserMention>. Please contact them for any issues or
-                    questions.
+                    All technical features are owned and operated by <UserMention id="251082987360223233" />. Please contact them for any issues or questions.
                 </p>
             </Prose>
             <br />
@@ -42,7 +41,7 @@ export default function OnboardingGuideTechnical() {
                     <p>
                         Learn how to handle suggestions in{" "}
                         <Mention>
-                            <FaHashtag></FaHashtag> suggestions
+                            <FaHashtag /> suggestions
                         </Mention>{" "}
                         in both HQ and the TCN Hub.
                     </p>

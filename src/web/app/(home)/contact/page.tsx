@@ -23,7 +23,7 @@ export default async function Contact() {
             <ul>
                 {users.map(({ id }) => (
                     <li key={id}>
-                        <UserMention id={id}></UserMention> &mdash; <code>{id}</code>
+                        <UserMention id={id} /> &mdash; <code>{id}</code>
                     </li>
                 ))}
             </ul>

@@ -70,13 +70,13 @@ export default function AdminServersClient({
                         setServer(server);
                         setData(await getServer(server));
                     }}
-                ></ComboSelector>
+                />
                 <Button variant="secondary" onClick={reload}>
-                    <FaRotateRight></FaRotateRight>
+                    <FaRotateRight />
                 </Button>
                 <a href="/admin/servers/new">
                     <Button variant="secondary" className="flex items-center gap-2">
-                        <FaPlus></FaPlus> Add Server
+                        <FaPlus /> Add Server
                     </Button>
                 </a>
             </div>
@@ -102,17 +102,17 @@ export default function AdminServersClient({
                                         if (valid) reload();
                                         else alert("Operation failed; try reloading.");
                                     }}
-                                ></ComboSelector>
+                                />
                                 <a href="/admin/characters" target="_blank">
                                     <Button variant="secondary" className="flex items-center gap-2">
-                                        <FaPlus></FaPlus> Create
+                                        <FaPlus /> Create
                                     </Button>
                                 </a>
                             </div>
                             <b>Name:</b>
                             <div className="flex items-center gap-4">
                                 <div>
-                                    <Input value={name} onChange={({ currentTarget: { value } }) => setName(value)} maxLength={80}></Input>
+                                    <Input value={name} onChange={({ currentTarget: { value } }) => setName(value)} maxLength={80} />
                                 </div>
                                 <Button
                                     variant="secondary"
@@ -123,7 +123,7 @@ export default function AdminServersClient({
                                         else reload();
                                     }}
                                 >
-                                    <FaFloppyDisk></FaFloppyDisk>
+                                    <FaFloppyDisk />
                                 </Button>
                             </div>
                             <b>Invite:</b>
@@ -141,7 +141,7 @@ export default function AdminServersClient({
                                         else reload();
                                     }}
                                 >
-                                    <FaPencil></FaPencil> Edit
+                                    <FaPencil /> Edit
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -152,12 +152,12 @@ export default function AdminServersClient({
                                         else alert("That invite looks okay.");
                                     }}
                                 >
-                                    <FaCheck></FaCheck> Verify
+                                    <FaCheck /> Verify
                                 </Button>
                             </div>
                             <b>Owner:</b>
                             <div className="flex items-center gap-4">
-                                <UserMention id={data.owner}></UserMention>
+                                <UserMention id={data.owner} />
                                 <Button
                                     variant="outline"
                                     className="flex items-center gap-2"
@@ -170,12 +170,12 @@ export default function AdminServersClient({
                                         else reload();
                                     }}
                                 >
-                                    <FaPencil></FaPencil> Edit
+                                    <FaPencil /> Edit
                                 </Button>
                             </div>
                             <b>Advisor:</b>
                             <div className="flex items-center gap-4">
-                                {data.advisor ? <UserMention id={data.advisor}></UserMention> : <span className="opacity-50">(none)</span>}
+                                {data.advisor ? <UserMention id={data.advisor} /> : <span className="opacity-50">(none)</span>}
                                 <Button
                                     variant="outline"
                                     className="flex items-center gap-2"
@@ -188,7 +188,7 @@ export default function AdminServersClient({
                                         else reload();
                                     }}
                                 >
-                                    <FaPencil></FaPencil> Edit
+                                    <FaPencil /> Edit
                                 </Button>
                                 {data.advisor ? (
                                     <Button
@@ -202,7 +202,7 @@ export default function AdminServersClient({
                                             else reload();
                                         }}
                                     >
-                                        <FaShuffle></FaShuffle> Switch With Owner
+                                        <FaShuffle /> Switch With Owner
                                     </Button>
                                 ) : null}
                             </div>
@@ -219,7 +219,7 @@ export default function AdminServersClient({
                                         if (error) alert(`Error:${error}`);
                                         else reload();
                                     }}
-                                ></Switch>
+                                />
                                 Advisor
                             </div>
                         </div>

@@ -10,12 +10,12 @@ export default function OnboardingGuideExpectations() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Onboarding Home
+                        <FaAnglesLeft /> Return to Onboarding Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/critical">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Critical Information
+                        <FaAngleLeft /> Critical Information
                     </Button>
                 </a>
             </div>
@@ -99,7 +99,7 @@ export default function OnboardingGuideExpectations() {
             <br />
             <a href="/admin/onboarding/directory">
                 <Button className="flex items-center gap-2">
-                    Directory <FaAngleRight></FaAngleRight>
+                    Directory <FaAngleRight />
                 </Button>
             </a>
         </Prose>

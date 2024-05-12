@@ -10,12 +10,12 @@ export default function OnboardingTechnicalModmail() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding/technical">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Technical Guide Home
+                        <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/technical/tickets">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Tickets
+                        <FaAngleLeft /> Tickets
                     </Button>
                 </a>
             </div>
@@ -26,7 +26,7 @@ export default function OnboardingTechnicalModmail() {
             <p>
                 Self-assign the{" "}
                 <Mention>
-                    <FaAt></FaAt> Modmail Ping
+                    <FaAt /> Modmail Ping
                 </Mention>{" "}
                 role if you wish to be pinged when modmail threads are opened.
             </p>
@@ -46,14 +46,14 @@ export default function OnboardingTechnicalModmail() {
             </p>
             <p>
                 <Mention>
-                    <FaHashtag></FaHashtag> modmail-log
+                    <FaHashtag /> modmail-log
                 </Mention>{" "}
                 contains links to the modmail logs, which contain all relayed messages, including edits, and internal messages sent within the thread but not to
                 the user. You can also obtain this link ahead of time using <code>/modmail log-link</code>.
             </p>
             <a href="/admin/onboarding/technical/suggestions">
                 <Button className="flex items-center gap-2">
-                    Suggestions <FaAngleRight></FaAngleRight>
+                    Suggestions <FaAngleRight />
                 </Button>
             </a>
         </Prose>

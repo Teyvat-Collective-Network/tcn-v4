@@ -8,8 +8,8 @@ export default async function AdminServersNew({ searchParams: { origin } }: { se
 
     if (origin) {
         const data = await api.getPartialGuildFromThread.query(origin).catch(() => null);
-        if (!data) return <AdminServersNewClient characters={characters}></AdminServersNewClient>;
+        if (!data) return <AdminServersNewClient characters={characters} />;
 
-        return <AdminServersNewClient id={data.guild} name={data.name} invite={data.invite} characters={characters}></AdminServersNewClient>;
-    } else return <AdminServersNewClient characters={characters}></AdminServersNewClient>;
+        return <AdminServersNewClient id={data.guild} name={data.name} invite={data.invite} characters={characters} />;
+    } else return <AdminServersNewClient characters={characters} />;
 }

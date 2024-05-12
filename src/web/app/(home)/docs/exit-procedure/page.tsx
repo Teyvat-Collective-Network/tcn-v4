@@ -9,7 +9,7 @@ export default function DocsExitProcedures() {
             <h1>Docs &mdash; Exit Procedures</h1>
             <a href="/docs">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Docs Home
+                    <FaAnglesLeft /> Return to Docs Home
                 </Button>
             </a>
             <p>
@@ -38,10 +38,10 @@ export default function DocsExitProcedures() {
                 </li>
                 <li>
                     Use <code>/disconnect</code> in your global channels.You do not need to delete them, but you should archive them for clarity if not. You can
-                    then kick <UserMention id={process.env.GLOBAL_CLIENT_ID!}></UserMention> as it will no longer serve any purpose.
+                    then kick <UserMention id={process.env.GLOBAL_CLIENT_ID!} /> as it will no longer serve any purpose.
                 </li>
                 <li>
-                    Kick <UserMention id={process.env.CLIENT_ID!}></UserMention>. Staff autosync will stop working once your server is formally removed and your
+                    Kick <UserMention id={process.env.CLIENT_ID!} />. Staff autosync will stop working once your server is formally removed and your
                     server&apos;s dedicated role will be removed. Banshares will no longer be forwarded.
                 </li>
             </ul>
@@ -51,8 +51,7 @@ export default function DocsExitProcedures() {
             </p>
             <p>
                 Note that your free access to Daedalus&apos; custom client feature will be terminated if you are using it.{" "}
-                <UserMention id="251082987360223233"></UserMention> (the maintainer of the bot) will reach out to you regarding this if it applies and assist
-                you.
+                <UserMention id="251082987360223233" /> (the maintainer of the bot) will reach out to you regarding this if it applies and assist you.
             </p>
             <p>
                 If you are using global chat in a collaboration with another TCN server, you may keep it, as we allow global chat to be used by TCN servers with

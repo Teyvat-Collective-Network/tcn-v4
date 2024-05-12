@@ -93,11 +93,11 @@ export default function ObservationGuide() {
             <p>
                 Post your reports to{" "}
                 <Mention>
-                    <FaHashtag></FaHashtag> reports
+                    <FaHashtag /> reports
                 </Mention>{" "}
                 in HQ and update the status of the candidate&apos;s post in{" "}
                 <Mention>
-                    <FaComments></FaComments> applicants
+                    <FaComments /> applicants
                 </Mention>{" "}
                 to <b>Observation Finished</b>. (You may have to search for the post since it likely will be auto-archived before your observation is complete.)
             </p>

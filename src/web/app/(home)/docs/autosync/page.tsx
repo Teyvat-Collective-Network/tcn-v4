@@ -8,7 +8,7 @@ export default function DocsAutosync() {
             <h1>Docs &mdash; Autosync</h1>
             <a href="/docs">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Docs Home
+                    <FaAnglesLeft /> Return to Docs Home
                 </Button>
             </a>
             <p>

@@ -10,12 +10,12 @@ export default function OnboardingGuideDirectory() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Onboarding Home
+                        <FaAnglesLeft /> Return to Onboarding Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/expectations">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Expectations
+                        <FaAngleLeft /> Expectations
                     </Button>
                 </a>
             </div>
@@ -23,43 +23,43 @@ export default function OnboardingGuideDirectory() {
             <ul>
                 <li>
                     <Mention>
-                        <FaHashtag></FaHashtag> important
+                        <FaHashtag /> important
                     </Mention>{" "}
                     &mdash; This channel contains some important links.
                 </li>
                 <li>
                     <Mention>
-                        <FaHashtag></FaHashtag> exec-management
+                        <FaHashtag /> exec-management
                     </Mention>{" "}
                     &mdash; This is the main private observer channel. This is not exclusively a business channel &mdash; feel free to chat with the other
                     observers here. Keep in mind that we also have{" "}
                     <Mention>
-                        <FaHashtag></FaHashtag> observer-chat
+                        <FaHashtag /> observer-chat
                     </Mention>
                     , a public channel, which may be more suitable for some discussions or information.
                 </li>
                 <li>
                     <Mention>
-                        <FaHashtag></FaHashtag> nsfw-evidence
+                        <FaHashtag /> nsfw-evidence
                     </Mention>{" "}
                     &mdash; This is for posting evidence for topics in discussion that are too NSFW to post in regular channels. Be warned that this may contain
                     disturbing/disgusting content and not just sexually explicit content.
                 </li>
                 <li>
                     <Mention>
-                        <FaHashtag></FaHashtag> exec-bot-spam
+                        <FaHashtag /> exec-bot-spam
                     </Mention>{" "}
                     &mdash; This is the private bot spam / bot command channel.
                 </li>
                 <li>
                     <Mention>
-                        <FaComments></FaComments> exec-projects
+                        <FaComments /> exec-projects
                     </Mention>{" "}
                     &mdash; This is a forum for ongoing projects that do not concern the public. Feel free to open new posts here.
                 </li>
                 <li>
                     <Mention>
-                        <FaHashtag></FaHashtag> ticket-logs
+                        <FaHashtag /> ticket-logs
                     </Mention>{" "}
                     &mdash; This is the log channel for tickets. Keep an eye on the text channels below this, which are the tickets themselves. Learn more about
                     using these on{" "}
@@ -70,37 +70,37 @@ export default function OnboardingGuideDirectory() {
                 </li>
                 <li>
                     <Mention>
-                        <FaVolumeHigh></FaVolumeHigh> Observer Voice Chat
+                        <FaVolumeHigh /> Observer Voice Chat
                     </Mention>{" "}
                     &mdash; This is the observer-only voice channel and may be used for meetings, discussions, or just chatting.
                 </li>
                 <li>
                     <Mention>
-                        <FaFolderOpen></FaFolderOpen> Logs
+                        <FaFolderOpen /> Logs
                     </Mention>{" "}
                     &mdash; This category contains log channels.
                     <ul>
                         <li>
                             <Mention>
-                                <FaHashtag></FaHashtag> message-logs
+                                <FaHashtag /> message-logs
                             </Mention>{" "}
                             logs message edits and deletions.
                         </li>
                         <li>
                             <Mention>
-                                <FaHashtag></FaHashtag> member-logs
+                                <FaHashtag /> member-logs
                             </Mention>{" "}
                             logs updates to members (role, avatar, and nickname changes).
                         </li>
                         <li>
                             <Mention>
-                                <FaHashtag></FaHashtag> server-logs
+                                <FaHashtag /> server-logs
                             </Mention>{" "}
                             logs edits to the server (including roles, channels, etc.).
                         </li>
                         <li>
                             <Mention>
-                                <FaHashtag></FaHashtag> bot-logs
+                                <FaHashtag /> bot-logs
                             </Mention>{" "}
                             is the output for the main bot and functions as a debug/audit channel.
                         </li>
@@ -111,28 +111,28 @@ export default function OnboardingGuideDirectory() {
             <ul>
                 <li>
                     <Mention>
-                        <FaAt></FaAt> Ticket Ping
+                        <FaAt /> Ticket Ping
                     </Mention>{" "}
                     &mdash; pinged when tickets are opened via{" "}
                     <Mention>
-                        <FaHashtag></FaHashtag> contact-observers
+                        <FaHashtag /> contact-observers
                     </Mention>
                     .
                 </li>
                 <li>
                     <Mention>
-                        <FaAt></FaAt> Banshare Ping
+                        <FaAt /> Banshare Ping
                     </Mention>{" "}
                     &mdash; pinged when banshares are submitted to{" "}
                     <Mention>
-                        <FaHashtag></FaHashtag> banshare-logs
+                        <FaHashtag /> banshare-logs
                     </Mention>{" "}
                     (urgent banshares will ping all observers).
                 </li>
             </ul>
             <a href="/admin/onboarding/responsibilities">
                 <Button className="flex items-center gap-2">
-                    Responsibilities <FaAngleRight></FaAngleRight>
+                    Responsibilities <FaAngleRight />
                 </Button>
             </a>
         </Prose>

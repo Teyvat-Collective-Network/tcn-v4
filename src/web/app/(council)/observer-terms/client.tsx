@@ -29,16 +29,16 @@ export default function ObserverTermsClient({ observers }: { observers: { id: st
                         return (
                             <TableRow key={observer.id}>
                                 <TableCell className="flex items-center gap-4">
-                                    <UserMention id={observer.id}></UserMention>
+                                    <UserMention id={observer.id} />
                                 </TableCell>
                                 <TableCell>
-                                    <TimeMention time={observer.observerSince}></TimeMention>
+                                    <TimeMention time={observer.observerSince} />
                                 </TableCell>
                                 <TableCell>
-                                    <TimeMention time={end}></TimeMention>
+                                    <TimeMention time={end} />
                                 </TableCell>
                                 <TableCell>
-                                    <TimeMention time={election}></TimeMention>
+                                    <TimeMention time={election} />
                                 </TableCell>
                             </TableRow>
                         );

@@ -266,20 +266,20 @@ export async function renderResults(id: number, type: string): Promise<string> {
         return verdict === "tie"
             ? `The council's vote tied with ${decline} in favor of declining and ${proceed} against. ${abstainInfo(abstain)}`
             : verdict === "decline"
-            ? `The council voted ${decline} : ${proceed} to reject without observation. ${abstainInfo(abstain)}`
-            : verdict === "proceed"
-            ? `The council voted ${proceed} : ${decline} to proceed with observing this applicant. ${abstainInfo(abstain)}`
-            : "?";
+              ? `The council voted ${decline} : ${proceed} to reject without observation. ${abstainInfo(abstain)}`
+              : verdict === "proceed"
+                ? `The council voted ${proceed} : ${decline} to proceed with observing this applicant. ${abstainInfo(abstain)}`
+                : "?";
     } else if (type === "cancel-observation") {
         const { verdict, cancel, continue: cont, abstain } = await getCancelObservationResults(id);
 
         return verdict === "tie"
             ? `The council's vote tied with ${cancel} in favor of canceling and ${cont} against. ${abstainInfo(abstain)}`
             : verdict === "cancel"
-            ? `The council voted ${cancel} : ${cont} to reject and cancel the ongoing observation. ${abstainInfo(abstain)}`
-            : verdict === "continue"
-            ? `The council voted ${cont} : ${cancel} to continue observing this applicant. ${abstainInfo(abstain)}`
-            : "?";
+              ? `The council voted ${cancel} : ${cont} to reject and cancel the ongoing observation. ${abstainInfo(abstain)}`
+              : verdict === "continue"
+                ? `The council voted ${cont} : ${cancel} to continue observing this applicant. ${abstainInfo(abstain)}`
+                : "?";
     } else if (type === "induction") {
         const poll = await db.query.inductionPolls.findFirst({ columns: { mode: true }, where: eq(tables.inductionPolls.ref, id) });
         if (!poll) return "Could not fetch induction poll data.";
@@ -290,63 +290,63 @@ export async function renderResults(id: number, type: string): Promise<string> {
             ? verdict === "tie"
                 ? `The council's vote tied with ${induct} in favor of inducting and ${reject} (reject) + ${extend} (extend) against. ${abstainInfo(abstain)})`
                 : verdict === "induct"
-                ? `The council voted ${induct} : ${reject} (reject) + ${extend} (extend) to induct this applicant. ${abstainInfo(abstain)}`
-                : verdict === "reject"
-                ? `The council voted ${reject} : ${induct} (induct) + ${extend} (extend) to reject this applicant. ${abstainInfo(abstain)}`
-                : verdict === "extend"
-                ? `The council voted ${extend} : ${induct} (induct) + ${reject} (reject) to extend observation. ${abstainInfo(abstain)}`
-                : verdict === "negative-tie"
-                ? `The council's vote tied between rejecting and extending observation with ${reject} in favor of rejecting and ${extend} in favor of extending observation. ${induct} voter${
-                      induct === 1 ? "" : "s"
-                  } voted to induct. ${abstainInfo(abstain)}`
-                : "?"
+                  ? `The council voted ${induct} : ${reject} (reject) + ${extend} (extend) to induct this applicant. ${abstainInfo(abstain)}`
+                  : verdict === "reject"
+                    ? `The council voted ${reject} : ${induct} (induct) + ${extend} (extend) to reject this applicant. ${abstainInfo(abstain)}`
+                    : verdict === "extend"
+                      ? `The council voted ${extend} : ${induct} (induct) + ${reject} (reject) to extend observation. ${abstainInfo(abstain)}`
+                      : verdict === "negative-tie"
+                        ? `The council's vote tied between rejecting and extending observation with ${reject} in favor of rejecting and ${extend} in favor of extending observation. ${induct} voter${
+                              induct === 1 ? "" : "s"
+                          } voted to induct. ${abstainInfo(abstain)}`
+                        : "?"
             : poll.mode === "pre-approve"
-            ? verdict === "tie"
-                ? `The council's vote tied with ${induct} (induct) + ${preapprove} (pre-approve) in favor of approval and ${reject} (reject) + ${extend} (extend) against. ${abstainInfo(
-                      abstain,
-                  )}`
-                : verdict === "induct"
-                ? `The council voted ${induct} : ${preapprove} (pre-approve) + ${reject} (reject) + ${extend} (extend) to induct this applicant. ${abstainInfo(
-                      abstain,
-                  )}`
-                : verdict === "preapprove"
-                ? `The council voted ${preapprove} : ${induct} (induct) + ${reject} (reject) + ${extend} (extend) to induct this applicant. ${abstainInfo(
-                      abstain,
-                  )}`
-                : verdict === "reject"
-                ? `The council voted ${reject} : ${induct} (induct) + ${preapprove} (pre-approve) + ${extend} (extend) to induct this applicant. ${abstainInfo(
-                      abstain,
-                  )}`
-                : verdict === "extend"
-                ? `The council voted ${extend} : ${induct} (induct) + ${preapprove} (pre-approve) + ${reject} (reject) to induct this applicant. ${abstainInfo(
-                      abstain,
-                  )}`
-                : verdict === "positive-tie"
-                ? `The council's vote tied between inducting and pre-approving with ${induct} in favor of inducting and ${preapprove} in favor of pre-approving. ${reject} voter${
-                      reject === 1 ? "" : "s"
-                  } voted to reject and ${extend} voter${extend === 1 ? "" : "s"} voted to extend observation. ${abstainInfo(abstain)}`
-                : verdict === "negative-tie"
-                ? `The council's vote tied between rejecting and extending observation with ${reject} in favor of rejecting and ${extend} in favor of extending observation. ${induct} voter${
-                      induct === 1 ? "" : "s"
-                  } voted to induct and ${preapprove} voter${preapprove === 1 ? "" : "s"} voted to pre-approve. ${abstainInfo(abstain)}`
-                : "?"
-            : poll.mode === "positive-tiebreak"
-            ? verdict === "tie"
-                ? `The council's vote tied with ${induct} in favor of inducting now and ${preapprove} in favor of pre-approving. ${abstainInfo(abstain)}`
-                : verdict === "induct"
-                ? `The council voted ${induct} : ${preapprove} to induct this applicant now rather than pre-approving. ${abstainInfo(abstain)}`
-                : verdict === "preapprove"
-                ? `The council voted ${preapprove} : ${induct} to pre-approve this applicant rather than inducting them now. ${abstainInfo(abstain)}`
-                : "?"
-            : poll.mode === "negative-tiebreak"
-            ? verdict === "tie"
-                ? `The council's vote tied with ${reject} in favor of rejecting and ${extend} in favor of extending observation. ${abstainInfo(abstain)}`
-                : verdict === "reject"
-                ? `The council voted ${reject} : ${extend} to reject this applicant rather than extending observation. ${abstainInfo(abstain)}`
-                : verdict === "extend"
-                ? `The council voted ${extend} : ${reject} to extend observation for this applicant rather than rejecting them. ${abstainInfo(abstain)}`
-                : "?"
-            : "?";
+              ? verdict === "tie"
+                  ? `The council's vote tied with ${induct} (induct) + ${preapprove} (pre-approve) in favor of approval and ${reject} (reject) + ${extend} (extend) against. ${abstainInfo(
+                        abstain,
+                    )}`
+                  : verdict === "induct"
+                    ? `The council voted ${induct} : ${preapprove} (pre-approve) + ${reject} (reject) + ${extend} (extend) to induct this applicant. ${abstainInfo(
+                          abstain,
+                      )}`
+                    : verdict === "preapprove"
+                      ? `The council voted ${preapprove} : ${induct} (induct) + ${reject} (reject) + ${extend} (extend) to induct this applicant. ${abstainInfo(
+                            abstain,
+                        )}`
+                      : verdict === "reject"
+                        ? `The council voted ${reject} : ${induct} (induct) + ${preapprove} (pre-approve) + ${extend} (extend) to induct this applicant. ${abstainInfo(
+                              abstain,
+                          )}`
+                        : verdict === "extend"
+                          ? `The council voted ${extend} : ${induct} (induct) + ${preapprove} (pre-approve) + ${reject} (reject) to induct this applicant. ${abstainInfo(
+                                abstain,
+                            )}`
+                          : verdict === "positive-tie"
+                            ? `The council's vote tied between inducting and pre-approving with ${induct} in favor of inducting and ${preapprove} in favor of pre-approving. ${reject} voter${
+                                  reject === 1 ? "" : "s"
+                              } voted to reject and ${extend} voter${extend === 1 ? "" : "s"} voted to extend observation. ${abstainInfo(abstain)}`
+                            : verdict === "negative-tie"
+                              ? `The council's vote tied between rejecting and extending observation with ${reject} in favor of rejecting and ${extend} in favor of extending observation. ${induct} voter${
+                                    induct === 1 ? "" : "s"
+                                } voted to induct and ${preapprove} voter${preapprove === 1 ? "" : "s"} voted to pre-approve. ${abstainInfo(abstain)}`
+                              : "?"
+              : poll.mode === "positive-tiebreak"
+                ? verdict === "tie"
+                    ? `The council's vote tied with ${induct} in favor of inducting now and ${preapprove} in favor of pre-approving. ${abstainInfo(abstain)}`
+                    : verdict === "induct"
+                      ? `The council voted ${induct} : ${preapprove} to induct this applicant now rather than pre-approving. ${abstainInfo(abstain)}`
+                      : verdict === "preapprove"
+                        ? `The council voted ${preapprove} : ${induct} to pre-approve this applicant rather than inducting them now. ${abstainInfo(abstain)}`
+                        : "?"
+                : poll.mode === "negative-tiebreak"
+                  ? verdict === "tie"
+                      ? `The council's vote tied with ${reject} in favor of rejecting and ${extend} in favor of extending observation. ${abstainInfo(abstain)}`
+                      : verdict === "reject"
+                        ? `The council voted ${reject} : ${extend} to reject this applicant rather than extending observation. ${abstainInfo(abstain)}`
+                        : verdict === "extend"
+                          ? `The council voted ${extend} : ${reject} to extend observation for this applicant rather than rejecting them. ${abstainInfo(abstain)}`
+                          : "?"
+                  : "?";
     } else if (type === "election") {
         const { winners, ties } = await getElectionResults(id);
 
@@ -452,38 +452,38 @@ export async function renderComponents(id: number, type: string, disabled: boole
                                   },
                               ]
                             : poll.mode === "positive-tiebreak"
-                            ? [
-                                  {
-                                      type: ComponentType.Button,
-                                      customId: ":poll/induction/button:induct",
-                                      style: ButtonStyle.Success,
-                                      label: "Induct Now",
-                                      disabled,
-                                  },
-                                  {
-                                      type: ComponentType.Button,
-                                      customId: ":poll/induction/button:preapprove",
-                                      style: ButtonStyle.Primary,
-                                      label: "Pre-Approve",
-                                      disabled,
-                                  },
-                              ]
-                            : [
-                                  {
-                                      type: ComponentType.Button,
-                                      customId: ":poll/induction/button:reject",
-                                      style: ButtonStyle.Success,
-                                      label: "Reject",
-                                      disabled,
-                                  },
-                                  {
-                                      type: ComponentType.Button,
-                                      customId: ":poll/induction/button:extend",
-                                      style: ButtonStyle.Primary,
-                                      label: "Extend Observation",
-                                      disabled,
-                                  },
-                              ],
+                              ? [
+                                    {
+                                        type: ComponentType.Button,
+                                        customId: ":poll/induction/button:induct",
+                                        style: ButtonStyle.Success,
+                                        label: "Induct Now",
+                                        disabled,
+                                    },
+                                    {
+                                        type: ComponentType.Button,
+                                        customId: ":poll/induction/button:preapprove",
+                                        style: ButtonStyle.Primary,
+                                        label: "Pre-Approve",
+                                        disabled,
+                                    },
+                                ]
+                              : [
+                                    {
+                                        type: ComponentType.Button,
+                                        customId: ":poll/induction/button:reject",
+                                        style: ButtonStyle.Success,
+                                        label: "Reject",
+                                        disabled,
+                                    },
+                                    {
+                                        type: ComponentType.Button,
+                                        customId: ":poll/induction/button:extend",
+                                        style: ButtonStyle.Primary,
+                                        label: "Extend Observation",
+                                        disabled,
+                                    },
+                                ],
                 },
             ];
     }

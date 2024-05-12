@@ -8,5 +8,5 @@ export default async function BanshareForm() {
     const user = await getId();
     if (!user) return;
 
-    return <BanshareFormClient guilds={await api.getGuildsForBanshare.query(user)}></BanshareFormClient>;
+    return <BanshareFormClient guilds={await api.getGuildsForBanshare.query(user)} />;
 }

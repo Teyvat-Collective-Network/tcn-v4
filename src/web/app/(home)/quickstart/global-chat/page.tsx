@@ -9,12 +9,12 @@ export default function QuickstartGlobalChat() {
             <div className="flex items-center gap-4">
                 <a href="/quickstart">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Quickstart Home
+                        <FaAnglesLeft /> Return to Quickstart Home
                     </Button>
                 </a>
                 <a href="/quickstart/banshares">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Banshares
+                        <FaAngleLeft /> Banshares
                     </Button>
                 </a>
             </div>
@@ -102,7 +102,7 @@ export default function QuickstartGlobalChat() {
             </p>
             <a href="/quickstart/staff-link">
                 <Button className="flex items-center gap-2">
-                    Staff Link <FaAngleRight></FaAngleRight>
+                    Staff Link <FaAngleRight />
                 </Button>
             </a>
         </Prose>

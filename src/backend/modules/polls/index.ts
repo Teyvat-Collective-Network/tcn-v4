@@ -144,12 +144,12 @@ loop(async () => {
                                 verdict === "induct"
                                     ? applicationThreadStatusToTag.inducted
                                     : verdict === "preapprove"
-                                    ? applicationThreadStatusToTag["pre-approved"]
-                                    : verdict === "reject"
-                                    ? applicationThreadStatusToTag.rejected
-                                    : verdict === "extend"
-                                    ? applicationThreadStatusToTag.pending
-                                    : applicationThreadStatusToTag["observation-finished"],
+                                      ? applicationThreadStatusToTag["pre-approved"]
+                                      : verdict === "reject"
+                                        ? applicationThreadStatusToTag.rejected
+                                        : verdict === "extend"
+                                          ? applicationThreadStatusToTag.pending
+                                          : applicationThreadStatusToTag["observation-finished"],
                             ]);
 
                             await channel.send(

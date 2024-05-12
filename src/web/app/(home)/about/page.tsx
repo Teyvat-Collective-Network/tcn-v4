@@ -36,14 +36,14 @@ export default function About() {
             <Panel>
                 <h2 className="mt-4">Benefits of Joining the TCN</h2>
                 <h3 className="flex items-center gap-4">
-                    <FaCircleInfo></FaCircleInfo> Information
+                    <FaCircleInfo /> Information
                 </h3>
                 <p>
                     As a member server of the TCN, you get access to information on members, ongoing issues, as well as informative resources like server setup
                     and tools and on-demand help for the technical aspects and community and staff management.
                 </p>
                 <h3 className="flex items-center gap-4">
-                    <FaHandshake></FaHandshake> Connections
+                    <FaHandshake /> Connections
                 </h3>
                 <p>
                     TCN servers have quick and easy access to communication with each other. In addition to being able to more quickly resolve any issues and
@@ -51,21 +51,21 @@ export default function About() {
                     like events, which you can also promote through the TCN&apos;s event announcement feed.
                 </p>
                 <h3 className="flex items-center gap-4">
-                    <FaChartLine></FaChartLine> Growth
+                    <FaChartLine /> Growth
                 </h3>
                 <p>
                     When you join the TCN, you automatically become a TCN partner of all TCN servers and will have your server listed on the partner list in all
                     of them. Additionally, you will be able to get tips on how to improve your server environment and grow a strong, healthy community.
                 </p>
                 <h3 className="flex items-center gap-4">
-                    <FaCircleNodes></FaCircleNodes> Networking
+                    <FaCircleNodes /> Networking
                 </h3>
                 <p>
                     As a TCN server, besides direct connections with other server owners, you will also have access to networking with admins in HQ and with
                     other server admins and staff through their TCN representatives.
                 </p>
                 <h3 className="flex items-center gap-4">
-                    <FaEarthAmericas></FaEarthAmericas> Global Chat
+                    <FaEarthAmericas /> Global Chat
                 </h3>
                 <p>
                     You will have access to global channels, which are channels where messages are relayed to all connected servers. We have a public global
@@ -78,14 +78,14 @@ export default function About() {
             <Panel>
                 <h2 className="mt-4">Our Core Tenets</h2>
                 <h3 className="flex items-center gap-4">
-                    <FaComments></FaComments> Transparency
+                    <FaComments /> Transparency
                 </h3>
                 <p>
                     We prioritize two-way communication with our member servers. We are always open to feedback and will reach out for opportunities to improve
                     the network to work for our members, and not the other way around.
                 </p>
                 <h3 className="flex items-center gap-4">
-                    <FaCheckToSlot></FaCheckToSlot> Democracy
+                    <FaCheckToSlot /> Democracy
                 </h3>
                 <p>
                     In addition to communicating major changes with our members clearly, we propose these changes and vote on major decisions on them, and the
@@ -93,7 +93,7 @@ export default function About() {
                     implement follow-up changes based on feedback.
                 </p>
                 <h3 className="flex items-center gap-4">
-                    <FaUserGroup></FaUserGroup> Collaboration
+                    <FaUserGroup /> Collaboration
                 </h3>
                 <p>
                     We don&apos;t expect everyone in the TCN to like everyone else, but even when discussions are heated we treat each other with civility and

@@ -9,12 +9,12 @@ export default function OnboardingGuideResponsibilities() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Onboarding Home
+                        <FaAnglesLeft /> Return to Onboarding Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/directory">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Directory
+                        <FaAngleLeft /> Directory
                     </Button>
                 </a>
             </div>
@@ -103,7 +103,7 @@ export default function OnboardingGuideResponsibilities() {
             </ul>
             <a href="/admin/onboarding/hub">
                 <Button className="flex items-center gap-2">
-                    TCN Hub <FaAngleRight></FaAngleRight>
+                    TCN Hub <FaAngleRight />
                 </Button>
             </a>
         </Prose>

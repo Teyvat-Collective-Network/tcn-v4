@@ -9,12 +9,12 @@ export default function OnboardingTechnicalElections() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding/technical">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Technical Guide Home
+                        <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/technical/votes">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Votes
+                        <FaAngleLeft /> Votes
                     </Button>
                 </a>
             </div>

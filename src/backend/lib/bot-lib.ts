@@ -101,8 +101,8 @@ export async function promptConfirm(interaction: RepliableInteraction, body: str
                         timeout < 60
                             ? `${timeout} second${timeout === 1 ? "" : "s"}`
                             : timeout % 60 === 0
-                            ? `${timeout / 60} minute${timeout === 60 ? "" : "s"}`
-                            : `${Math.floor(timeout / 60)} minute${timeout < 120 ? "" : "s"} and ${timeout % 60} second${timeout % 60 === 1 ? "" : "s"}`
+                              ? `${timeout / 60} minute${timeout === 60 ? "" : "s"}`
+                              : `${Math.floor(timeout / 60)} minute${timeout < 120 ? "" : "s"} and ${timeout % 60} second${timeout % 60 === 1 ? "" : "s"}`
                     } to confirm.`,
                 },
             },

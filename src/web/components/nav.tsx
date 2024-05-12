@@ -6,8 +6,8 @@ import { Container } from "./ui/container";
 export function Nav({ root, children }: React.PropsWithChildren<{ root: string }>) {
     return (
         <>
-            <Menu root={root}></Menu>
-            <TopBar root={root}></TopBar>
+            <Menu root={root} />
+            <TopBar root={root} />
             <Container>{children}</Container>
         </>
     );

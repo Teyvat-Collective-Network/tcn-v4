@@ -10,19 +10,19 @@ export default function OnboardingTechnicalSuggestions() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding/technical">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Technical Guide Home
+                        <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/technical/modmail">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Modmail
+                        <FaAngleLeft /> Modmail
                     </Button>
                 </a>
             </div>
             <p>
                 In both HQ and the TCN Hub, users can make suggestions to{" "}
                 <Mention>
-                    <FaHashtag></FaHashtag> suggestions
+                    <FaHashtag /> suggestions
                 </Mention>{" "}
                 using <code>/suggest</code>. Other users can then vote on the suggestion.
             </p>
@@ -36,7 +36,7 @@ export default function OnboardingTechnicalSuggestions() {
             </p>
             <a href="/admin/onboarding/technical/applications">
                 <Button className="flex items-center gap-2">
-                    Applications <FaAngleRight></FaAngleRight>
+                    Applications <FaAngleRight />
                 </Button>
             </a>
         </Prose>

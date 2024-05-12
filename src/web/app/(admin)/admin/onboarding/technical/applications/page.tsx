@@ -10,12 +10,12 @@ export default function OnboardingTechnicalApplications() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding/technical">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Technical Guide Home
+                        <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/technical/suggestions">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Suggestions
+                        <FaAngleLeft /> Suggestions
                     </Button>
                 </a>
             </div>
@@ -26,7 +26,7 @@ export default function OnboardingTechnicalApplications() {
                 </a>
                 , a thread is automatically opened under{" "}
                 <Mention>
-                    <FaComments></FaComments> applicants
+                    <FaComments /> applicants
                 </Mention>{" "}
                 with the status set to <b>pending</b>.
             </p>
@@ -105,7 +105,7 @@ export default function OnboardingTechnicalApplications() {
             </p>
             <a href="/admin/onboarding/technical/global">
                 <Button className="flex items-center gap-2">
-                    Global Chat <FaAngleRight></FaAngleRight>
+                    Global Chat <FaAngleRight />
                 </Button>
             </a>
         </Prose>

@@ -34,7 +34,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
         <>
             <div className="flex items-center gap-4">
                 <b>User:</b>
-                {id ? <UserMention id={id}></UserMention> : <span className="opacity-50">(enter a user to start)</span>}
+                {id ? <UserMention id={id} /> : <span className="opacity-50">(enter a user to start)</span>}
                 <Button
                     variant="secondary"
                     onClick={() => {
@@ -46,7 +46,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                         reload(id);
                     }}
                 >
-                    <FaPencil></FaPencil>
+                    <FaPencil />
                 </Button>
                 <Button
                     variant="secondary"
@@ -56,7 +56,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                         setServers(await getServers());
                     }}
                 >
-                    <FaRotateRight></FaRotateRight>
+                    <FaRotateRight />
                 </Button>
             </div>
             <hr className="my-8" />
@@ -71,7 +71,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                                 <span>
                                     {data.observer ? (
                                         <>
-                                            Yes, since <TimeMention time={data.observerSince}></TimeMention>
+                                            Yes, since <TimeMention time={data.observerSince} />
                                         </>
                                     ) : (
                                         <>No</>
@@ -116,7 +116,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                                         reload();
                                     }}
                                 >
-                                    <FaPencil></FaPencil>
+                                    <FaPencil />
                                 </Button>
                             </div>
                             <b>Council Position:</b>
@@ -132,7 +132,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                                                 {index === 0 ? "" : ", "}
                                                 {position} of{" "}
                                                 <Mention>
-                                                    <FaServer></FaServer> {guildNames[id] ?? id}
+                                                    <FaServer /> {guildNames[id] ?? id}
                                                 </Mention>
                                             </React.Fragment>
                                         ))}
@@ -147,7 +147,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                                         <React.Fragment key={id}>
                                             {index === 0 ? "" : ", "}
                                             <Mention>
-                                                <FaServer></FaServer> {guildNames[id] ?? id}
+                                                <FaServer /> {guildNames[id] ?? id}
                                             </Mention>
                                         </React.Fragment>
                                     ))}

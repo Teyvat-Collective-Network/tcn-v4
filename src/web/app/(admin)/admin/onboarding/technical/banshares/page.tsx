@@ -10,38 +10,38 @@ export default function OnboardingTechnicalBanshares() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding/technical">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Technical Guide Home
+                        <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/technical/global">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Global Chat
+                        <FaAngleLeft /> Global Chat
                     </Button>
                 </a>
             </div>
             <p>
                 When banshares are submitted, an alert will be sent to{" "}
                 <Mention>
-                    <FaHashtag></FaHashtag> exec-management
+                    <FaHashtag /> exec-management
                 </Mention>{" "}
                 pinging{" "}
                 <Mention>
-                    <FaAt></FaAt> Banshare Ping
+                    <FaAt /> Banshare Ping
                 </Mention>{" "}
                 (you can self-assign this role) if non-urgent and{" "}
                 <Mention>
-                    <FaAt></FaAt> Observer
+                    <FaAt /> Observer
                 </Mention>{" "}
                 if urgent.
             </p>
             <p>
                 You can always check an up-to-date list of banshares awaiting review in{" "}
                 <Mention>
-                    <FaHashtag></FaHashtag> banshare-dashboard
+                    <FaHashtag /> banshare-dashboard
                 </Mention>
                 . If a banshare is left unreviewed for too long (6 hours for non-urgent banshares and 2 hours for urgent banshares), an alert pinging{" "}
                 <Mention>
-                    <FaAt></FaAt> Observer
+                    <FaAt /> Observer
                 </Mention>{" "}
                 will be sent.
             </p>
@@ -70,7 +70,7 @@ export default function OnboardingTechnicalBanshares() {
             </p>
             <a href="/admin/onboarding/technical/votes">
                 <Button className="flex items-center gap-2">
-                    Votes <FaAngleRight></FaAngleRight>
+                    Votes <FaAngleRight />
                 </Button>
             </a>
         </Prose>

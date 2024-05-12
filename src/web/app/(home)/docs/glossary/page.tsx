@@ -9,7 +9,7 @@ export default function DocsGlossary() {
             <h1>Docs &mdash; Glossary</h1>
             <a href="/docs">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Docs Home
+                    <FaAnglesLeft /> Return to Docs Home
                 </Button>
             </a>
             <Table>

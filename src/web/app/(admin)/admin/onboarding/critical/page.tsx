@@ -8,7 +8,7 @@ export default function OnboardingGuideCritical() {
             <h1>Observer Onboarding &mdash; Critical Information</h1>
             <a href="/admin/onboarding">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Onboarding Home
+                    <FaAnglesLeft /> Return to Onboarding Home
                 </Button>
             </a>
             <p>
@@ -23,7 +23,7 @@ export default function OnboardingGuideCritical() {
             <p>If a channel or role needs to be deleted, it will need to be discussed first, and the owner of HQ can safely remove it.</p>
             <a href="/admin/onboarding/expectations">
                 <Button className="flex items-center gap-2">
-                    Expectations <FaAngleRight></FaAngleRight>
+                    Expectations <FaAngleRight />
                 </Button>
             </a>
         </Prose>

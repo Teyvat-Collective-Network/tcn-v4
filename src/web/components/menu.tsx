@@ -76,15 +76,15 @@ export function Menu({ root }: { root: string }) {
         <>
             <div className="z-10 hidden md:block fixed pl-4 pt-4">
                 <button onClick={() => setOpen(true)}>
-                    <FaBars className="text-2xl text-muted-foreground"></FaBars>
+                    <FaBars className="text-2xl text-muted-foreground" />
                 </button>
             </div>
             <div className="md:hidden fixed w-screen h-14 pl-4 pt-4 bg-secondary">
                 <button onClick={() => setOpen(true)}>
-                    <FaBars className="text-2xl text-muted-foreground"></FaBars>
+                    <FaBars className="text-2xl text-muted-foreground" />
                 </button>
             </div>
-            <div className="md:hidden h-14"></div>
+            <div className="md:hidden h-14" />
             <div
                 className="fixed z-20 bg-background/90 backdrop-blur-[2px] h-screen w-[calc(min(90%,400px))]"
                 style={{ translate: open ? "0" : "-100%", transition: "translate 200ms" }}
@@ -92,21 +92,21 @@ export function Menu({ root }: { root: string }) {
                 <div className="w-full h-full bg-muted-foreground/5">
                     <div className="p-4">
                         <button className="text-2xl text-muted-foreground" onClick={() => setOpen(false)}>
-                            <FaXmark></FaXmark>
+                            <FaXmark />
                         </button>
                     </div>
                     <div className="flex flex-col">
                         <button className="px-4 py-2 hidden dark:flex items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("light")}>
-                            <FaSun></FaSun>
+                            <FaSun />
                             Switch to Light Mode
                         </button>
                         <button className="px-4 py-2 flex dark:hidden items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("dark")}>
-                            <FaMoon></FaMoon>
+                            <FaMoon />
                             Switch to Dark Mode
                         </button>
                         <hr />
                         {links.map((item, i) => {
-                            if (item === null) return <hr key={i} className="my-2"></hr>;
+                            if (item === null) return <hr key={i} className="my-2" />;
 
                             const [link, title, icon] = item;
 
@@ -127,7 +127,7 @@ export function Menu({ root }: { root: string }) {
                 className="fixed z-10 w-screen h-screen bg-background"
                 style={{ opacity: open ? "40%" : "0%", pointerEvents: open ? "inherit" : "none" }}
                 onClick={() => setOpen(false)}
-            ></div>
+            />
         </>
     );
 }

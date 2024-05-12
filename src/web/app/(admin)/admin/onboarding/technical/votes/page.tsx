@@ -9,12 +9,12 @@ export default function OnboardingTechnicalVotes() {
             <div className="flex items-center gap-4">
                 <a href="/admin/onboarding/technical">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Technical Guide Home
+                        <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
                 <a href="/admin/onboarding/technical/banshares">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Banshares
+                        <FaAngleLeft /> Banshares
                     </Button>
                 </a>
             </div>
@@ -49,7 +49,7 @@ export default function OnboardingTechnicalVotes() {
             {/* TODO: */}
             <a href="/admin/onboarding/technical/elections">
                 <Button className="flex items-center gap-2">
-                    Elections <FaAngleRight></FaAngleRight>
+                    Elections <FaAngleRight />
                 </Button>
             </a>
         </Prose>

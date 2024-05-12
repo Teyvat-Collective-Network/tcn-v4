@@ -31,13 +31,13 @@ export default function AutoPaginate({
             <PaginationContent className="cursor-pointer">
                 {page === 1 ? null : (
                     <PaginationItem>
-                        <PaginationPrevious onClick={() => setPage((x) => (update?.(x - 1), x - 1))}></PaginationPrevious>
+                        <PaginationPrevious onClick={() => setPage((x) => (update?.(x - 1), x - 1))} />
                     </PaginationItem>
                 )}
                 {show.map((n, i) => (
                     <PaginationItem key={i}>
                         {n === null ? (
-                            <PaginationEllipsis></PaginationEllipsis>
+                            <PaginationEllipsis />
                         ) : (
                             <PaginationLink
                                 onClick={() => {
@@ -54,7 +54,7 @@ export default function AutoPaginate({
                 ))}
                 {page === pages ? null : (
                     <PaginationItem>
-                        <PaginationNext onClick={() => setPage((x) => (update?.(x + 1), x + 1))}></PaginationNext>
+                        <PaginationNext onClick={() => setPage((x) => (update?.(x + 1), x + 1))} />
                     </PaginationItem>
                 )}
             </PaginationContent>

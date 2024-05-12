@@ -6,7 +6,7 @@ export default function TimeMention({ time }: { time: number | Date }) {
 
     return (
         <Mention>
-            <FaClock></FaClock>
+            <FaClock />
             {date.getFullYear()}-{(date.getMonth() + 1).toString().padStart(2, "0")}-{date.getDate().toString().padStart(2, "0")}
         </Mention>
     );

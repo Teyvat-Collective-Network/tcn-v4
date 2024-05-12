@@ -43,7 +43,7 @@ export default function ElectionClient(data: { wave: number; seats: number; toke
                         {ranked.map((id, i) => (
                             <li key={id}>
                                 <div className="inline-flex items-center gap-4">
-                                    <UserMention id={id}></UserMention>
+                                    <UserMention id={id} />
                                     {i === 0 ? null : (
                                         <>
                                             <Button
@@ -52,7 +52,7 @@ export default function ElectionClient(data: { wave: number; seats: number; toke
                                                     setRanked((ranked) => [id, ...ranked.filter((x) => x !== id)]);
                                                 }}
                                             >
-                                                <FaAnglesUp></FaAnglesUp>
+                                                <FaAnglesUp />
                                             </Button>
                                             <Button
                                                 variant="secondary"
@@ -65,7 +65,7 @@ export default function ElectionClient(data: { wave: number; seats: number; toke
                                                     });
                                                 }}
                                             >
-                                                <FaAngleUp></FaAngleUp>
+                                                <FaAngleUp />
                                             </Button>
                                         </>
                                     )}
@@ -82,7 +82,7 @@ export default function ElectionClient(data: { wave: number; seats: number; toke
                                                     });
                                                 }}
                                             >
-                                                <FaAngleDown></FaAngleDown>
+                                                <FaAngleDown />
                                             </Button>
                                             <Button
                                                 variant="secondary"
@@ -90,7 +90,7 @@ export default function ElectionClient(data: { wave: number; seats: number; toke
                                                     setRanked((ranked) => [...ranked.filter((x) => x !== id), id]);
                                                 }}
                                             >
-                                                <FaAnglesDown></FaAnglesDown>
+                                                <FaAnglesDown />
                                             </Button>
                                         </>
                                     )}
@@ -122,7 +122,7 @@ export default function ElectionClient(data: { wave: number; seats: number; toke
                         {countered.map((id) => (
                             <li key={id}>
                                 <div className="inline-flex items-center gap-4">
-                                    <UserMention id={id}></UserMention>
+                                    <UserMention id={id} />
                                     <Button
                                         variant="secondary"
                                         onClick={() => {
@@ -151,7 +151,7 @@ export default function ElectionClient(data: { wave: number; seats: number; toke
                         {abstained.map((id) => (
                             <li key={id}>
                                 <div className="inline-flex items-center gap-4">
-                                    <UserMention id={id}></UserMention>
+                                    <UserMention id={id} />
                                     <Button variant="secondary" onClick={() => setRanked((ranked) => [...ranked, id])}>
                                         Rank
                                     </Button>

@@ -15,13 +15,6 @@ export default async function Election({ searchParams: { token } }: { searchPara
         );
 
     return (
-        <ElectionClient
-            wave={data.wave}
-            seats={data.seats}
-            token={data.token}
-            candidates={data.candidates}
-            ranked={data.ranked}
-            countered={data.countered}
-        ></ElectionClient>
+        <ElectionClient wave={data.wave} seats={data.seats} token={data.token} candidates={data.candidates} ranked={data.ranked} countered={data.countered} />
     );
 }

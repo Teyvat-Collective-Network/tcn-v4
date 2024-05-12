@@ -17,13 +17,13 @@ export default function UserMention({ id }: { id: string }) {
     if (id in cache)
         return (
             <Mention>
-                <FaAt></FaAt> {cache[id]}
+                <FaAt /> {cache[id]}
             </Mention>
         );
 
     const loading = (
         <Mention>
-            <FaSpinner></FaSpinner> Loading user {id}
+            <FaSpinner /> Loading user {id}
         </Mention>
     );
 
@@ -31,7 +31,7 @@ export default function UserMention({ id }: { id: string }) {
 
     return (
         <Suspense fallback={loading}>
-            <Core id={id}></Core>
+            <Core id={id} />
         </Suspense>
     );
 }
@@ -43,7 +43,7 @@ async function Core({ id }: { id: string }) {
     const tag = (cache[id] = await ptag);
     return (
         <Mention>
-            <FaAt></FaAt> {tag}
+            <FaAt /> {tag}
         </Mention>
     );
 }

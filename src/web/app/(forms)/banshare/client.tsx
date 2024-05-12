@@ -34,14 +34,14 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                 <p>
                     We will review it and you should see it in{" "}
                     <Mention>
-                        <FaHashtag></FaHashtag> banshares
+                        <FaHashtag /> banshares
                     </Mention>{" "}
                     in the TCN Hub shortly. We will reach out to you if we believe the banshare does not meet our standards.
                 </p>
                 <div className="flex items-center gap-4">
                     <a href="/">
                         <Button className="flex items-center gap-2">
-                            <FaHouse></FaHouse> Home
+                            <FaHouse /> Home
                         </Button>
                     </a>
                     <Button
@@ -57,7 +57,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                             setDone(false);
                         }}
                     >
-                        <FaRepeat></FaRepeat> Submit Another
+                        <FaRepeat /> Submit Another
                     </Button>
                 </div>
             </Prose>
@@ -76,7 +76,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                 </p>
                 <Panel>
                     <h2 className="mt-4">ID(s) of the offender(s)</h2>
-                    <Input placeholder="Space-separated list of IDs" value={ids} onChange={({ currentTarget: { value } }) => setIds(value)}></Input>
+                    <Input placeholder="Space-separated list of IDs" value={ids} onChange={({ currentTarget: { value } }) => setIds(value)} />
                     <br />
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
@@ -97,7 +97,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                                           <ul>
                                               {idList.map((id) => (
                                                   <li key={id}>
-                                                      <code>{id}</code> &mdash; <UserMention id={id}></UserMention>
+                                                      <code>{id}</code> &mdash; <UserMention id={id} />
                                                   </li>
                                               ))}
                                           </ul>
@@ -118,7 +118,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                         onChange={({ currentTarget: { value } }) => setReason(value)}
                         maxLength={498}
                         rows={4}
-                    ></Textarea>
+                    />
                     <hr className="my-8" />
                     <h2>Evidence &amp; Context</h2>
                     <p>
@@ -135,14 +135,14 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                         onChange={({ currentTarget: { value } }) => setEvidence(value)}
                         maxLength={1000}
                         rows={4}
-                    ></Textarea>
+                    />
                     <hr className="my-8" />
                     <h2>Server</h2>
                     <p>
                         Identify the server from which you are submitting this banshare. This is just for auditing/contact, so if you are not in the server
                         where the incident happened or it spans multiple servers, just pick whichever one you staff most actively in.
                     </p>
-                    <ComboSelector values={guilds.map((guild) => ({ label: guild.name, value: guild.id }))} value={server} setValue={setServer}></ComboSelector>
+                    <ComboSelector values={guilds.map((guild) => ({ label: guild.name, value: guild.id }))} value={server} setValue={setServer} />
                     <hr className="my-8" />
                     <h2>Severity</h2>
                     <p>
@@ -161,12 +161,12 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                         ]}
                         value={severity}
                         setValue={setSeverity}
-                    ></ComboSelector>
+                    />
                     <hr className="my-8" />
                     <h2>Urgency</h2>
                     <p>Check the box below to ping all observers to review this banshare urgently.</p>
                     <div className="flex items-center gap-4">
-                        <Switch checked={urgent} onCheckedChange={setUrgent}></Switch> This banshare is urgent.
+                        <Switch checked={urgent} onCheckedChange={setUrgent} /> This banshare is urgent.
                     </div>
                 </Panel>
                 <br />

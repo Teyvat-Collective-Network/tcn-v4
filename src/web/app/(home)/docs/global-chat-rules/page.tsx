@@ -10,7 +10,7 @@ export default function DocsGlobalChatRules() {
             <h1>Docs &mdash; Global Chat Rules</h1>
             <a href="/docs">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Docs Home
+                    <FaAnglesLeft /> Return to Docs Home
                 </Button>
             </a>
             <p>
@@ -22,7 +22,7 @@ export default function DocsGlobalChatRules() {
                 <a href={process.env.HUB_INVITE} className="link" target="_blank">
                     TCN Hub
                 </a>{" "}
-                by DMing <UserMention id={process.env.CLIENT_ID!}></UserMention> after joining the server.
+                by DMing <UserMention id={process.env.CLIENT_ID!} /> after joining the server.
             </p>
             <p>Inappropriate behavior in DMs or in TCN servers outside of global chat may also result in penalties applied in global chat.</p>
             <Section tag="h2" id="be-nice">

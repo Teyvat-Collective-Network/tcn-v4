@@ -7,7 +7,7 @@ export function Section({ id, tag, children }: React.PropsWithChildren<{ id: str
     return (
         <Tag className="flex items-center gap-4">
             <a id={id} href={`#${id}`}>
-                <FaLink></FaLink>
+                <FaLink />
             </a>
             {children}
         </Tag>

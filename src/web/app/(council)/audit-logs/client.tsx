@@ -72,7 +72,7 @@ export default function AuditLogsClient({
         guildNames[id] ? (
             <span>
                 <Mention>
-                    <FaServer></FaServer> {guildNames[id]}
+                    <FaServer /> {guildNames[id]}
                 </Mention>{" "}
                 (<code>{id}</code>)
             </span>
@@ -91,10 +91,10 @@ export default function AuditLogsClient({
                         <span className="opacity-50">(all)</span>
                     ) : actor === "system" ? (
                         <Mention>
-                            <FaServer></FaServer> System
+                            <FaServer /> System
                         </Mention>
                     ) : (
-                        <UserMention id={actor}></UserMention>
+                        <UserMention id={actor} />
                     )}
                     <Button
                         variant="secondary"
@@ -108,20 +108,20 @@ export default function AuditLogsClient({
                             setActor(id);
                         }}
                     >
-                        <FaPencil></FaPencil>
+                        <FaPencil />
                     </Button>
                     <Button variant="secondary" onClick={() => setActor("system")}>
                         System
                     </Button>
                     <Button variant="secondary" onClick={() => setActor(null)}>
-                        <FaXmark></FaXmark>
+                        <FaXmark />
                     </Button>
                 </div>
                 <b>Action Type:</b>
                 <div className="flex items-center gap-4">
-                    <ComboSelector values={user!.observer ? types : types.filter((x) => !x.hide)} value={type} setValue={setType}></ComboSelector>
+                    <ComboSelector values={user!.observer ? types : types.filter((x) => !x.hide)} value={type} setValue={setType} />
                     <Button variant="secondary" onClick={() => setType(null)}>
-                        <FaXmark></FaXmark>
+                        <FaXmark />
                     </Button>
                 </div>
                 <b>Guild:</b>
@@ -132,7 +132,7 @@ export default function AuditLogsClient({
                             .concat(...(guild && !guilds.some((x) => x.id === guild) ? [{ label: guild, value: guild }] : []))}
                         value={guild}
                         setValue={setGuild}
-                    ></ComboSelector>
+                    />
                     <Button
                         variant="secondary"
                         className="flex items-center gap-2"
@@ -146,14 +146,14 @@ export default function AuditLogsClient({
                             setGuild(id);
                         }}
                     >
-                        <FaPencil></FaPencil> Input Guild ID
+                        <FaPencil /> Input Guild ID
                     </Button>
                     <Button variant="secondary" onClick={() => setGuild(null)}>
-                        <FaXmark></FaXmark>
+                        <FaXmark />
                     </Button>
                 </div>
                 <b>Target:</b>
-                <Input placeholder="Any Discord ID" value={target ?? ""} onChange={({ currentTarget: { value } }) => setTarget(value || null)}></Input>
+                <Input placeholder="Any Discord ID" value={target ?? ""} onChange={({ currentTarget: { value } }) => setTarget(value || null)} />
                 <b># Per Page:</b>
                 <div className="flex items-center gap-2">
                     {[10, 25, 50, 100].map((x) => (
@@ -191,18 +191,18 @@ export default function AuditLogsClient({
                                     {typeNames[entry.type] ?? entry.type}
                                     <span className="font-light">
                                         {" "}
-                                        &mdash; <TimeMentionFull time={new Date(entry.time)}></TimeMentionFull>
+                                        &mdash; <TimeMentionFull time={new Date(entry.time)} />
                                     </span>
                                 </h2>
                                 <p>
-                                    <UserMention id={entry.actor}></UserMention>{" "}
+                                    <UserMention id={entry.actor} />{" "}
                                     {entry.type === "guilds/create" ? (
                                         <>
                                             added <b>{entry.data.name}</b> (ID: <code>{entry.guild}</code>) to the TCN with owner{" "}
-                                            <UserMention id={entry.data.owner}></UserMention> and{" "}
+                                            <UserMention id={entry.data.owner} /> and{" "}
                                             {entry.data.advisor ? (
                                                 <>
-                                                    advisor <UserMention id={entry.data.advisor}></UserMention>
+                                                    advisor <UserMention id={entry.data.advisor} />
                                                 </>
                                             ) : (
                                                 "no advisor"
@@ -213,41 +213,42 @@ export default function AuditLogsClient({
                                         </>
                                     ) : entry.type === "guilds/delete" ? (
                                         <>
-                                            removed {guild} from the TCN (owner was <UserMention id={entry.data[0]}></UserMention>
+                                            removed {guild} from the TCN (owner was <UserMention id={entry.data[0]} />
                                             {entry.data[1] ? (
                                                 <>
                                                     {" "}
-                                                    and advisor was <UserMention id={entry.data[1]}></UserMention>
+                                                    and advisor was <UserMention id={entry.data[1]} />
                                                 </>
                                             ) : null}
                                             )
                                         </>
                                     ) : entry.type === "guilds/update/owner" ? (
                                         <>
-                                            changed {guild}&apos;s owner from <UserMention id={entry.data[0]}></UserMention> to{" "}
-                                            <UserMention id={entry.data[1]}></UserMention>.
+                                            changed {guild}&apos;s owner from <UserMention id={entry.data[0]} /> to <UserMention id={entry.data[1]} />.
                                         </>
                                     ) : entry.type === "guilds/update/advisor" ? (
                                         entry.data[0] ? (
                                             entry.data[1] ? (
                                                 <>
-                                                    changed {guild}&apos;s advisor from <UserMention id={entry.data[0]}></UserMention> to{" "}
-                                                    <UserMention id={entry.data[1]}></UserMention>.
+                                                    changed {guild}&apos;s advisor from <UserMention id={entry.data[0]} /> to <UserMention id={entry.data[1]} />
+                                                    .
                                                 </>
                                             ) : (
                                                 <>
-                                                    removed {guild}&apos;s advisor (<UserMention id={entry.data[0]}></UserMention>).
+                                                    removed {guild}&apos;s advisor (<UserMention id={entry.data[0]} />
+                                                    ).
                                                 </>
                                             )
                                         ) : (
                                             <>
-                                                added <UserMention id={entry.data[1]}></UserMention> as {guild}&apos;s advisor.
+                                                added <UserMention id={entry.data[1]} /> as {guild}&apos;s advisor.
                                             </>
                                         )
                                     ) : entry.type === "guilds/update/swap-representatives" ? (
                                         <>
-                                            swapped {guild}&apos;s owner (now <UserMention id={entry.data[0]}></UserMention>) and advisor (now{" "}
-                                            <UserMention id={entry.data[1]}></UserMention>).
+                                            swapped {guild}&apos;s owner (now <UserMention id={entry.data[0]} />) and advisor (now{" "}
+                                            <UserMention id={entry.data[1]} />
+                                            ).
                                         </>
                                     ) : entry.type === "guilds/update/delegated" ? (
                                         entry.data ? (
@@ -341,20 +342,21 @@ export default function AuditLogsClient({
                                         <>removed the pre-approve option from poll #{entry.data}.</>
                                     ) : entry.type === "users/promote" ? (
                                         <>
-                                            promoted <UserMention id={entry.data}></UserMention> to observer.
+                                            promoted <UserMention id={entry.data} /> to observer.
                                         </>
                                     ) : entry.type === "users/demote" ? (
                                         <>
-                                            demoted <UserMention id={entry.data}></UserMention> from observer.
+                                            demoted <UserMention id={entry.data} /> from observer.
                                         </>
                                     ) : entry.type === "users/refresh-term" ? (
                                         <>
-                                            refreshed <UserMention id={entry.data}></UserMention>&apos;s term as observer.
+                                            refreshed <UserMention id={entry.data} />
+                                            &apos;s term as observer.
                                         </>
                                     ) : entry.type === "users/update/global-nickname" ? (
                                         <>
-                                            changed <UserMention id={entry.data.user}></UserMention>&apos;s global nickname to{" "}
-                                            <b>{entry.data.name || "(none)"}</b>.
+                                            changed <UserMention id={entry.data.user} />
+                                            &apos;s global nickname to <b>{entry.data.name || "(none)"}</b>.
                                         </>
                                     ) : null}
                                 </p>
@@ -382,7 +384,7 @@ export default function AuditLogsClient({
                 pages={pages}
                 setPage={setPage}
                 update={async (page) => setData(await getAuditLogs(actor, type, guild, target, (page - 1) * pageSize, pageSize))}
-            ></AutoPaginate>
+            />
         </>
     );
 }

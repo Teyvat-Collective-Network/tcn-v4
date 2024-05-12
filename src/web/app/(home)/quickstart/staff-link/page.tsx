@@ -9,12 +9,12 @@ export default function QuickstartStaffLink() {
             <div className="flex items-center gap-4">
                 <a href="/quickstart">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Quickstart Home
+                        <FaAnglesLeft /> Return to Quickstart Home
                     </Button>
                 </a>
                 <a href="/quickstart/global-chat">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Global Chat
+                        <FaAngleLeft /> Global Chat
                     </Button>
                 </a>
             </div>
@@ -49,7 +49,7 @@ export default function QuickstartStaffLink() {
             </ul>
             <a href="/quickstart/other-bots">
                 <Button className="flex items-center gap-2">
-                    Other Bots <FaAngleRight></FaAngleRight>
+                    Other Bots <FaAngleRight />
                 </Button>
             </a>
         </Prose>

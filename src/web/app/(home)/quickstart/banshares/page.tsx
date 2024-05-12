@@ -9,12 +9,12 @@ export default function QuickstartBanshares() {
             <div className="flex items-center gap-4">
                 <a href="/quickstart">
                     <Button className="flex items-center gap-2">
-                        <FaAnglesLeft></FaAnglesLeft> Return to Quickstart Home
+                        <FaAnglesLeft /> Return to Quickstart Home
                     </Button>
                 </a>
                 <a href="/quickstart/requirements">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft></FaAngleLeft> Requirements
+                        <FaAngleLeft /> Requirements
                     </Button>
                 </a>
             </div>
@@ -82,7 +82,7 @@ export default function QuickstartBanshares() {
             </p>
             <a href="/quickstart/global-chat">
                 <Button className="flex items-center gap-2">
-                    Global Chat <FaAngleRight></FaAngleRight>
+                    Global Chat <FaAngleRight />
                 </Button>
             </a>
         </Prose>

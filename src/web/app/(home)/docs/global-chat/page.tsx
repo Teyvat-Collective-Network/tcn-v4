@@ -9,7 +9,7 @@ export default function DocsGlobalChatt() {
             <h1>Docs &mdash; Global Chat</h1>
             <a href="/docs">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Docs Home
+                    <FaAnglesLeft /> Return to Docs Home
                 </Button>
             </a>
             <Section tag="h2" id="channels">

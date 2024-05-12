@@ -57,7 +57,7 @@ export default function AdminServersNewClient({
         <>
             <div className="grid grid-cols-[max-content_1fr] items-center gap-4">
                 <b>ID:</b>
-                <Input className="font-mono" placeholder="Server ID" value={id} onChange={({ currentTarget: { value } }) => setId(value)}></Input>
+                <Input className="font-mono" placeholder="Server ID" value={id} onChange={({ currentTarget: { value } }) => setId(value)} />
                 <b>Mascot:</b>
                 <div className="flex items-center gap-4">
                     <ComboSelector
@@ -71,17 +71,17 @@ export default function AdminServersNewClient({
                                 if (character) setRoleName(character.short ?? character.name);
                             }
                         }}
-                    ></ComboSelector>
+                    />
                     <a href="/admin/characters">
                         <Button variant="secondary" className="flex items-center gap-2">
-                            <FaPlus></FaPlus> Create
+                            <FaPlus /> Create
                         </Button>
                     </a>
                 </div>
                 <b>Name:</b>
-                <Input placeholder="Server Name" value={name} onChange={({ currentTarget: { value } }) => setName(value)} maxLength={80}></Input>
+                <Input placeholder="Server Name" value={name} onChange={({ currentTarget: { value } }) => setName(value)} maxLength={80} />
                 <b>Invite:</b>
-                <Input placeholder="Invite" value={invite} onChange={({ currentTarget: { value } }) => setInvite(value)}></Input>
+                <Input placeholder="Invite" value={invite} onChange={({ currentTarget: { value } }) => setInvite(value)} />
                 <b>Owner:</b>
                 <div className="flex items-center gap-4">
                     <Button
@@ -93,9 +93,9 @@ export default function AdminServersNewClient({
                                 else alert("Invalid user ID.");
                         }}
                     >
-                        <FaPencil></FaPencil>
+                        <FaPencil />
                     </Button>
-                    {owner ? <UserMention id={owner}></UserMention> : <span className="opacity-50">(none)</span>}
+                    {owner ? <UserMention id={owner} /> : <span className="opacity-50">(none)</span>}
                 </div>
                 <b>Advisor:</b>
                 <div className="flex items-center gap-4">
@@ -109,14 +109,14 @@ export default function AdminServersNewClient({
                                     else alert("Invalid user ID.");
                         }}
                     >
-                        <FaPencil></FaPencil>
+                        <FaPencil />
                     </Button>
-                    {advisor ? <UserMention id={advisor}></UserMention> : <span className="opacity-50">(none)</span>}
+                    {advisor ? <UserMention id={advisor} /> : <span className="opacity-50">(none)</span>}
                 </div>
                 <b>Delegated:</b>
                 <div className="flex items-center gap-4">
                     Owner
-                    <Switch checked={!!advisor && delegated} disabled={!advisor} onCheckedChange={setDelegated}></Switch>
+                    <Switch checked={!!advisor && delegated} disabled={!advisor} onCheckedChange={setDelegated} />
                     Advisor
                 </div>
                 <b>HQ/Hub Role Color:</b>
@@ -124,14 +124,14 @@ export default function AdminServersNewClient({
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button variant="secondary">
-                                <FaPencil></FaPencil>
+                                <FaPencil />
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent>
-                            <RgbColorPicker color={rgb} onChange={setRGB}></RgbColorPicker>
+                            <RgbColorPicker color={rgb} onChange={setRGB} />
                         </PopoverContent>
                     </Popover>
-                    <div className="w-9 h-9 rounded-md border" style={{ backgroundColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` }}></div>
+                    <div className="w-9 h-9 rounded-md border" style={{ backgroundColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` }} />
                     {hexString}
                     <span className="text-[#ff0000]">
                         {hex("#ffffff", hexString) < 2.5
@@ -139,8 +139,8 @@ export default function AdminServersNewClient({
                                 ? "This color is unsuitable in both light and dark mode."
                                 : "This color is too bright for light mode."
                             : hex("#323338", hexString) < 2.5
-                            ? "This color is too dark for dark mode."
-                            : ""}
+                              ? "This color is too dark for dark mode."
+                              : ""}
                     </span>
                 </div>
                 <b>HQ/Hub Role Name:</b>
@@ -152,7 +152,7 @@ export default function AdminServersNewClient({
                         setTouchedRoleName(true);
                     }}
                     maxLength={80}
-                ></Input>
+                />
             </div>
             <br />
             <Button

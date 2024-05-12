@@ -8,7 +8,7 @@ export default function QuickstartRequirements() {
             <h1>Quickstart &mdash; Requirements</h1>
             <a href="/quickstart">
                 <Button className="flex items-center gap-2">
-                    <FaAnglesLeft></FaAnglesLeft> Return to Quickstart Home
+                    <FaAnglesLeft /> Return to Quickstart Home
                 </Button>
             </a>
             <h2>Partner List</h2>
@@ -73,7 +73,7 @@ export default function QuickstartRequirements() {
             </p>
             <a href="/quickstart/banshares">
                 <Button className="flex items-center gap-2">
-                    Banshares <FaAngleRight></FaAngleRight>
+                    Banshares <FaAngleRight />
                 </Button>
             </a>
         </Prose>

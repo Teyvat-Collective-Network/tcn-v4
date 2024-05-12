@@ -24,7 +24,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                 </p>
                 <div className="flex items-center gap-4">
                     <p>Show TCN members</p>
-                    <Switch checked={showExternal} onCheckedChange={setShowExternal}></Switch>
+                    <Switch checked={showExternal} onCheckedChange={setShowExternal} />
                     <p>Show External Partners</p>
                 </div>
             </div>
@@ -39,7 +39,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                             width={180}
                             height={180}
                             className="rounded"
-                        ></Image>
+                        />
                         <div className="flex flex-col gap-2 prose">
                             <h2>Genshin Wizard</h2>
                             <p>The TCN is partnered with Genshin Wizard, a multi-purpose Genshin Impact utility bot. Check out their website below!</p>
@@ -50,7 +50,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                     </Panel>
                     <br />
                     <Panel className="flex items-center gap-8">
-                        <Image src="https://i.imgur.com/pwzRnxW.png" alt="Genshin Impact Tavern Icon" width={180} height={180} className="rounded"></Image>
+                        <Image src="https://i.imgur.com/pwzRnxW.png" alt="Genshin Impact Tavern Icon" width={180} height={180} className="rounded" />
                         <div className="flex flex-col gap-2 prose">
                             <h2>Genshin Impact Tavern</h2>
                             <p>
@@ -65,7 +65,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                     </Panel>
                     <br />
                     <Panel className="flex items-center gap-8">
-                        <Image src="https://daedalusbot.xyz/favicon.ico" alt="Daedalus Icon" width={180} height={180} className="rounded"></Image>
+                        <Image src="https://daedalusbot.xyz/favicon.ico" alt="Daedalus Icon" width={180} height={180} className="rounded" />
                         <div className="flex flex-col gap-2 prose">
                             <h2>Daedalus</h2>
                             <p>
@@ -81,8 +81,8 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
             ) : (
                 <>
                     <div className="flex items-center gap-4">
-                        <FaMagnifyingGlass></FaMagnifyingGlass>
-                        <Input placeholder="Filter Servers" value={query} onChange={({ currentTarget: { value } }) => setQuery(value)}></Input>
+                        <FaMagnifyingGlass />
+                        <Input placeholder="Filter Servers" value={query} onChange={({ currentTarget: { value } }) => setQuery(value)} />
                     </div>
                     <br />
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(min(360px,100%),1fr))] gap-2">
@@ -90,7 +90,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                             .filter(({ mascot, name }) => fuzzy(mascot, query) || fuzzy(name, query))
                             .map(({ id, name, invite, image }) => (
                                 <Panel key={id} className="flex items-center gap-8">
-                                    <Image src={image} alt={`${name} Icon`} width={100} height={100}></Image>
+                                    <Image src={image} alt={`${name} Icon`} width={100} height={100} />
                                     <div className="flex flex-col gap-2">
                                         <a href={`/server/${id}`} className="link text-xl font-semibold">
                                             {name}

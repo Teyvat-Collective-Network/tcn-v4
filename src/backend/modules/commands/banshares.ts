@@ -1,10 +1,4 @@
-import {
-    ApplicationCommandDataResolvable,
-    ApplicationCommandOptionType,
-    ApplicationCommandType,
-    ChannelType,
-    ChatInputCommandInteraction
-} from "discord.js";
+import { ApplicationCommandDataResolvable, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ChatInputCommandInteraction } from "discord.js";
 import { and, eq } from "drizzle-orm";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -186,8 +180,8 @@ export async function handleBanshares(interaction: ChatInputCommandInteraction) 
                                 ? "everything"
                                 : `${memberMode === 0 ? "non-members" : "members"} across all severities`
                             : memberMode === null
-                            ? `${severities[severity]} banshares (both members and non-members)`
-                            : `${severities[severity]} banshares for ${memberMode === 1 ? "members" : "non-members"}`
+                              ? `${severities[severity]} banshares (both members and non-members)`
+                              : `${severities[severity]} banshares for ${memberMode === 1 ? "members" : "non-members"}`
                     } updated to ${ban ? "Ban" : "Don't Ban"}.`,
                 ),
             );
