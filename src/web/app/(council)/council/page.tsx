@@ -11,6 +11,10 @@ export default function CouncilHome() {
                 <h2>Observer Terms</h2>
                 <p>View the list of observers and their current term start and end dates here.</p>
             </LandingPanel>
+            <LandingPanel href="/election-history">
+                <h2>Election History</h2>
+                <p>View the history of elections here.</p>
+            </LandingPanel>
         </LandingPage>
     );
 }

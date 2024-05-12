@@ -79,14 +79,12 @@ export async function handleApplication(interaction: ChatInputCommandInteraction
     await ensureObserver(interaction);
 
     const thread = interaction.channel;
-
     if (!thread?.isThread() || thread.parent !== channels.applicants || thread.parent.type !== ChannelType.GuildForum) throw errorInvalidThread;
 
     const application = await db.query.applications.findFirst({ where: eq(tables.applications.thread, thread.id) });
     if (!application) throw errorInvalidThread;
 
     if (thread.appliedTags.length !== 1) throw "This thread is in an invalid state. Please fix the tags (there should be exactly one).";
-
     const state = applicationThreadTagToStatus[thread.appliedTags[0]];
 
     const key = cmdKey(interaction);

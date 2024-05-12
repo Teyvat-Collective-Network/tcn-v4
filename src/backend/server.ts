@@ -1,7 +1,10 @@
 import "dotenv/config";
+
 import addGuild from "./actions/add-guild.js";
+import exchangeDataForElection from "./actions/exchange-data-for-election.js";
 import getAuditLogs from "./actions/get-audit-logs.js";
 import getCharacters from "./actions/get-characters.js";
+import getElectionHistory from "./actions/get-election-history.js";
 import getGuild from "./actions/get-guild.js";
 import getGuildsForBanshare from "./actions/get-guilds-for-banshare.js";
 import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
@@ -15,6 +18,7 @@ import getTag from "./actions/get-tag.js";
 import getUserForAdmin from "./actions/get-user-for-admin.js";
 import getUser from "./actions/get-user.js";
 import refreshTerm from "./actions/refresh-term.js";
+import removeGuild from "./actions/remove-guild.js";
 import setAdvisor from "./actions/set-advisor.js";
 import setDelegated from "./actions/set-delegated.js";
 import setGlobalNickname from "./actions/set-global-nickname.js";
@@ -25,14 +29,17 @@ import setObserver from "./actions/set-observer.js";
 import setOwner from "./actions/set-owner.js";
 import submitApplication from "./actions/submit-application.js";
 import submitBanshare from "./actions/submit-banshare.js";
+import submitElectionVote from "./actions/submit-election-vote.js";
 import swapRepresentatives from "./actions/swap-representatives.js";
 import validateInvite from "./actions/validate-invite.js";
 import { router } from "./trpc.js";
 
 export const appRouter = router({
     addGuild,
+    exchangeDataForElection,
     getAuditLogs,
     getCharacters,
+    getElectionHistory,
     getGuild,
     getGuildsForBanshare,
     getGuildsForDropdown,
@@ -46,6 +53,7 @@ export const appRouter = router({
     getUserForAdmin,
     getUser,
     refreshTerm,
+    removeGuild,
     setAdvisor,
     setDelegated,
     setGlobalNickname,
@@ -56,6 +64,7 @@ export const appRouter = router({
     setOwner,
     submitApplication,
     submitBanshare,
+    submitElectionVote,
     swapRepresentatives,
     validateInvite,
 });

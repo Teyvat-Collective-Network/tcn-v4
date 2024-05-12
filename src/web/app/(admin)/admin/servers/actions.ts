@@ -50,3 +50,7 @@ export async function swapRepresentatives(guild: string) {
 export async function setDelegated(guild: string, delegated: boolean) {
     return await withUserId(async (actor) => api.setDelegated.mutate({ actor, guild, delegated }));
 }
+
+export async function removeGuild(guild: string) {
+    return await withUserId(async (actor) => api.removeGuild.mutate({ actor, id: guild }));
+}

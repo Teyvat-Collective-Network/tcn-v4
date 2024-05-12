@@ -12,6 +12,7 @@ import { and, eq, or } from "drizzle-orm";
 import bot from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
+import { isCouncil } from "./api-lib.js";
 
 export function embed(title: string, description: string, color: number, ephemeral: boolean = true): BaseMessageOptions & { ephemeral: boolean } {
     return { content: "", embeds: [{ title, description, color }], files: [], components: [], ephemeral };
@@ -60,11 +61,7 @@ export async function ensureVoter(interaction: RepliableInteraction) {
 }
 
 export async function ensureCouncil(interaction: RepliableInteraction) {
-    const valid = !!(await db.query.guilds.findFirst({
-        columns: { id: true },
-        where: or(eq(tables.guilds.advisor, interaction.user.id), eq(tables.guilds.owner, interaction.user.id)),
-    }));
-
+    const valid = await isCouncil(interaction.user.id);
     if (!valid) throw "Permission denied: you must be a voter.";
 }
 

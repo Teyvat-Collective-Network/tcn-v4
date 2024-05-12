@@ -3,8 +3,8 @@ import { and, eq } from "drizzle-orm";
 import { channels } from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
-import { timeinfo } from "../lib.js";
-import { getTurnoutAndQuorum } from "./api-lib.js";
+import { englishList, shuffle, timeinfo } from "../lib.js";
+import { getTurnoutAndQuorum, getVoters } from "./api-lib.js";
 import { template } from "./bot-lib.js";
 
 export const unrestrictedTypes: string[] = [];
@@ -24,7 +24,7 @@ export async function registerVote(id: number, user: string) {
 }
 
 export async function newPoll(
-    type: "decline-observation" | "cancel-observation" | "induction",
+    type: "decline-observation" | "cancel-observation" | "induction" | "election",
     fn: (ref: number) => Promise<Message>,
     config?: { reminder?: number; deadline?: number },
 ) {
@@ -113,6 +113,16 @@ export async function renderDescription(id: number, type: string): Promise<strin
             if (more.mode === "positive-tiebreak") return `Induct or pre-approve ${link}?`;
             if (more.mode === "negative-tiebreak") return `Reject or extend observation for ${link}?`;
         }
+    } else if (type === "election") {
+        const [data] = await db
+            .select({ wave: tables.elections.wave })
+            .from(tables.electionPolls)
+            .innerJoin(tables.elections, eq(tables.electionPolls.thread, tables.elections.channel))
+            .where(eq(tables.electionPolls.ref, id));
+
+        if (!data) return `Failed to fetch poll #${id} (type: ${type}).`;
+
+        return `Please vote in the Wave ${data.wave} Election.`;
     }
 
     return `Unknown Poll Type / Unexpected Error: \`${type}\`.`;
@@ -139,10 +149,19 @@ function addVerdict<T extends string, U extends string, R, S extends string = "t
     return { verdict: resolveVerdict(tally[x], tally[y], x, y, tie), ...tally };
 }
 
+async function filterVotes<T extends { user: string }>(votes: T[], type: string): Promise<T[]> {
+    const voters = new Set(await getVoters(unrestrictedTypes.includes(type)));
+    return votes.filter((vote) => voters.has(vote.user));
+}
+
 export async function getDeclineObservationResults(
     id: number,
 ): Promise<{ verdict: "tie" | "decline" | "proceed"; decline: number; proceed: number; abstain: number }> {
-    const votes = await db.query.declineObservationVotes.findMany({ where: eq(tables.declineObservationVotes.ref, id) });
+    const votes = await filterVotes(
+        await db.query.declineObservationVotes.findMany({ where: eq(tables.declineObservationVotes.ref, id) }),
+        "decline-observation",
+    );
+
     const tally = { decline: 0, proceed: 0, abstain: 0 };
 
     for (const vote of votes) tally[vote.vote]++;
@@ -153,7 +172,7 @@ export async function getDeclineObservationResults(
 export async function getCancelObservationResults(
     id: number,
 ): Promise<{ verdict: "tie" | "cancel" | "continue"; cancel: number; continue: number; abstain: number }> {
-    const votes = await db.query.cancelObservationVotes.findMany({ where: eq(tables.cancelObservationVotes.ref, id) });
+    const votes = await filterVotes(await db.query.cancelObservationVotes.findMany({ where: eq(tables.cancelObservationVotes.ref, id) }), "cancel-observation");
     const tally = { cancel: 0, continue: 0, abstain: 0 };
 
     for (const vote of votes) tally[vote.vote]++;
@@ -172,7 +191,7 @@ export async function getInductionResults(
     extend: number;
     abstain: number;
 }> {
-    const votes = await db.query.inductionVotes.findMany({ where: eq(tables.inductionVotes.ref, id) });
+    const votes = await filterVotes(await db.query.inductionVotes.findMany({ where: eq(tables.inductionVotes.ref, id) }), "induction");
     const tally = { induct: 0, preapprove: 0, reject: 0, extend: 0, abstain: 0 };
 
     for (const vote of votes) tally[vote.vote]++;
@@ -189,6 +208,55 @@ export async function getInductionResults(
         return addVerdict(tally, "reject", "extend", "negative-tie");
     } else if (mode === "positive-tiebreak") return addVerdict(tally, "induct", "preapprove");
     else return addVerdict(tally, "reject", "extend");
+}
+
+export async function getElectionResults(id: number): Promise<{ winners: string[]; ties: string[] }> {
+    const [poll] = await db
+        .select({ seats: tables.elections.seats, candidates: tables.electionPolls.candidates })
+        .from(tables.electionPolls)
+        .innerJoin(tables.elections, eq(tables.electionPolls.thread, tables.elections.channel))
+        .where(eq(tables.electionPolls.ref, id));
+
+    if (!poll) return { winners: [], ties: [] };
+
+    const candidates = poll.candidates as string[];
+
+    const votes = await filterVotes(
+        await db.query.electionVotes.findMany({ columns: { user: true, vote: true }, where: eq(tables.electionVotes.ref, id) }),
+        "election",
+    );
+
+    const score = Object.fromEntries(candidates.map((candidate) => [candidate, 0]));
+    const anti = Object.fromEntries(candidates.map((candidate) => [candidate, 0]));
+
+    for (const { vote } of votes as { vote: { ranked: string[]; countered: string[] } }[]) {
+        vote.ranked.forEach((candidate, i) => (score[candidate] += poll.seats - i));
+        vote.countered.forEach((candidate) => anti[candidate]++);
+    }
+
+    const results = Object.entries(score)
+        .filter(([candidate]) => anti[candidate] * 2 <= votes.length)
+        .sort(([, a], [, b]) => b - a)
+        .map(([candidate]) => candidate);
+
+    if (results.length <= poll.seats) return { winners: shuffle(results), ties: [] };
+
+    if (score[results[poll.seats - 1]] === score[results[poll.seats]]) {
+        const threshold = score[results[poll.seats - 1]];
+
+        const winners: string[] = [];
+        const ties: string[] = [];
+
+        for (const candidate of results) {
+            if (score[candidate] > threshold) winners.push(candidate);
+            else if (score[candidate] === threshold) ties.push(candidate);
+            else break;
+        }
+
+        return { winners: shuffle(winners), ties: shuffle(ties) };
+    }
+
+    return { winners: shuffle(results.slice(0, poll.seats)), ties: [] };
 }
 
 export async function renderResults(id: number, type: string): Promise<string> {
@@ -279,6 +347,17 @@ export async function renderResults(id: number, type: string): Promise<string> {
                 ? `The council voted ${extend} : ${reject} to extend observation for this applicant rather than rejecting them. ${abstainInfo(abstain)}`
                 : "?"
             : "?";
+    } else if (type === "election") {
+        const { winners, ties } = await getElectionResults(id);
+
+        if (winners.length === 0)
+            if (ties.length === 0) return "No candidates were approved by the council and this election has no winners.";
+            else return `The election ended in a tie ${ties.length === 2 ? "between" : "amongst"} ${englishList(ties.map((id) => `<@${id}>`))}.`;
+        else if (ties.length === 0) return `This election's winners are ${englishList(winners.map((id) => `<@${id}>`))}.`;
+        else
+            return `This election was won by ${englishList(winners.map((id) => `<@${id}>`))} and also resulted in a tie ${
+                ties.length === 2 ? "between" : "amongst"
+            } ${englishList(ties.map((id) => `<@${id}>`))}.`;
     }
 
     return `Unknown Poll Type / Unexpected Error: \`${type}\`.`;
@@ -409,6 +488,49 @@ export async function renderComponents(id: number, type: string, disabled: boole
             ];
     }
 
+    if (type === "election") {
+        const poll = await db.query.electionPolls.findFirst({ columns: { autopromoted: true }, where: eq(tables.inductionPolls.ref, id) });
+
+        if (poll)
+            return [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            customId: ":poll/election/vote",
+                            style: ButtonStyle.Primary,
+                            label: "Vote",
+                            disabled,
+                        },
+                        {
+                            type: ComponentType.Button,
+                            customId: ":poll/election/abstain",
+                            style: ButtonStyle.Secondary,
+                            label: "Abstain",
+                            disabled,
+                        },
+                        ...(disabled && !poll.autopromoted
+                            ? ([
+                                  {
+                                      type: ComponentType.Button,
+                                      customId: ":poll/election/auto-promote",
+                                      style: ButtonStyle.Success,
+                                      label: "Auto-Promote",
+                                  },
+                                  {
+                                      type: ComponentType.Button,
+                                      customId: ":poll/election/remove-auto-promote",
+                                      style: ButtonStyle.Danger,
+                                      label: "Remove Auto-Promote Option",
+                                  },
+                              ] as const)
+                            : []),
+                    ],
+                },
+            ];
+    }
+
     return [
         {
             type: ComponentType.ActionRow,
@@ -479,6 +601,36 @@ export async function renderVote(id: number, user: string, type: string): Promis
             extend: "You have voted to extend this applicant's observation.",
             abstain: "You have abstained.",
         }[vote.vote];
+    } else if (type === "election") {
+        const poll = await db.query.electionPolls.findFirst({ columns: { candidates: true }, where: eq(tables.electionPolls.ref, id) });
+        if (!poll) return "Error fetching election poll data.";
+
+        const candidates = poll.candidates as string[];
+
+        const vote = await db.query.electionVotes.findFirst({
+            columns: { vote: true },
+            where: and(eq(tables.electionVotes.ref, id), eq(tables.electionVotes.user, user)),
+        });
+
+        if (!vote) return "You have not voted on this poll.";
+
+        const { ranked, countered } = vote.vote as { ranked: string[]; countered: string[] };
+
+        if (ranked.length === 0)
+            if (countered.length === 0) return "You have abstained for all candidates in this election.";
+            else return `You did not vote in favor of any candidates and voted against ${englishList(countered.map((id) => `<@${id}>`))}.`;
+        else if (ranked.length === 1)
+            if (countered.length === 0) return `You voted for <@${ranked[0]}>${candidates.length === 1 ? "" : " and abstained for all other candidates"}.`;
+            else
+                return `You voted for <@${ranked[0]}> and against ${englishList(countered.map((id) => `<@${id}>`))}${
+                    candidates.length === countered.length + 1 ? "" : " and abstained for all other candidates"
+                }.`;
+        else
+            return `You voted for the following candidates (in order, with highest preference first):\n\n${ranked
+                .map((id, i) => `${i + 1}. <@${id}>`)
+                .join("\n")}\n\n${countered.length > 0 ? `You also voted against ${englishList(countered.map((id) => `<@${id}>`))}. ` : ""}${
+                candidates.length === countered.length + ranked.length ? "" : "You abstained for all other candidates."
+            }`;
     }
 
     throw "Invalid poll type or the vote render handler is broken.";

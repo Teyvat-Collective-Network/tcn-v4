@@ -8,11 +8,13 @@
         "discord.js": "^14.14.1",
         "dotenv": "^16.4.5",
         "drizzle-orm": "^0.30.8",
+        "jsonwebtoken": "^9.0.2",
         "mysql2": "^3.9.4",
         "wcag-contrast": "^3.0.0",
         "zod": "^3.23.4"
     },
     "devDependencies": {
+        "@types/jsonwebtoken": "^9.0.6",
         "@types/node": "^20.12.7",
         "drizzle-kit": "^0.20.14",
         "tsx": "^4.7.2"

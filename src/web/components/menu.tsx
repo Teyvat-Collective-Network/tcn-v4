@@ -8,6 +8,7 @@ import {
     FaBookBookmark,
     FaBuildingColumns,
     FaCalendarWeek,
+    FaCheckToSlot,
     FaCircleInfo,
     FaClipboardList,
     FaDoorOpen,
@@ -64,7 +65,12 @@ export function Menu({ root }: { root: string }) {
             ["/admin/users", "Manage Users", FaUserGroup],
         );
 
-    if (root === "/council") links.push(["/audit-logs", "Audit Log", FaClipboardList], ["/observer-terms", "Observer Terms", FaCalendarWeek]);
+    if (root === "/council")
+        links.push(
+            ["/audit-logs", "Audit Log", FaClipboardList],
+            ["/observer-terms", "Observer Terms", FaCalendarWeek],
+            ["/election-history", "Election History", FaCheckToSlot],
+        );
 
     return (
         <>

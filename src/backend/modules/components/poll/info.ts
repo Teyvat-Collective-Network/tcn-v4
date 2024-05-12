@@ -29,6 +29,10 @@ export default async function (interaction: ButtonInteraction, type: string) {
         info.push(
             "The result is decided using a variant of the standard tiebreaker method (60%+ majority required) with the positive and negative options combined for an initial tie check.",
         );
+    else if (type === "election")
+        info.push(
+            "The result is decided by first eliminating any candidates with strictly more counter-votes than support-votes. Then, each candidate receives points based on their rank on each ballot voting for them, with 1st place giving points equal to the number of candidates and each subsequent place giving one point fewer. Then, the result is decided by ranking candidates by score with ties not resolved automatically.",
+        );
 
     await interaction.reply(template.info(info.map((line) => `- ${line}`).join("\n")));
 }

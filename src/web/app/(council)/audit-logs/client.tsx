@@ -15,6 +15,7 @@ import { getAuditLogs } from "./actions";
 
 const types: { label: string; value: string; hide?: boolean }[] = [
     { label: "Add Server", value: "guilds/create" },
+    { label: "Remove Server", value: "guilds/delete" },
     { label: "Update Owner", value: "guilds/update/owner" },
     { label: "Update Advisor", value: "guilds/update/advisor" },
     { label: "Swap Owner and Advisor", value: "guilds/update/swap-representatives" },
@@ -209,6 +210,17 @@ export default function AuditLogsClient({
                                             . The mascot is <code>{entry.data.mascot}</code>, the role name is <code>{entry.data.roleName}</code>, the role
                                             color is <code>#{entry.data.roleColor.toString(16).padStart(6, "0")}</code>, and the voter role is assigned to the{" "}
                                             {entry.data.delegated ? "advisor" : "owner"}.
+                                        </>
+                                    ) : entry.type === "guilds/delete" ? (
+                                        <>
+                                            removed {guild} from the TCN (owner was <UserMention id={entry.data[0]}></UserMention>
+                                            {entry.data[1] ? (
+                                                <>
+                                                    {" "}
+                                                    and advisor was <UserMention id={entry.data[1]}></UserMention>
+                                                </>
+                                            ) : null}
+                                            )
                                         </>
                                     ) : entry.type === "guilds/update/owner" ? (
                                         <>

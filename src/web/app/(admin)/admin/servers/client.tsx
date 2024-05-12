@@ -12,6 +12,7 @@ import {
     getCharacters,
     getServer,
     getServers,
+    removeGuild,
     saveName,
     setAdvisor,
     setDelegated,
@@ -84,143 +85,157 @@ export default function AdminServersClient({
             <br />
             {server ? (
                 data ? (
-                    <div className="grid grid-cols-[max-content_1fr] items-center gap-4">
-                        <b>ID:</b>
-                        <code>{server}</code>
-                        <b>Mascot:</b>
-                        <div className="flex items-center gap-4">
-                            <ComboSelector
-                                values={characters.map((char) => ({ label: char.name, value: char.id }))}
-                                value={data.mascot}
-                                setValue={async (mascot) => {
-                                    if (mascot === null) return;
-                                    if (!confirm(`Set ${data.name}'s mascot to ${characters.find((char) => char.id === mascot)?.name}?`)) return;
+                    <>
+                        <div className="grid grid-cols-[max-content_1fr] items-center gap-4">
+                            <b>ID:</b>
+                            <code>{server}</code>
+                            <b>Mascot:</b>
+                            <div className="flex items-center gap-4">
+                                <ComboSelector
+                                    values={characters.map((char) => ({ label: char.name, value: char.id }))}
+                                    value={data.mascot}
+                                    setValue={async (mascot) => {
+                                        if (mascot === null) return;
+                                        if (!confirm(`Set ${data.name}'s mascot to ${characters.find((char) => char.id === mascot)?.name}?`)) return;
 
-                                    const valid = await setMascot(server, mascot);
-                                    if (valid) reload();
-                                    else alert("Operation failed; try reloading.");
-                                }}
-                            ></ComboSelector>
-                            <a href="/admin/characters" target="_blank">
-                                <Button variant="secondary" className="flex items-center gap-2">
-                                    <FaPlus></FaPlus> Create
-                                </Button>
-                            </a>
-                        </div>
-                        <b>Name:</b>
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <Input value={name} onChange={({ currentTarget: { value } }) => setName(value)} maxLength={80}></Input>
+                                        const valid = await setMascot(server, mascot);
+                                        if (valid) reload();
+                                        else alert("Operation failed; try reloading.");
+                                    }}
+                                ></ComboSelector>
+                                <a href="/admin/characters" target="_blank">
+                                    <Button variant="secondary" className="flex items-center gap-2">
+                                        <FaPlus></FaPlus> Create
+                                    </Button>
+                                </a>
                             </div>
-                            <Button
-                                variant="secondary"
-                                disabled={name === data.name || name.trim() === ""}
-                                onClick={async () => {
-                                    const error = await saveName(server, name);
-                                    if (error) alert(`Error: ${error}`);
-                                    else reload();
-                                }}
-                            >
-                                <FaFloppyDisk></FaFloppyDisk>
-                            </Button>
-                        </div>
-                        <b>Invite:</b>
-                        <div className="flex items-center gap-4">
-                            <code>discord.gg/{data.invite}</code>
-                            <Button
-                                variant="outline"
-                                className="flex items-center gap-2"
-                                onClick={async () => {
-                                    const invite = prompt("Enter a new invite:");
-                                    if (!invite) return;
-
-                                    const error = await setInvite(server, invite);
-                                    if (error) alert(`Error: ${error}`);
-                                    else reload();
-                                }}
-                            >
-                                <FaPencil></FaPencil> Edit
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="flex items-center gap-2"
-                                onClick={async () => {
-                                    const error = await validateInvite(server, data.invite);
-                                    if (error) alert(`Error: ${error}`);
-                                    else alert("That invite looks okay.");
-                                }}
-                            >
-                                <FaCheck></FaCheck> Verify
-                            </Button>
-                        </div>
-                        <b>Owner:</b>
-                        <div className="flex items-center gap-4">
-                            <UserMention id={data.owner}></UserMention>
-                            <Button
-                                variant="outline"
-                                className="flex items-center gap-2"
-                                onClick={async () => {
-                                    const owner = prompt("Enter the new owner's ID:");
-                                    if (!owner) return;
-
-                                    const error = await setOwner(server, owner);
-                                    if (error) alert(`Error: ${error}`);
-                                    else reload();
-                                }}
-                            >
-                                <FaPencil></FaPencil> Edit
-                            </Button>
-                        </div>
-                        <b>Advisor:</b>
-                        <div className="flex items-center gap-4">
-                            {data.advisor ? <UserMention id={data.advisor}></UserMention> : <span className="opacity-50">(none)</span>}
-                            <Button
-                                variant="outline"
-                                className="flex items-center gap-2"
-                                onClick={async () => {
-                                    const advisor = prompt("Enter the new advisor's ID (leave empty to remove):");
-                                    if (advisor === null) return;
-
-                                    const error = await setAdvisor(server, advisor);
-                                    if (error) alert(`Error: ${error}`);
-                                    else reload();
-                                }}
-                            >
-                                <FaPencil></FaPencil> Edit
-                            </Button>
-                            {data.advisor ? (
+                            <b>Name:</b>
+                            <div className="flex items-center gap-4">
+                                <div>
+                                    <Input value={name} onChange={({ currentTarget: { value } }) => setName(value)} maxLength={80}></Input>
+                                </div>
+                                <Button
+                                    variant="secondary"
+                                    disabled={name === data.name || name.trim() === ""}
+                                    onClick={async () => {
+                                        const error = await saveName(server, name);
+                                        if (error) alert(`Error: ${error}`);
+                                        else reload();
+                                    }}
+                                >
+                                    <FaFloppyDisk></FaFloppyDisk>
+                                </Button>
+                            </div>
+                            <b>Invite:</b>
+                            <div className="flex items-center gap-4">
+                                <code>discord.gg/{data.invite}</code>
                                 <Button
                                     variant="outline"
                                     className="flex items-center gap-2"
                                     onClick={async () => {
-                                        if (!confirm(`Swap ${data.name}'s owner and advisor?`)) return;
+                                        const invite = prompt("Enter a new invite:");
+                                        if (!invite) return;
 
-                                        const error = await swapRepresentatives(server);
-                                        if (error) alert(`Error:${error}`);
+                                        const error = await setInvite(server, invite);
+                                        if (error) alert(`Error: ${error}`);
                                         else reload();
                                     }}
                                 >
-                                    <FaShuffle></FaShuffle> Switch With Owner
+                                    <FaPencil></FaPencil> Edit
                                 </Button>
-                            ) : null}
-                        </div>
-                        <b>Voter:</b>
-                        <div className="flex items-center gap-4">
-                            Owner
-                            <Switch
-                                checked={data.delegated}
-                                disabled={!data.advisor}
-                                onCheckedChange={async (checked) => {
-                                    if (!confirm(checked ? "Delegate the voter role to the advisor?" : "Return the voter role to the owner?")) return;
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2"
+                                    onClick={async () => {
+                                        const error = await validateInvite(server, data.invite);
+                                        if (error) alert(`Error: ${error}`);
+                                        else alert("That invite looks okay.");
+                                    }}
+                                >
+                                    <FaCheck></FaCheck> Verify
+                                </Button>
+                            </div>
+                            <b>Owner:</b>
+                            <div className="flex items-center gap-4">
+                                <UserMention id={data.owner}></UserMention>
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2"
+                                    onClick={async () => {
+                                        const owner = prompt("Enter the new owner's ID:");
+                                        if (!owner) return;
 
-                                    const error = await setDelegated(server, checked);
-                                    if (error) alert(`Error:${error}`);
-                                    else reload();
-                                }}
-                            ></Switch>
-                            Advisor
+                                        const error = await setOwner(server, owner);
+                                        if (error) alert(`Error: ${error}`);
+                                        else reload();
+                                    }}
+                                >
+                                    <FaPencil></FaPencil> Edit
+                                </Button>
+                            </div>
+                            <b>Advisor:</b>
+                            <div className="flex items-center gap-4">
+                                {data.advisor ? <UserMention id={data.advisor}></UserMention> : <span className="opacity-50">(none)</span>}
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2"
+                                    onClick={async () => {
+                                        const advisor = prompt("Enter the new advisor's ID (leave empty to remove):");
+                                        if (advisor === null) return;
+
+                                        const error = await setAdvisor(server, advisor);
+                                        if (error) alert(`Error: ${error}`);
+                                        else reload();
+                                    }}
+                                >
+                                    <FaPencil></FaPencil> Edit
+                                </Button>
+                                {data.advisor ? (
+                                    <Button
+                                        variant="outline"
+                                        className="flex items-center gap-2"
+                                        onClick={async () => {
+                                            if (!confirm(`Swap ${data.name}'s owner and advisor?`)) return;
+
+                                            const error = await swapRepresentatives(server);
+                                            if (error) alert(`Error:${error}`);
+                                            else reload();
+                                        }}
+                                    >
+                                        <FaShuffle></FaShuffle> Switch With Owner
+                                    </Button>
+                                ) : null}
+                            </div>
+                            <b>Voter:</b>
+                            <div className="flex items-center gap-4">
+                                Owner
+                                <Switch
+                                    checked={data.delegated}
+                                    disabled={!data.advisor}
+                                    onCheckedChange={async (checked) => {
+                                        if (!confirm(checked ? "Delegate the voter role to the advisor?" : "Return the voter role to the owner?")) return;
+
+                                        const error = await setDelegated(server, checked);
+                                        if (error) alert(`Error:${error}`);
+                                        else reload();
+                                    }}
+                                ></Switch>
+                                Advisor
+                            </div>
                         </div>
-                    </div>
+                        <br />
+                        <Button
+                            onClick={async () => {
+                                if (!confirm(`Remove ${data.name} from the TCN?`)) return;
+
+                                const error = await removeGuild(server);
+                                if (error) alert(`Error: ${error}`);
+                                else reload();
+                            }}
+                        >
+                            Remove from TCN
+                        </Button>
+                    </>
                 ) : (
                     <Loading>Loading...</Loading>
                 )

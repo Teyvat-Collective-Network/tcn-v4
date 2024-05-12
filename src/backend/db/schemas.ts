@@ -60,7 +60,7 @@ export const applications = mysqlTable("applications", {
 
 export const polls = mysqlTable("polls", {
     id: int("id").autoincrement().primaryKey(),
-    type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction"]).notNull(),
+    type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction", "election"]).notNull(),
     message: varchar("message", { length: 20 }).notNull(),
     reminder: bigint("reminder", { mode: "number" }),
     deadline: bigint("deadline", { mode: "number" }).notNull(),
@@ -270,5 +270,77 @@ export const auditEntryTargets = mysqlTable(
     },
     (t) => ({
         idx_target: index("idx_target").on(t.target),
+    }),
+);
+
+export const elections = mysqlTable(
+    "elections",
+    {
+        wave: int("wave").primaryKey(),
+        channel: varchar("channel", { length: 20 }).notNull(),
+        seats: int("seats").notNull(),
+    },
+    (t) => ({
+        idx_channel: index("idx_channel").on(t.channel),
+    }),
+);
+
+export const electionStatements = mysqlTable(
+    "election_statements",
+    {
+        wave: int("wave")
+            .references(() => elections.wave, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        message: varchar("message", { length: 20 }).notNull(),
+    },
+    (t) => ({
+        pk_wave_user: primaryKey({ columns: [t.wave, t.user] }),
+    }),
+);
+
+export const electionHistory = mysqlTable(
+    "election_history",
+    {
+        wave: int("wave")
+            .references(() => elections.wave, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        status: mysqlEnum("status", ["nominated", "accepted", "declined", "elected", "runner-up"]).notNull(),
+        rerunning: boolean("rerunning").notNull(),
+    },
+    (t) => ({
+        pk_wave_user: primaryKey({ columns: [t.wave, t.user] }),
+    }),
+);
+
+export const electionPolls = mysqlTable(
+    "election_polls",
+    {
+        ref: int("ref")
+            .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .primaryKey(),
+        thread: varchar("thread", { length: 20 })
+            .references(() => elections.channel, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        candidates: json("candidates").notNull(),
+        autopromoted: boolean("autopromoted").notNull().default(false),
+    },
+    (t) => ({
+        idx_thread: index("idx_thread").on(t.thread),
+    }),
+);
+
+export const electionVotes = mysqlTable(
+    "election_votes",
+    {
+        ref: int("ref")
+            .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        vote: json("vote").notNull(),
+    },
+    (t) => ({
+        pk_ref_user: primaryKey({ columns: [t.ref, t.user] }),
     }),
 );

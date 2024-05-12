@@ -28,7 +28,7 @@ export default proc
             await audit(actor, "guilds/update/advisor", guild, [obj.advisor, advisor]);
 
             if (obj.advisor) await fixUserRolesQueue.add("", obj.advisor);
-            await fixUserRolesQueue.add("", advisor);
+            if (advisor) await fixUserRolesQueue.add("", advisor);
 
             return null;
         }),
