@@ -4,9 +4,10 @@ import { reply, template } from "../../lib/bot-lib.js";
 import application, { handleApplication } from "./application.js";
 import banshares, { handleBanshares } from "./banshares.js";
 import elections, { handleElectionMarkAsStatement, handleElections } from "./elections.js";
+import staff, { handleStaff } from "./staff.js";
 import testing, { handleTesting } from "./testing.js";
 
-await bot.application.commands.set([banshares]);
+await bot.application.commands.set([banshares, staff]);
 await HQ.commands.set([application, ...elections, ...testing]);
 await HUB.commands.set([]);
 
@@ -27,6 +28,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 case "testing":
                     await handleTesting(interaction);
+                    break;
+                case "staff":
+                    await handleStaff(interaction);
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";

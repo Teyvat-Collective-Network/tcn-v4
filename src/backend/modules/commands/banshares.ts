@@ -73,13 +73,13 @@ export default {
 } satisfies ApplicationCommandDataResolvable;
 
 export async function handleBanshares(interaction: ChatInputCommandInteraction) {
-    if (interaction.user.id !== interaction.guild!.ownerId)
+    await ensureTCN(interaction);
+    if (!interaction.guild) return;
+
+    if (interaction.user.id !== interaction.guild.ownerId)
         await ensureObserver(interaction).catch(() => {
             throw "Only the server owner can manage banshare settings.";
         });
-
-    await ensureTCN(interaction);
-    if (!interaction.guild) return;
 
     await interaction.deferReply({ ephemeral: true });
 
@@ -180,8 +180,8 @@ export async function handleBanshares(interaction: ChatInputCommandInteraction) 
                                 ? "everything"
                                 : `${memberMode === 0 ? "non-members" : "members"} across all severities`
                             : memberMode === null
-                              ? `${severities[severity]} banshares (both members and non-members)`
-                              : `${severities[severity]} banshares for ${memberMode === 1 ? "members" : "non-members"}`
+                            ? `${severities[severity]} banshares (both members and non-members)`
+                            : `${severities[severity]} banshares for ${memberMode === 1 ? "members" : "non-members"}`
                     } updated to ${ban ? "Ban" : "Don't Ban"}.`,
                 ),
             );

@@ -232,6 +232,13 @@
       "when": 1715479917574,
       "tag": "0032_lyrical_gunslinger",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1715483343089,
+      "tag": "0033_brainy_sabretooth",
+      "breakpoints": true
     }
   ]
 }

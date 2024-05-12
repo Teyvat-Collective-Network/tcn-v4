@@ -1,5 +1,5 @@
 import { Events, Guild, GuildMember, Role } from "discord.js";
-import { eq, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import bot, { HQ, HUB, roles } from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -97,16 +97,16 @@ makeWorker<string>("tcn:fix-guild-roles", async (id) => {
 makeWorker<string>("tcn:fix-user-roles", async (id) => {
     const guilds = await db.query.guilds.findMany({
         columns: { id: true, owner: true, advisor: true, delegated: true, hqRole: true, hubRole: true, roleColor: true, roleName: true },
-        where: or(eq(tables.guilds.owner, id), eq(tables.guilds.advisor, id)),
     });
 
     for (const guild of guilds)
-        try {
-            if (!(await HQ.roles.fetch(guild.hqRole))) throw 0;
-            if (!(await HUB.roles.fetch(guild.hubRole))) throw 0;
-        } catch {
-            await fixRoles(guild);
-        }
+        if (guild.owner === id || guild.advisor === id)
+            try {
+                if (!(await HQ.roles.fetch(guild.hqRole))) throw 0;
+                if (!(await HUB.roles.fetch(guild.hubRole))) throw 0;
+            } catch {
+                await fixRoles(guild);
+            }
 
     const user = await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, id) });
 
@@ -116,7 +116,7 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
     const advisor = guilds.some((guild) => guild.advisor === id);
     const voter = guilds.some((guild) => (guild.delegated ? guild.advisor : guild.owner) === id);
     const observer = user?.observer ?? false;
-    const staff = !!(await db.query.guildStaff.findFirst({ where: eq(tables.guildStaff.user, id) }));
+    const staff = await db.query.guildStaff.findMany({ columns: { guild: true }, where: eq(tables.guildStaff.user, id) });
 
     const hqMember = await HQ.members.fetch(id).catch(() => null);
     const hubMember = await HUB.members.fetch(id).catch(() => null);
@@ -140,11 +140,17 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
     check(advisor, process.env.ROLE_COUNCIL_ADVISORS, process.env.ROLE_HUB_ADVISORS);
     check(voter, process.env.ROLE_VOTERS);
     check(observer, process.env.ROLE_OBSERVERS, process.env.ROLE_HUB_OBSERVERS);
-    check(staff, undefined, process.env.ROLE_NETWORK_STAFF);
+    check(owner || advisor || observer || staff.length > 0, undefined, process.env.ROLE_NETWORK_STAFF);
 
-    for (const guild of guilds) {
-        hqAdd.push(guild.hqRole);
-        hubAdd.push(guild.hubRole);
+    for (const guild of guilds)
+        if (guild.owner === id || guild.advisor === id) {
+            hqAdd.push(guild.hqRole);
+            hubAdd.push(guild.hubRole);
+        }
+
+    for (const { guild: id } of staff) {
+        const role = guilds.find((guild) => guild.id === id)?.hubRole;
+        if (role && !hubAdd.includes(role)) hubAdd.push(role);
     }
 
     if (hqMember)
@@ -157,7 +163,7 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
     if (hubMember)
         hubRemove.push(
             ...(await HUB.roles.fetch())
-                .filter((role) => role.position < roles.hqMainsAnchor.position && role.position > roles.hqMainsEnd.position && !hqAdd.includes(role.id))
+                .filter((role) => role.position < roles.hubMainsAnchor.position && role.position > roles.hubMainsEnd.position && !hubAdd.includes(role.id))
                 .map((role) => role.id),
         );
 

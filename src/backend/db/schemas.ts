@@ -38,6 +38,33 @@ export const guildStaff = mysqlTable(
     }),
 );
 
+export const forcedStaff = mysqlTable(
+    "forced_staff",
+    {
+        guild: varchar("guild", { length: 20 })
+            .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+        staff: boolean("staff").notNull(),
+    },
+    (t) => ({
+        pk_guild_user: primaryKey({ columns: [t.guild, t.user] }),
+    }),
+);
+
+export const autoStaffRoles = mysqlTable(
+    "auto_staff_roles",
+    {
+        guild: varchar("guild", { length: 20 })
+            .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        role: varchar("role", { length: 20 }).notNull(),
+    },
+    (t) => ({
+        pk_guild_role: primaryKey({ columns: [t.guild, t.role] }),
+    }),
+);
+
 export const characters = mysqlTable("characters", {
     id: varchar("id", { length: 32 }).primaryKey(),
     short: varchar("short", { length: 32 }),
