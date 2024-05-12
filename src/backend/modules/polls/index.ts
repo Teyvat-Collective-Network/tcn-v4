@@ -68,7 +68,7 @@ makeWorker<DMReminderTask>("tcn:dm-reminders", async ({ id, url, user }) => {
 loop(async () => {
     const polls = await db.query.polls.findMany({
         columns: { id: true, message: true, type: true },
-        where: and(lt(tables.polls.deadline, Date.now()), eq(tables.polls.trulyClosed, false)),
+        where: and(lt(tables.polls.deadline, Date.now()), eq(tables.polls.trulyClosed, false), eq(tables.polls.errored, false)),
     });
 
     if (polls.length === 0) return;
@@ -86,8 +86,15 @@ loop(async () => {
     for (const { id, message, type } of polls)
         try {
             const msg = await channels.voteHere.messages.fetch(message);
+            if (!msg) throw "Could not find poll message.";
+
             await msg.edit(await renderPoll(id));
             await db.update(tables.polls).set({ trulyClosed: true }).where(eq(tables.polls.id, id));
+
+            await db
+                .insert(tables.expectedVoters)
+                .values((await getVoters(unrestrictedTypes.includes(type))).map((user) => ({ poll: id, user })))
+                .onDuplicateKeyUpdate({ set: { poll: id } });
 
             const link = `[poll #${id}](<${msg.url}>)`;
             channels.logs.send(`Closed ${link}.`);
@@ -215,8 +222,10 @@ loop(async () => {
                     console.error(error);
                 }
         } catch (error) {
-            channels.logs.send(`Error closing poll #${id}: ${error}`);
+            channels.logs.send(`Error closing poll #${id} (marking as errored and abandoning): ${error}`);
             console.error(error);
+
+            await db.update(tables.polls).set({ errored: true }).where(eq(tables.polls.id, id));
         }
 }, 10000);
 

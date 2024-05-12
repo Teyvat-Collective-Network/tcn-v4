@@ -1,0 +1,1 @@
+ALTER TABLE `polls` ADD `errored` boolean DEFAULT false NOT NULL;

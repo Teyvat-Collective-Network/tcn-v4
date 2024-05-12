@@ -93,7 +93,21 @@ export const polls = mysqlTable("polls", {
     deadline: bigint("deadline", { mode: "number" }).notNull(),
     closed: boolean("closed").notNull(),
     trulyClosed: boolean("truly_closed").notNull(),
+    errored: boolean("errored").notNull().default(false),
 });
+
+export const expectedVoters = mysqlTable(
+    "expected_voters",
+    {
+        poll: int("poll")
+            .references(() => polls.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+    },
+    (t) => ({
+        pk_poll_user: primaryKey({ columns: [t.poll, t.user] }),
+    }),
+);
 
 export const voteTracker = mysqlTable(
     "vote_tracker",

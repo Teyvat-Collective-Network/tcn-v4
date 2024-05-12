@@ -17,6 +17,7 @@ import getServerListForAdmin from "./actions/get-server-list-for-admin.js";
 import getTag from "./actions/get-tag.js";
 import getUserForAdmin from "./actions/get-user-for-admin.js";
 import getUser from "./actions/get-user.js";
+import getVoteTracker from "./actions/get-vote-tracker.js";
 import refreshTerm from "./actions/refresh-term.js";
 import removeGuild from "./actions/remove-guild.js";
 import setAdvisor from "./actions/set-advisor.js";
@@ -52,6 +53,7 @@ export const appRouter = router({
     getTag,
     getUserForAdmin,
     getUser,
+    getVoteTracker,
     refreshTerm,
     removeGuild,
     setAdvisor,

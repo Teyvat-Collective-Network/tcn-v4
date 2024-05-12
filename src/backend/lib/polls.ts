@@ -4,7 +4,7 @@ import { channels } from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 import { englishList, shuffle, timeinfo } from "../lib.js";
-import { getTurnoutAndQuorum, getVoters } from "./api-lib.js";
+import { getQuorum, getTurnoutAndQuorum, getVoters } from "./api-lib.js";
 import { template } from "./bot-lib.js";
 
 export const unrestrictedTypes: string[] = ["election"];
@@ -564,7 +564,7 @@ export async function renderComponents(id: number, type: string, disabled: boole
                             label: "Abstain",
                             disabled,
                         },
-                        ...(disabled && !poll.autopromoted
+                        ...(disabled && !poll.autopromoted && (await getQuorum(id, type)) && (await getElectionResults(id)).winners.length > 0
                             ? ([
                                   {
                                       type: ComponentType.Button,

@@ -10,6 +10,7 @@ import {
     FaCalendarWeek,
     FaCheckToSlot,
     FaCircleInfo,
+    FaClipboardCheck,
     FaClipboardList,
     FaDoorOpen,
     FaEarthAmericas,
@@ -63,6 +64,7 @@ export function Menu({ root }: { root: string }) {
             ["/admin/observation-guide", "Observation Guide", FaClipboardList],
             ["/admin/servers", "Manage Servers", FaServer],
             ["/admin/users", "Manage Users", FaUserGroup],
+            ["/admin/vote-tracker", "Vote Tracker", FaClipboardCheck],
         );
 
     if (root === "/council")
