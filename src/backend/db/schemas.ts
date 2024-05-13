@@ -446,3 +446,143 @@ export const hubPartnerListLocation = mysqlTable("hub_partner_list_location", {
     id: int("id").primaryKey(),
     message: varchar("message", { length: 20 }).notNull(),
 });
+
+export const globalChannels = mysqlTable("global_channels", {
+    id: int("id").autoincrement().primaryKey(),
+    name: varchar("name", { length: 80 }).notNull(),
+    visible: boolean("visible").notNull(),
+    password: varchar("password", { length: 128 }),
+    panic: boolean("panic").notNull().default(false),
+    protected: boolean("protected").notNull().default(false),
+});
+
+export const globalConnections = mysqlTable("global_connections", {
+    channel: int("channel")
+        .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .notNull(),
+    guild: varchar("guild", { length: 20 }).notNull(),
+    location: varchar("location", { length: 20 }).notNull(),
+    suspended: boolean("suspended").notNull(),
+});
+
+export const globalFilters = mysqlTable("global_filters", {
+    id: int("id").autoincrement().primaryKey(),
+    name: varchar("name", { length: 80 }).notNull(),
+});
+
+export const globalFilterTerms = mysqlTable(
+    "global_filter_terms",
+    {
+        id: int("id").autoincrement().primaryKey(),
+        filter: int("filter")
+            .references(() => globalFilters.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        term: text("term").notNull(),
+        regex: boolean("regex").notNull(),
+    },
+    (t) => ({
+        idx_filter: index("idx_filter").on(t.filter),
+    }),
+);
+
+export const globalAppliedFilters = mysqlTable(
+    "global_applied_filters",
+    {
+        channel: int("channel")
+            .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        filter: int("filter")
+            .references(() => globalFilters.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+    },
+    (t) => ({
+        pk_channel_filter: primaryKey({ columns: [t.channel, t.filter] }),
+    }),
+);
+
+export const globalMods = mysqlTable(
+    "global_mods",
+    {
+        channel: int("channel")
+            .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+    },
+    (t) => ({
+        pk_channel_user: primaryKey({ columns: [t.channel, t.user] }),
+    }),
+);
+
+export const globalBans = mysqlTable(
+    "global_bans",
+    {
+        channel: int("channel")
+            .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        user: varchar("user", { length: 20 }).notNull(),
+    },
+    (t) => ({
+        pk_channel_user: primaryKey({ columns: [t.channel, t.user] }),
+    }),
+);
+
+export const globalMessages = mysqlTable(
+    "global_messages",
+    {
+        id: int("id").autoincrement().primaryKey(),
+        channel: int("channel")
+            .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        author: varchar("author", { length: 20 }).notNull(),
+        originGuild: varchar("origin_guild", { length: 20 }).notNull(),
+        originChannel: varchar("origin_channel", { length: 20 }).notNull(),
+        originMessage: varchar("origin_message", { length: 20 }).notNull(),
+        deleted: boolean("deleted").notNull().default(false),
+        time: bigint("time", { mode: "number" }).notNull(),
+    },
+    (t) => ({
+        idx_author: index("idx_author").on(t.author),
+    }),
+);
+
+export const globalMessageInstances = mysqlTable(
+    "global_message_instances",
+    {
+        ref: int("ref")
+            .references(() => globalMessages.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        guild: varchar("guild", { length: 20 }).notNull(),
+        channel: varchar("channel", { length: 20 }).notNull(),
+        message: varchar("message", { length: 20 }).notNull(),
+        purged: boolean("purged").notNull().default(false),
+    },
+    (t) => ({
+        idx_message: index("idx_message").on(t.message),
+    }),
+);
+
+export const globalLogs = mysqlTable(
+    "global_logs",
+    {
+        id: int("id").autoincrement().primaryKey(),
+        channel: int("channel")
+            .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        time: bigint("time", { mode: "number" }).notNull(),
+        action: mysqlEnum("action", ["block", "delete", "edit", "ban", "unban"]).notNull(),
+        actor: varchar("actor", { length: 20 }),
+        target: varchar("target", { length: 20 }),
+        content: text("content"),
+        after: text("after"),
+        removedFiles: json("removed_files"),
+    },
+    (t) => ({
+        idx_channel_time: index("idx_channel_time").on(t.channel, t.time),
+    }),
+);
+
+export const files = mysqlTable("files", {
+    uuid: varchar("uuid", { length: 36 }).primaryKey(),
+    channel: varchar("channel", { length: 20 }).notNull(),
+    message: varchar("message", { length: 20 }).notNull(),
+});

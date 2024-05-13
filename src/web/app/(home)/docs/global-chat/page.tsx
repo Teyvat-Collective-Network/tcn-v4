@@ -63,24 +63,6 @@ export default function DocsGlobalChatt() {
                 If there is a raid or ongoing network-wide incident, you can use <code>/global panic</code> to completely shut down this global channel. It will
                 stop relaying messages from all servers but will continue to relay deletions.
             </p>
-            <Section tag="h2" id="management">
-                Management
-            </Section>
-            <ul>
-                <li>
-                    <code>/global channels delete</code> deletes a global channel. Do not use this unless the council has agreed to terminate a global channel
-                    or it was a temporary channel that is no longer needed.
-                </li>
-                <li>
-                    <code>/global channels create</code> creates a new global channel.
-                </li>
-                <li>
-                    <code>/global channels edit</code> edits an existing global channel.
-                </li>
-                <li>
-                    <code>/global unpanic</code> ends an ongoing panic state.
-                </li>
-            </ul>
             <Section tag="h2" id="other-commands">
                 Other Commands
             </Section>

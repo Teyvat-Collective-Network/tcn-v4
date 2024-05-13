@@ -44,6 +44,13 @@ const types: { label: string; value: string; hide?: boolean }[] = [
     { label: "Demote Observer", value: "users/demote" },
     { label: "Refresh Term", value: "users/refresh-term" },
     { label: "Change Global Nickname", value: "users/update/global-nickname" },
+    { label: "Add Global Filter Term", value: "global/filter/add-term" },
+    { label: "Create Global Filter", value: "global/filter/create" },
+    { label: "Delete Global Filter Term", value: "global/filter/delete-term" },
+    { label: "Delete Global Filter", value: "global/filter/delete" },
+    { label: "Edit Global Filter Term Mode", value: "global/filter/edit-term-regex" },
+    { label: "Edit Global Filter Term Match", value: "global/filter/edit-term-term" },
+    { label: "Rename Global Filter", value: "global/filter/rename" },
 ];
 const typeNames = Object.fromEntries(types.map((x) => [x.value, x.label]));
 
@@ -99,8 +106,8 @@ export default function AuditLogsClient({
                     <Button
                         variant="secondary"
                         onClick={() => {
-                            const id = prompt("Enter user ID to filter by, or leave empty to show all entries");
-                            if (id === null) return;
+                            const id = prompt("Enter user ID to filter by, or leave empty to show all entries")?.trim();
+                            if (id === undefined) return;
 
                             if (id === "") return setActor(null);
                             if (!id.match(/^[1-9][0-9]{16,19}$/)) return alert("Invalid user ID.");
@@ -137,8 +144,8 @@ export default function AuditLogsClient({
                         variant="secondary"
                         className="flex items-center gap-2"
                         onClick={() => {
-                            const id = prompt("Enter guild ID to filter by, or leave empty to show all entries");
-                            if (id === null) return;
+                            const id = prompt("Enter guild ID to filter by, or leave empty to show all entries")?.trim();
+                            if (id === undefined) return;
 
                             if (id === "") return setGuild(null);
                             if (!id.match(/^[1-9][0-9]{16,19}$/)) return alert("Invalid guild ID.");
@@ -358,6 +365,35 @@ export default function AuditLogsClient({
                                             changed <UserMention id={entry.data.user} />
                                             &apos;s global nickname to <b>{entry.data.name || "(none)"}</b>.
                                         </>
+                                    ) : entry.type === "global/filter/add-term" ? (
+                                        <>
+                                            added <code>{entry.data.term}</code> as a {entry.data.regex ? "regex" : "standard"} match to a global filter.
+                                        </>
+                                    ) : entry.type === "global/filter/create" ? (
+                                        <>
+                                            created a new global filter named <b>{entry.data}</b>.
+                                        </>
+                                    ) : entry.type === "global/filter/delete-term" ? (
+                                        <>
+                                            deleted the {entry.data.regex ? "regex" : "standard"} term <code>{entry.data.term}</code> from a global filter.
+                                        </>
+                                    ) : entry.type === "global/filter/delete" ? (
+                                        <>
+                                            deleted the global filter <b>{entry.data.name}</b>. Terms are shown below.
+                                        </>
+                                    ) : entry.type === "global/filter/edit-term-regex" ? (
+                                        <>
+                                            changed <code>{entry.data.term}</code> to a {entry.data.regex ? "regex" : "standard"} term.
+                                        </>
+                                    ) : entry.type === "global/filter/edit-term-term" ? (
+                                        <>
+                                            changed a {entry.data.regex ? "regex" : "standard"} term from <code>{entry.data.before}</code> to{" "}
+                                            <code>{entry.data.term}</code>.
+                                        </>
+                                    ) : entry.type === "global/filter/rename" ? (
+                                        <>
+                                            renamed the global filter named <b>{entry.data.before}</b> to <b>{entry.data.name}</b>.
+                                        </>
                                     ) : null}
                                 </p>
                                 {entry.type === "applications/nuke" ? (
@@ -371,6 +407,10 @@ export default function AuditLogsClient({
                                 ) : entry.type === "banshares/rescind" ? (
                                     <pre>
                                         <code>{entry.data.explanation}</code>
+                                    </pre>
+                                ) : entry.type === "global/filters/delete" ? (
+                                    <pre>
+                                        <code>{JSON.stringify(entry.data.terms, null, 4)}</code>
                                     </pre>
                                 ) : null}
                             </div>

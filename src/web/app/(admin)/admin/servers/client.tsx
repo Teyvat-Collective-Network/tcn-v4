@@ -133,7 +133,7 @@ export default function AdminServersClient({
                                     variant="outline"
                                     className="flex items-center gap-2"
                                     onClick={async () => {
-                                        const invite = prompt("Enter a new invite:");
+                                        const invite = prompt("Enter a new invite:")?.trim();
                                         if (!invite) return;
 
                                         const error = await setInvite(server, invite);
@@ -162,7 +162,7 @@ export default function AdminServersClient({
                                     variant="outline"
                                     className="flex items-center gap-2"
                                     onClick={async () => {
-                                        const owner = prompt("Enter the new owner's ID:");
+                                        const owner = prompt("Enter the new owner's ID:")?.trim();
                                         if (!owner) return;
 
                                         const error = await setOwner(server, owner);
@@ -180,8 +180,8 @@ export default function AdminServersClient({
                                     variant="outline"
                                     className="flex items-center gap-2"
                                     onClick={async () => {
-                                        const advisor = prompt("Enter the new advisor's ID (leave empty to remove):");
-                                        if (advisor === null) return;
+                                        const advisor = prompt("Enter the new advisor's ID (leave empty to remove):")?.trim();
+                                        if (advisor === undefined) return;
 
                                         const error = await setAdvisor(server, advisor);
                                         if (error) alert(`Error: ${error}`);

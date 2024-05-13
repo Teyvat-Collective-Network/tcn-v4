@@ -1,4 +1,4 @@
-import { eq, or } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 import { majorTypes, unrestrictedTypes } from "./polls.js";
@@ -24,6 +24,10 @@ export async function getTurnout(id: number, type: string) {
 
 export async function getQuorum(id: number, type: string) {
     return (await getTurnoutAndQuorum(id, type))[1];
+}
+
+export async function isObserver(user: string) {
+    return !!(await db.query.users.findFirst({ where: and(eq(tables.users.id, user), eq(tables.users.observer, true)) }));
 }
 
 export async function isCouncil(user: string) {

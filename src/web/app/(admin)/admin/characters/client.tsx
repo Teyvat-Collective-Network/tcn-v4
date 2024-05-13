@@ -49,7 +49,7 @@ export default function AdminCharactersClient({ characters: initial }: { charact
                                     <Button
                                         variant="secondary"
                                         onClick={async () => {
-                                            const id = prompt("Enter a new character ID:");
+                                            const id = prompt("Enter a new character ID:")?.trim();
                                             if (!id) return;
                                             if (!id.match(/^[a-z-]{1,32}$/))
                                                 return alert("Invalid character ID (should be 1-32 lowercase letters and dashes).");
@@ -75,9 +75,9 @@ export default function AdminCharactersClient({ characters: initial }: { charact
                                         onClick={async () => {
                                             const short = prompt(
                                                 "Enter a new short name (maximum 32 characters) or leave blank to remove. This will update partner embeds but not guild role names in HQ/the Hub.",
-                                            );
+                                            )?.trim();
 
-                                            if (short === null) return;
+                                            if (short === undefined) return;
                                             if (short.length > 32) return alert("Short name is too long (maximum 32 characters).");
                                             const valid = await setCharacterShortName(character.id, short);
 
@@ -98,7 +98,7 @@ export default function AdminCharactersClient({ characters: initial }: { charact
                                         onClick={async () => {
                                             const name = prompt(
                                                 "Enter a new name (maximum 64 characters). This will update partner embeds but not guild role names in HQ/the Hub.",
-                                            );
+                                            )?.trim();
 
                                             if (!name) return;
                                             if (name.length > 64) return alert("Name is too long (maximum 64 characters).");
@@ -146,19 +146,19 @@ export default function AdminCharactersClient({ characters: initial }: { charact
             <Button
                 variant="secondary"
                 onClick={async () => {
-                    const id = prompt("Enter a new character ID:");
+                    const id = prompt("Enter a new character ID:")?.trim();
                     if (!id) return;
                     if (!id.match(/^[a-z-]{1,32}$/)) return alert("Invalid character ID (should be 1-32 lowercase letters and dashes).");
 
-                    const short = prompt("Enter a short name (maximum 32 characters).");
-                    if (short === null) return;
+                    const short = prompt("Enter a short name (maximum 32 characters).")?.trim();
+                    if (short === undefined) return;
                     if (short.length > 32) return alert("Short name is too long (maximum 32 characters).");
 
-                    const name = prompt("Enter a name (required, maximum 64 characters).");
+                    const name = prompt("Enter a name (required, maximum 64 characters).")?.trim();
                     if (!name) return;
                     if (name.length > 64) return alert("Name is too long (maximum 64 characters).");
 
-                    const element = prompt("Enter an element.")?.toLowerCase();
+                    const element = prompt("Enter an element.")?.trim()?.toLowerCase();
                     if (!element) return;
                     if (!["pyro", "hydro", "anemo", "electro", "dendro", "cryo", "geo"].includes(element)) return alert("Invalid element.");
 

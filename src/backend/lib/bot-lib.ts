@@ -1,4 +1,5 @@
 import {
+    AutocompleteInteraction,
     BaseMessageOptions,
     ButtonStyle,
     ChatInputCommandInteraction,
@@ -12,7 +13,7 @@ import { and, eq, or } from "drizzle-orm";
 import bot from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
-import { isCouncil } from "./api-lib.js";
+import { isCouncil, isObserver } from "./api-lib.js";
 
 export function embed(title: string, description: string, color: number, ephemeral: boolean = true): BaseMessageOptions & { ephemeral: boolean } {
     return { content: "", embeds: [{ title, description, color }], files: [], components: [], ephemeral };
@@ -44,8 +45,7 @@ export async function reply(interaction: RepliableInteraction, data: Interaction
 }
 
 export async function ensureObserver(interaction: RepliableInteraction) {
-    const user = await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, interaction.user.id) });
-    if (!user?.observer) throw "Permission denied: you must be an observer.";
+    if (!(await isObserver(interaction.user.id))) throw "Permission denied: you must be an observer.";
 }
 
 export async function ensureVoter(interaction: RepliableInteraction) {
@@ -61,8 +61,7 @@ export async function ensureVoter(interaction: RepliableInteraction) {
 }
 
 export async function ensureCouncil(interaction: RepliableInteraction) {
-    const valid = await isCouncil(interaction.user.id);
-    if (!valid) throw "Permission denied: you must be a voter.";
+    if (!(await isCouncil(interaction.user.id))) throw "Permission denied: you must be a voter.";
 }
 
 export async function ensureTCN(interaction: RepliableInteraction) {
@@ -71,7 +70,7 @@ export async function ensureTCN(interaction: RepliableInteraction) {
         throw "This command is restricted to TCN servers.";
 }
 
-export function cmdKey(interaction: ChatInputCommandInteraction) {
+export function cmdKey(interaction: ChatInputCommandInteraction | AutocompleteInteraction) {
     const group = interaction.options.getSubcommandGroup(false);
     const sub = interaction.options.getSubcommand(false);
 

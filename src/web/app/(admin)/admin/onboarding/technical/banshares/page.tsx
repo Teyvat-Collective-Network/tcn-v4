@@ -13,9 +13,9 @@ export default function OnboardingTechnicalBanshares() {
                         <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
-                <a href="/admin/onboarding/technical/global">
+                <a href="/admin/onboarding/technical/applications">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft /> Global Chat
+                        <FaAngleLeft /> Applications
                     </Button>
                 </a>
             </div>

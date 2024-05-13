@@ -1,5 +1,5 @@
 import { Events, Guild, GuildMember, Role } from "discord.js";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import bot, { HQ, HUB, roles } from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -110,13 +110,12 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
 
     const user = await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, id) });
 
-    // TODO: global mod role
-
     const owner = guilds.some((guild) => guild.owner === id);
     const advisor = guilds.some((guild) => guild.advisor === id);
     const voter = guilds.some((guild) => (guild.delegated ? guild.advisor : guild.owner) === id);
     const observer = user?.observer ?? false;
     const staff = await db.query.guildStaff.findMany({ columns: { guild: true }, where: eq(tables.guildStaff.user, id) });
+    const globalMod = observer || !!(await db.query.globalMods.findFirst({ where: and(eq(tables.globalMods.channel, 1), eq(tables.globalMods.user, id)) }));
 
     const hqMember = await HQ.members.fetch(id).catch(() => null);
     const hubMember = await HUB.members.fetch(id).catch(() => null);
@@ -127,6 +126,9 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
     const hubRemove: string[] = [];
 
     function check(condition: boolean, hqRole?: string, hubRole?: string) {
+        hqRole &&= process.env[hqRole];
+        hubRole &&= process.env[hubRole];
+
         if (condition) {
             if (hqRole) hqAdd.push(hqRole);
             if (hubRole) hubAdd.push(hubRole);
@@ -136,11 +138,12 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
         }
     }
 
-    check(owner, process.env.ROLE_SERVER_OWNERS, process.env.ROLE_HUB_OWNERS);
-    check(advisor, process.env.ROLE_COUNCIL_ADVISORS, process.env.ROLE_HUB_ADVISORS);
-    check(voter, process.env.ROLE_VOTERS);
-    check(observer, process.env.ROLE_OBSERVERS, process.env.ROLE_HUB_OBSERVERS);
-    check(owner || advisor || observer || staff.length > 0, undefined, process.env.ROLE_NETWORK_STAFF);
+    check(owner, "ROLE_SERVER_OWNERS", "ROLE_HUB_OWNERS");
+    check(advisor, "ROLE_COUNCIL_ADVISORS", "ROLE_HUB_ADVISORS");
+    check(voter, "ROLE_VOTERS");
+    check(observer, "ROLE_OBSERVERS", "ROLE_HUB_OBSERVERS");
+    check(owner || advisor || observer || staff.length > 0, undefined, "ROLE_NETWORK_STAFF");
+    check(globalMod, undefined, "ROLE_HUB_GLOBAL_MODS");
 
     for (const guild of guilds)
         if (guild.owner === id || guild.advisor === id) {

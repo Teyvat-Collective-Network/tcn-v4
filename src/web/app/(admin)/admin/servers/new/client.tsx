@@ -87,7 +87,8 @@ export default function AdminServersNewClient({
                     <Button
                         variant="secondary"
                         onClick={() => {
-                            const owner = prompt("Enter the owner's user ID:");
+                            const owner = prompt("Enter the owner's user ID:")?.trim();
+
                             if (owner)
                                 if (owner.match(/^[1-9][0-9]{16,19}$/)) setOwner(owner);
                                 else alert("Invalid user ID.");
@@ -102,8 +103,9 @@ export default function AdminServersNewClient({
                     <Button
                         variant="secondary"
                         onClick={() => {
-                            const advisor = prompt("Enter the advisor's user ID (leave empty to remove):");
-                            if (advisor !== null)
+                            const advisor = prompt("Enter the advisor's user ID (leave empty to remove):")?.trim();
+
+                            if (advisor !== undefined)
                                 if (advisor)
                                     if (advisor.match(/^([1-9][0-9]{16,19})?$/)) setAdvisor(advisor);
                                     else alert("Invalid user ID.");
@@ -139,8 +141,8 @@ export default function AdminServersNewClient({
                                 ? "This color is unsuitable in both light and dark mode."
                                 : "This color is too bright for light mode."
                             : hex("#323338", hexString) < 2.5
-                              ? "This color is too dark for dark mode."
-                              : ""}
+                            ? "This color is too dark for dark mode."
+                            : ""}
                     </span>
                 </div>
                 <b>HQ/Hub Role Name:</b>

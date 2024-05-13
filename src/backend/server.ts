@@ -2,12 +2,20 @@ import "dotenv/config";
 
 import addCharacter from "./actions/add-character.js";
 import addGuild from "./actions/add-guild.js";
+import addTermToFilter from "./actions/add-term-to-filter.js";
 import changeCharacterId from "./actions/change-character-id.js";
+import createFilter from "./actions/create-filter.js";
 import deleteCharacter from "./actions/delete-character.js";
+import deleteFilterTerm from "./actions/delete-filter-term.js";
+import deleteFilter from "./actions/delete-filter.js";
+import editFilterTermRegex from "./actions/edit-filter-term-regex.js";
+import editFilterTermTerm from "./actions/edit-filter-term-term.js";
 import exchangeDataForElection from "./actions/exchange-data-for-election.js";
 import getAuditLogs from "./actions/get-audit-logs.js";
 import getCharacters from "./actions/get-characters.js";
 import getElectionHistory from "./actions/get-election-history.js";
+import getFilter from "./actions/get-filter.js";
+import getFilters from "./actions/get-filters.js";
 import getGuild from "./actions/get-guild.js";
 import getGuildsForBanshare from "./actions/get-guilds-for-banshare.js";
 import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
@@ -24,6 +32,7 @@ import getUser from "./actions/get-user.js";
 import getVoteTracker from "./actions/get-vote-tracker.js";
 import refreshTerm from "./actions/refresh-term.js";
 import removeGuild from "./actions/remove-guild.js";
+import renameFilter from "./actions/rename-filter.js";
 import setAdvisor from "./actions/set-advisor.js";
 import setCharacterElement from "./actions/set-character-element.js";
 import setCharacterFullName from "./actions/set-character-full-name.js";
@@ -45,12 +54,20 @@ import { router } from "./trpc.js";
 export const appRouter = router({
     addCharacter,
     addGuild,
+    addTermToFilter,
     changeCharacterId,
+    createFilter,
     deleteCharacter,
+    deleteFilterTerm,
+    deleteFilter,
+    editFilterTermRegex,
+    editFilterTermTerm,
     exchangeDataForElection,
     getAuditLogs,
     getCharacters,
     getElectionHistory,
+    getFilter,
+    getFilters,
     getGuild,
     getGuildsForBanshare,
     getGuildsForDropdown,
@@ -67,6 +84,7 @@ export const appRouter = router({
     getVoteTracker,
     refreshTerm,
     removeGuild,
+    renameFilter,
     setAdvisor,
     setCharacterElement,
     setCharacterFullName,

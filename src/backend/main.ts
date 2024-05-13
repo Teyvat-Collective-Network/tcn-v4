@@ -1,5 +1,6 @@
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import { channels } from "./bot.js";
+import "./global-bot.js";
 import "./modules/applications";
 import "./modules/banshares";
 import "./modules/commands";

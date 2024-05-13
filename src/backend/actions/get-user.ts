@@ -40,9 +40,8 @@ export default proc
             const owner = guilds.some((guild) => guild.owner === id);
             const advisor = guilds.some((guild) => guild.advisor === id);
             const council = owner || advisor;
-            const staff = council || !!db.query.guildStaff.findFirst({ where: eq(tables.guildStaff.user, id) });
-
-            // TODO:
+            const staff = council || !!(await db.query.guildStaff.findFirst({ where: eq(tables.guildStaff.user, id) }));
+            const globalMod = dbUser?.observer || !!(await db.query.globalMods.findFirst({ where: eq(tables.globalMods.user, id) }));
 
             return {
                 id,
@@ -50,7 +49,7 @@ export default proc
                 tag: user.tag,
                 image: user.displayAvatarURL({ extension: "png", forceStatic: true, size: 256 }),
                 staff,
-                globalMod: false,
+                globalMod,
                 owner,
                 advisor,
                 council,

@@ -38,7 +38,7 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                 <Button
                     variant="secondary"
                     onClick={() => {
-                        const id = prompt("Enter a user ID:");
+                        const id = prompt("Enter a user ID:")?.trim();
                         if (!id) return;
                         if (!id.match(/^[1-9][0-9]{16,19}$/)) return alert("Invalid user ID.");
                         setId(id);
@@ -108,8 +108,8 @@ export default function AdminUsersClient({ guilds }: { guilds: { id: string; nam
                                 <Button
                                     variant="secondary"
                                     onClick={async () => {
-                                        const name = prompt("Enter a new global nickname:");
-                                        if (name === null) return;
+                                        const name = prompt("Enter a new global nickname:")?.trim();
+                                        if (name === undefined) return;
                                         if (name.length > 40) return "Nickname too long (maximum 40 characters).";
                                         const error = await setGlobalNickname(id, name);
                                         if (error) alert(error);

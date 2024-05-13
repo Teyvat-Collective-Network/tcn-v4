@@ -15,6 +15,8 @@ import {
     FaClipboardList,
     FaDoorOpen,
     FaEarthAmericas,
+    FaEarthAsia,
+    FaFilter,
     FaHandshake,
     FaHouse,
     FaList,
@@ -58,6 +60,8 @@ export function Menu({ root }: { root: string }) {
             ["/docs", "Documentation", FaBook],
         );
 
+    if (root === "/" && (user?.staff || user?.globalMod)) links.push(["/global-logs", "Global Logs", FaEarthAsia]);
+
     if (root === "/forms") links.push(["/apply", "Apply to Join", FaDoorOpen], ["/banshare", "Submit a Banshare", FaTowerBroadcast]);
 
     if (root === "/admin")
@@ -77,6 +81,15 @@ export function Menu({ root }: { root: string }) {
             ["/observer-terms", "Observer Terms", FaCalendarWeek],
             ["/election-history", "Election History", FaCheckToSlot],
         );
+
+    if (root === "/global")
+        links.push(
+            ["/global/onboarding", "Onboarding", FaDoorOpen],
+            ["/global/moderation", "Moderation", FaClipboardList],
+            ["/global/moderator-agreement", "Moderator Agreement", FaClipboardCheck],
+        );
+
+    if (root === "/global" && user?.observer) links.push(["/global/filters", "Chat Filters", FaFilter], ["/global/monitor", "Global Monitor", FaChartLine]);
 
     return (
         <>

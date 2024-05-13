@@ -50,10 +50,6 @@ export default function OnboardingGuideTechnical() {
                     <h2>Applications</h2>
                     <p>Learn about the application workflow.</p>
                 </LandingPanel>
-                <LandingPanel href="/admin/onboarding/technical/global">
-                    <h2>Global Chat</h2>
-                    <p>Learn how to operate/monitor the observer-only features in the global chat system.</p>
-                </LandingPanel>
                 <LandingPanel href="/admin/onboarding/technical/banshares">
                     <h2>Banshares</h2>
                     <p>Learn how to process banshares.</p>
