@@ -5,17 +5,23 @@ import addGuild from "./actions/add-guild.js";
 import addTermToFilter from "./actions/add-term-to-filter.js";
 import changeCharacterId from "./actions/change-character-id.js";
 import createFilter from "./actions/create-filter.js";
+import createGlobalChannel from "./actions/create-global-channel.js";
 import deleteCharacter from "./actions/delete-character.js";
 import deleteFilterTerm from "./actions/delete-filter-term.js";
 import deleteFilter from "./actions/delete-filter.js";
+import deleteGlobalChannel from "./actions/delete-global-channel.js";
 import editFilterTermRegex from "./actions/edit-filter-term-regex.js";
 import editFilterTermTerm from "./actions/edit-filter-term-term.js";
+import editGlobalChannelName from "./actions/edit-global-channel-name.js";
+import editGlobalChannelPassword from "./actions/edit-global-channel-password.js";
+import editGlobalChannelVisibility from "./actions/edit-global-channel-visibility.js";
 import exchangeDataForElection from "./actions/exchange-data-for-election.js";
 import getAuditLogs from "./actions/get-audit-logs.js";
 import getCharacters from "./actions/get-characters.js";
 import getElectionHistory from "./actions/get-election-history.js";
 import getFilter from "./actions/get-filter.js";
 import getFilters from "./actions/get-filters.js";
+import getGlobalChannels from "./actions/get-global-channels.js";
 import getGuild from "./actions/get-guild.js";
 import getGuildsForBanshare from "./actions/get-guilds-for-banshare.js";
 import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
@@ -57,17 +63,23 @@ export const appRouter = router({
     addTermToFilter,
     changeCharacterId,
     createFilter,
+    createGlobalChannel,
     deleteCharacter,
-    deleteFilterTerm,
     deleteFilter,
+    deleteFilterTerm,
+    deleteGlobalChannel,
     editFilterTermRegex,
     editFilterTermTerm,
+    editGlobalChannelName,
+    editGlobalChannelPassword,
+    editGlobalChannelVisibility,
     exchangeDataForElection,
     getAuditLogs,
     getCharacters,
     getElectionHistory,
     getFilter,
     getFilters,
+    getGlobalChannels,
     getGuild,
     getGuildsForBanshare,
     getGuildsForDropdown,
@@ -79,8 +91,8 @@ export const appRouter = router({
     getServerCount,
     getServerListForAdmin,
     getTag,
-    getUserForAdmin,
     getUser,
+    getUserForAdmin,
     getVoteTracker,
     refreshTerm,
     removeGuild,

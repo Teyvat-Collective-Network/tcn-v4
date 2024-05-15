@@ -51,6 +51,11 @@ const types: { label: string; value: string; hide?: boolean }[] = [
     { label: "Edit Global Filter Term Mode", value: "global/filter/edit-term-regex" },
     { label: "Edit Global Filter Term Match", value: "global/filter/edit-term-term" },
     { label: "Rename Global Filter", value: "global/filter/rename" },
+    { label: "Create Global Channel", value: "global/channels/create" },
+    { label: "Delete Global Channel", value: "global/channels/delete" },
+    { label: "Set Global Channel Name", value: "global/channels/set-name" },
+    { label: "Set Global Channel Visibility", value: "global/channels/set-visible" },
+    { label: "Set Global Channel Password", value: "global/channels/set-password" },
 ];
 const typeNames = Object.fromEntries(types.map((x) => [x.value, x.label]));
 
@@ -394,6 +399,25 @@ export default function AuditLogsClient({
                                         <>
                                             renamed the global filter named <b>{entry.data.before}</b> to <b>{entry.data.name}</b>.
                                         </>
+                                    ) : entry.type === "global/channels/create" ? (
+                                        <>
+                                            created a new {entry.data.visible ? "public" : "private"} global channel named <b>{entry.data.name}</b> (ID:{" "}
+                                            {entry.data.id}).
+                                        </>
+                                    ) : entry.type === "global/channels/delete" ? (
+                                        <>
+                                            deleted global channel #{entry.data.id} (<b>{entry.data.name}</b>).
+                                        </>
+                                    ) : entry.type === "global/channels/set-name" ? (
+                                        <>
+                                            renamed global channel #{entry.data.id} from <b>{entry.data.oldName}</b> to <b>{entry.data.name}</b>.
+                                        </>
+                                    ) : entry.type === "global/channels/set-visible" ? (
+                                        <>
+                                            made global channel #{entry.data.id} {entry.data.visible ? "public" : "private"}.
+                                        </>
+                                    ) : entry.type === "global/channels/set-password" ? (
+                                        <>updated the password of global channel #{entry.data.id}.</>
                                     ) : null}
                                 </p>
                                 {entry.type === "applications/nuke" ? (

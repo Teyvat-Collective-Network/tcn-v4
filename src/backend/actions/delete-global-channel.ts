@@ -19,5 +19,7 @@ export default proc.input(z.object({ actor: z.string(), id: z.number().int().min
 
         await db.delete(tables.globalChannels).where(and(eq(tables.globalChannels.id, id), eq(tables.globalChannels.protected, false)));
         await audit(actor, "global/channels/delete", null, { id, name: entry.name });
+
+        return null;
     }),
 );

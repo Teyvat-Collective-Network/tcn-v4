@@ -4,7 +4,7 @@ import React from "react";
 import { Nav } from "../../components/nav";
 import getUser from "../../lib/get-user";
 
-export default async function FormLayout({ children }: React.PropsWithChildren) {
+export default async function CouncilLayout({ children }: React.PropsWithChildren) {
     const user = await getUser();
 
     if (!user) return redirect(`/auth/login?${new URLSearchParams({ redirect: headers().get("host") || "/council" })}`);

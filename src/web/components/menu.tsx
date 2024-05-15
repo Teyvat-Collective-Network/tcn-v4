@@ -89,7 +89,12 @@ export function Menu({ root }: { root: string }) {
             ["/global/moderator-agreement", "Moderator Agreement", FaClipboardCheck],
         );
 
-    if (root === "/global" && user?.observer) links.push(["/global/filters", "Chat Filters", FaFilter], ["/global/monitor", "Global Monitor", FaChartLine]);
+    if (root === "/global" && user?.observer)
+        links.push(
+            ["/global/channels", "Global Channels", FaEarthAsia],
+            ["/global/filters", "Chat Filters", FaFilter],
+            ["/global/monitor", "Global Monitor", FaChartLine],
+        );
 
     return (
         <>

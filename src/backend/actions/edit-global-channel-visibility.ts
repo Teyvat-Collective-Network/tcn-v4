@@ -20,5 +20,7 @@ export default proc.input(z.object({ actor: zs.snowflake, id: z.number().int().m
 
         await db.update(tables.globalChannels).set({ visible }).where(eq(tables.globalChannels.id, id));
         await audit(actor, "global/channels/set-visible", null, { id, name: entry.name, visible });
+
+        return null;
     }),
 );

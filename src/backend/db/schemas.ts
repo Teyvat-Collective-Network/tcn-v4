@@ -454,6 +454,7 @@ export const globalChannels = mysqlTable("global_channels", {
     password: varchar("password", { length: 128 }),
     panic: boolean("panic").notNull().default(false),
     protected: boolean("protected").notNull().default(false),
+    logs: varchar("logs", { length: 20 }),
 });
 
 export const globalConnections = mysqlTable("global_connections", {
@@ -558,26 +559,6 @@ export const globalMessageInstances = mysqlTable(
     },
     (t) => ({
         idx_message: index("idx_message").on(t.message),
-    }),
-);
-
-export const globalLogs = mysqlTable(
-    "global_logs",
-    {
-        id: int("id").autoincrement().primaryKey(),
-        channel: int("channel")
-            .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
-            .notNull(),
-        time: bigint("time", { mode: "number" }).notNull(),
-        action: mysqlEnum("action", ["block", "delete", "edit", "ban", "unban"]).notNull(),
-        actor: varchar("actor", { length: 20 }),
-        target: varchar("target", { length: 20 }),
-        content: text("content"),
-        after: text("after"),
-        removedFiles: json("removed_files"),
-    },
-    (t) => ({
-        idx_channel_time: index("idx_channel_time").on(t.channel, t.time),
     }),
 );
 

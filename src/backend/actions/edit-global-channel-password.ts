@@ -21,5 +21,7 @@ export default proc
 
             await db.update(tables.globalChannels).set({ password: newPassword }).where(eq(tables.globalChannels.id, id));
             await audit(actor, "global/channels/set-password", null, { id, name: entry.name });
+
+            return null;
         }),
     );

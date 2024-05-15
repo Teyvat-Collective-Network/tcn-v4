@@ -1,7 +1,7 @@
 "use server";
 
-import { api } from "../../../../lib/trpc";
-import { withUserId } from "../../../../lib/with-user";
+import { api } from "../../../../../lib/trpc";
+import { withUserId } from "../../../../../lib/with-user";
 
 export async function getFilter(id: number) {
     return await api.getFilter.query(id);

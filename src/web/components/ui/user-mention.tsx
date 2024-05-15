@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import { FaAt, FaSpinner } from "react-icons/fa6";
 import { useTagsContext } from "../../context/tags";
 import { getTag } from "../../lib/actions";
@@ -36,11 +36,11 @@ export default function UserMention({ id }: { id: string }) {
     );
 }
 
-async function Core({ id }: { id: string }) {
+function Core({ id }: { id: string }) {
     const { tags, setTag } = useTagsContext();
     const ptag = id in tags ? tags[id] : id in pcache ? pcache[id] : setTag(id, getTag(id));
     pcache[id] = ptag;
-    const tag = (cache[id] = await ptag);
+    const tag = (cache[id] = use(ptag));
     return (
         <Mention>
             <FaAt /> {tag}

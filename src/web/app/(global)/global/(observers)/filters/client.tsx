@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { FaPencil, FaPlus, FaRotateRight, FaTrash } from "react-icons/fa6";
-import { Loading } from "../../../../components/loading";
-import { Button } from "../../../../components/ui/button";
-import { ComboSelector } from "../../../../components/ui/combo-selector";
-import { Prose } from "../../../../components/ui/prose";
-import { Switch } from "../../../../components/ui/switch";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/table";
+import { Loading } from "../../../../../components/loading";
+import { Button } from "../../../../../components/ui/button";
+import { ComboSelector } from "../../../../../components/ui/combo-selector";
+import { Prose } from "../../../../../components/ui/prose";
+import { Switch } from "../../../../../components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../components/ui/table";
 import {
     addTermToFilter,
     createFilter,
@@ -127,7 +127,7 @@ export default function GlobalFiltersClient({ filters: initial }: { filters: { i
                                     break;
                                 } while (true);
 
-                                let term: string | null;
+                                let term: string | undefined;
 
                                 do {
                                     term = prompt(

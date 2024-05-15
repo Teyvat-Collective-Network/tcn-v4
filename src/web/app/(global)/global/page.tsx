@@ -25,6 +25,10 @@ export default function GlobalHome() {
             </LandingPanel>
             {user?.observer ? (
                 <>
+                    <LandingPanel href="/global/channels">
+                        <h2>Channels</h2>
+                        <p>Create and manage global channels here.</p>
+                    </LandingPanel>
                     <LandingPanel href="/global/filters">
                         <h2>Chat Filters</h2>
                         <p>Manage global chat filter modules here.</p>

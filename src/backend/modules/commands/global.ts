@@ -11,7 +11,7 @@ import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
 import { fuzzy } from "../../lib.js";
 import { isObserver } from "../../lib/api-lib.js";
-import { cmdKey, ensureObserver } from "../../lib/bot-lib.js";
+import { cmdKey } from "../../lib/bot-lib.js";
 
 export default [
     {
@@ -263,6 +263,34 @@ export default [
                         type: ApplicationCommandOptionType.Subcommand,
                         name: "list",
                         description: "list this channel's mods",
+                    },
+                ],
+            },
+            {
+                type: ApplicationCommandOptionType.SubcommandGroup,
+                name: "logs",
+                description: "set the logs of a global channel",
+                options: [
+                    {
+                        type: ApplicationCommandOptionType.Subcommand,
+                        name: "set",
+                        description: "set the logs of a global channel",
+                        options: [
+                            {
+                                type: ApplicationCommandOptionType.Integer,
+                                name: "channel",
+                                description: "the channel for which to set the logs",
+                                required: true,
+                                autocomplete: true,
+                            },
+                            {
+                                type: ApplicationCommandOptionType.Channel,
+                                name: "location",
+                                description: "the channel to set the logs to",
+                                required: true,
+                                channelTypes: [ChannelType.GuildText],
+                            },
+                        ],
                     },
                 ],
             },

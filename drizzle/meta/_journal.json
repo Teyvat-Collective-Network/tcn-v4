@@ -274,6 +274,20 @@
       "when": 1715547086624,
       "tag": "0038_concerned_roughhouse",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "5",
+      "when": 1715735056677,
+      "tag": "0039_bouncy_stingray",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "5",
+      "when": 1715746271297,
+      "tag": "0040_daily_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }
