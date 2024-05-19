@@ -108,7 +108,7 @@ export default proc
 
             const role = urgent ? process.env.ROLE_OBSERVERS! : process.env.ROLE_BANSHARE_PING!;
 
-            channels.execManagement.send({
+            channels.observerManagement.send({
                 content: `<@&${role}> [A banshare](<${message.url}>) was just submitted for review.`,
                 allowedMentions: { roles: [role] },
             });

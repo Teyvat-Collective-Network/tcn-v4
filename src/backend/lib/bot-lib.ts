@@ -218,3 +218,10 @@ export async function getHubAndNormalPartnerList(): Promise<[BaseMessageOptions,
         base,
     ];
 }
+
+export function code(x: string): string {
+    if (!x) return x;
+    if (x.indexOf("`") === -1) return `\`${x}\``;
+    if (x.indexOf("``") === -1) return `\`\` ${x} \`\``;
+    return `\`\`${x.replaceAll("`", "\u200b`")}\`\``;
+}

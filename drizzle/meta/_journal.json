@@ -288,6 +288,97 @@
       "when": 1715746271297,
       "tag": "0040_daily_doctor_faustus",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "5",
+      "when": 1715829503000,
+      "tag": "0041_quick_silver_surfer",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "5",
+      "when": 1715829508079,
+      "tag": "0042_right_scarecrow",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "5",
+      "when": 1715829929024,
+      "tag": "0043_organic_stryfe",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "5",
+      "when": 1715985372420,
+      "tag": "0044_elite_roland_deschain",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "5",
+      "when": 1715993529535,
+      "tag": "0045_odd_next_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "5",
+      "when": 1715994353048,
+      "tag": "0046_dazzling_naoko",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "5",
+      "when": 1716004802737,
+      "tag": "0047_wooden_unus",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "5",
+      "when": 1716006127174,
+      "tag": "0048_empty_scream",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "5",
+      "when": 1716053055807,
+      "tag": "0049_broad_miracleman",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "5",
+      "when": 1716053163847,
+      "tag": "0050_aspiring_blob",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "5",
+      "when": 1716054816554,
+      "tag": "0051_bitter_lionheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "5",
+      "when": 1716064979104,
+      "tag": "0052_smart_captain_cross",
+      "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "5",
+      "when": 1716071417239,
+      "tag": "0053_superb_deathstrike",
+      "breakpoints": true
     }
   ]
 }

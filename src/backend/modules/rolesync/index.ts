@@ -1,5 +1,5 @@
 import { Events, Guild, GuildMember, Role } from "discord.js";
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import bot, { HQ, HUB, roles } from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -115,7 +115,15 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
     const voter = guilds.some((guild) => (guild.delegated ? guild.advisor : guild.owner) === id);
     const observer = user?.observer ?? false;
     const staff = await db.query.guildStaff.findMany({ columns: { guild: true }, where: eq(tables.guildStaff.user, id) });
-    const globalMod = observer || !!(await db.query.globalMods.findFirst({ where: and(eq(tables.globalMods.channel, 1), eq(tables.globalMods.user, id)) }));
+
+    const globalMod =
+        (
+            await db
+                .select({ number: count() })
+                .from(tables.globalMods)
+                .innerJoin(tables.globalChannels, eq(tables.globalMods.channel, tables.globalChannels.id))
+                .where(and(eq(tables.globalMods.user, id), eq(tables.globalChannels.important, true)))
+        )[0].number > 0;
 
     const hqMember = await HQ.members.fetch(id).catch(() => null);
     const hubMember = await HUB.members.fetch(id).catch(() => null);

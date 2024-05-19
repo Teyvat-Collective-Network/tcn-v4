@@ -1,0 +1,529 @@
+import {
+    BaseMessageOptions,
+    ButtonStyle,
+    ChannelType,
+    ComponentType,
+    Events,
+    Message,
+    MessageFlags,
+    MessageType,
+    PartialMessage,
+    PermissionFlagsBits,
+    escapeMarkdown,
+} from "discord.js";
+import { and, eq, inArray } from "drizzle-orm";
+import { fstatSync, openSync } from "fs";
+import { db } from "../../db/db.js";
+import tables from "../../db/tables.js";
+import globalBot from "../../global-bot.js";
+import { escapeRegex } from "../../lib.js";
+import { code } from "../../lib/bot-lib.js";
+import { addFile } from "../../lib/files.js";
+import { getWebhook, isGlobalWebhook, logDeletion, logToChannel } from "../../lib/global.js";
+import stickerCache from "../../lib/sticker-cache.js";
+import { GlobalChatRelayTask, GlobalChatTaskPriority, globalChatRelayQueue, makeWorker } from "../../queue.js";
+
+const panicAlertCooldown = new Map<string, number>();
+
+setInterval(() => {
+    for (const key of panicAlertCooldown.keys()) if (panicAlertCooldown.get(key)! < Date.now() - 30000) panicAlertCooldown.delete(key);
+}, 86400000);
+
+function shouldPanicAlert(channel: string) {
+    if (panicAlertCooldown.has(channel) && panicAlertCooldown.get(channel)! >= Date.now() - 30000) return false;
+
+    panicAlertCooldown.set(channel, Date.now());
+    return true;
+}
+
+const deleteButton = [
+    {
+        type: ComponentType.ActionRow,
+        components: [
+            {
+                type: ComponentType.Button,
+                customId: "delete-message",
+                style: ButtonStyle.Danger,
+                label: "Delete",
+            },
+        ],
+    },
+] satisfies BaseMessageOptions["components"];
+
+const getEmbeds = (message: Message | PartialMessage) =>
+    message.flags.has(MessageFlags.SuppressEmbeds) ? [] : message.embeds.filter((embed) => embed.data.type === "rich").map((embed) => embed.toJSON());
+
+globalBot.on(Events.MessageCreate, async (message) => {
+    if (!message.guild) return;
+    if (message.flags.has(MessageFlags.SuppressNotifications) || message.flags.has(MessageFlags.Loading)) return;
+
+    if (
+        message.type !== MessageType.Default &&
+        message.type !== MessageType.Reply &&
+        message.type !== MessageType.ContextMenuCommand &&
+        message.type !== MessageType.ChatInputCommand
+    )
+        return;
+
+    if (await isGlobalWebhook(message.webhookId)) return;
+
+    const [channel] = await db
+        .select({ id: tables.globalChannels.id, panic: tables.globalChannels.panic, logs: tables.globalChannels.logs })
+        .from(tables.globalConnections)
+        .innerJoin(tables.globalChannels, eq(tables.globalConnections.channel, tables.globalChannels.id))
+        .where(eq(tables.globalConnections.location, message.channel.id));
+
+    if (!channel) return;
+
+    if (channel.panic) {
+        if (shouldPanicAlert(message.channel.id))
+            message.reply({
+                content: "This channel is currently in panic mode. Messages and edits will not be forwarded.",
+                flags: MessageFlags.SuppressNotifications,
+            });
+        return;
+    }
+
+    const banned = !!(await db.query.globalBans.findFirst({
+        where: and(eq(tables.globalBans.channel, channel.id), eq(tables.globalBans.user, message.author.id)),
+    }));
+
+    if (banned) {
+        message.author.send("You are banned from that global channel and cannot send messages to it.");
+        message.delete();
+        return;
+    }
+
+    if (message.content.length > 2000) {
+        message.reply({
+            content: "This message is too long. Webhooks can only send messages up to 2000 characters long, so please send a shorter message.",
+            components: deleteButton,
+            flags: MessageFlags.SuppressNotifications,
+        });
+
+        return;
+    }
+
+    if (message.stickers.size + message.attachments.size > 10) {
+        message.reply({
+            content:
+                "Stickers must be converted to files and a message may only contain 10 messages. Please send only 10 files and stickers combined per message.",
+            components: deleteButton,
+            flags: MessageFlags.SuppressNotifications,
+        });
+
+        return;
+    }
+
+    const filters = await db
+        .select({ term: tables.globalFilterTerms.term, regex: tables.globalFilterTerms.regex })
+        .from(tables.globalAppliedFilters)
+        .innerJoin(tables.globalFilterTerms, eq(tables.globalAppliedFilters.filter, tables.globalFilterTerms.filter))
+        .where(eq(tables.globalAppliedFilters.channel, channel.id));
+
+    const entry = await db.query.users.findFirst({ columns: { globalNickname: true }, where: eq(tables.users.id, message.author.id) });
+    const guildEntry = await db.query.guilds.findFirst({ columns: { name: true }, where: eq(tables.guilds.id, message.guild.id) });
+
+    const user = message.member ?? message.author;
+
+    const username = `${(entry?.globalNickname ?? user.displayName).slice(0, 40)} from ${guildEntry?.name ?? message.guild.name}`.slice(0, 80);
+
+    for (const { term, regex } of filters)
+        try {
+            const re = regex
+                ? new RegExp(term, "i")
+                : new RegExp(
+                      term.length === 1
+                          ? escapeRegex(term)
+                          : `\\b${term.startsWith("*") ? "w*?" : term[0]}${escapeRegex(term.slice(1, -1))}${term.endsWith("*") ? ".*?" : term.at(-1)}\\b`,
+                      "i",
+                  );
+
+            let match = message.content.match(re)?.[0] ?? null;
+
+            if (match) {
+                message.delete();
+                message.author.send(`Your message was blocked by the global chat filter (the filtered term was: ${code(match)}).`);
+
+                if (channel.logs)
+                    await logToChannel(
+                        channel.logs,
+                        {
+                            content: `Message from ${message.author} blocked in **${escapeMarkdown(message.guild.name)}**`,
+                            embeds: [
+                                {
+                                    title: "Message Blocked",
+                                    description: message.content,
+                                    fields: [{ name: "Blocked Term", value: code(match) }],
+                                },
+                            ],
+                        },
+                        message.author.id,
+                    );
+
+                return;
+            }
+
+            match = username.match(re)?.[0] ?? null;
+
+            if (match) {
+                message.delete();
+
+                message.author.send(
+                    `Your message was blocked by the global chat filter due to your display name (the filtered term was: ${code(
+                        match,
+                    )}). You can bypass this by using \`/global nickname\`.`,
+                );
+
+                if (channel.logs)
+                    await logToChannel(
+                        channel.logs,
+                        {
+                            content: `Message from ${message.author} blocked in **${escapeMarkdown(message.guild.name)}** due to their username`,
+                            embeds: [
+                                {
+                                    title: "Message Blocked (Username)",
+                                    description: username,
+                                    fields: [{ name: "Blocked Term", value: code(match) }],
+                                },
+                            ],
+                        },
+                        message.author.id,
+                    );
+
+                return;
+            }
+        } catch {}
+
+    const attachments = await Promise.all(
+        message.attachments.map(async (attachment) => ({ name: attachment.name, attachment: await addFile(attachment.url), sticker: false })),
+    );
+
+    for (const sticker of message.stickers.values()) {
+        try {
+            const path = await stickerCache.fetch(sticker);
+            if (!path) throw null;
+            if (fstatSync(openSync(path, "r")).size === 0) throw null;
+
+            attachments.push({ name: `${sticker.name}.${stickerCache.ext(sticker)}`, attachment: path, sticker: true });
+        } catch {
+            message.reply({
+                content:
+                    "Your sticker could not be converted to a file to be sent. Unfortunately, Discord does not allow webhooks to send stickers, so this sticker cannot be relayed and your message has not been sent.",
+                components: deleteButton,
+                flags: MessageFlags.SuppressNotifications,
+            });
+
+            return;
+        }
+    }
+
+    const [{ insertId }] = await db.insert(tables.globalMessages).values({
+        channel: channel.id,
+        author: message.author.id,
+        originGuild: message.guild.id,
+        originChannel: message.channel.id,
+        originMessage: message.id,
+        time: Date.now(),
+        content: message.content,
+        embeds: getEmbeds(message),
+        attachments,
+        username,
+        avatar: user.displayAvatarURL({ extension: "png", size: 256 }),
+    });
+
+    await db.insert(tables.globalMessageInstances).values({ ref: insertId, guild: message.guild.id, channel: message.channel.id, message: message.id });
+
+    const connections = await db.query.globalConnections.findMany({
+        columns: { guild: true, location: true },
+        where: eq(tables.globalConnections.channel, channel.id),
+    });
+
+    await globalChatRelayQueue.addBulk(
+        connections
+            .filter((connection) => connection.guild !== message.guild!.id)
+            .map((connection) => ({
+                name: "",
+                data: { type: "post", id: insertId, guild: connection.guild, channel: connection.location },
+                opts: { priority: GlobalChatTaskPriority.Post },
+            })),
+    );
+});
+
+globalBot.on(Events.MessageDelete, async (message) => {
+    const [instance] = await db
+        .select({
+            id: tables.globalMessages.id,
+            author: tables.globalMessages.author,
+            username: tables.globalMessages.username,
+            content: tables.globalMessages.content,
+            embeds: tables.globalMessages.embeds,
+            attachments: tables.globalMessages.attachments,
+            logs: tables.globalChannels.logs,
+        })
+        .from(tables.globalMessageInstances)
+        .innerJoin(tables.globalMessages, eq(tables.globalMessageInstances.ref, tables.globalMessages.id))
+        .innerJoin(tables.globalChannels, eq(tables.globalMessages.channel, tables.globalChannels.id))
+        .where(eq(tables.globalMessageInstances.message, message.id));
+
+    if (!instance) return;
+
+    await logDeletion(message.guild!, instance);
+
+    await globalChatRelayQueue.add(
+        "",
+        { type: "start-delete", objects: [{ ref: instance.id, guild: message.guild!.id, channel: message.channel.id, message: message.id }] },
+        { priority: GlobalChatTaskPriority.Delete },
+    );
+});
+
+globalBot.on(Events.MessageBulkDelete, async (messages) => {
+    const instances = await db
+        .select({
+            ref: tables.globalMessageInstances.ref,
+            guild: tables.globalMessageInstances.guild,
+            channel: tables.globalMessageInstances.channel,
+            message: tables.globalMessageInstances.message,
+            logs: tables.globalChannels.logs,
+        })
+        .from(tables.globalMessageInstances)
+        .innerJoin(tables.globalMessages, eq(tables.globalMessageInstances.ref, tables.globalMessages.id))
+        .innerJoin(tables.globalChannels, eq(tables.globalMessages.channel, tables.globalChannels.id))
+        .where(inArray(tables.globalMessageInstances.message, [...messages.keys()]));
+
+    if (instances.length === 0) return;
+
+    const groups: Record<string, typeof instances> = {};
+
+    for (const instance of instances) if (instance.logs) (groups[instance.logs] ??= []).push(instance);
+
+    const guild = messages.first()!.guild!;
+
+    for (const [logs, instances] of Object.entries(groups))
+        await logToChannel(logs, {
+            embeds: [
+                {
+                    title: "Bulk Deletion",
+                    description: `${instances.length} message${instances.length === 1 ? " was" : "s were"} bulk deleted from **${escapeMarkdown(
+                        guild.name,
+                    )}** (\`${guild.id}\`).`,
+                    color: 0x2b2d31,
+                },
+            ],
+            files: [{ name: "deleted-messages.json", attachment: Buffer.from(JSON.stringify(instances, null, 4)) }],
+        });
+
+    await globalChatRelayQueue.add("", { type: "start-delete", objects: instances }, { priority: GlobalChatTaskPriority.Delete });
+});
+
+globalBot.on(Events.MessageUpdate, async (before, after) => {
+    if (!after.guild) return;
+    const contentUpdated = before.content !== after.content;
+
+    const embedsBefore = getEmbeds(before);
+    const embedsAfter = getEmbeds(after);
+
+    const embedsUpdated = JSON.stringify(embedsBefore) !== JSON.stringify(embedsAfter);
+    const attachmentsUpdated = before.attachments.size !== after.attachments.size;
+
+    if (!contentUpdated && !embedsUpdated && !attachmentsUpdated) return;
+
+    const [instance] = await db
+        .select({
+            id: tables.globalMessages.id,
+            attachments: tables.globalMessages.attachments,
+            panic: tables.globalChannels.panic,
+            content: tables.globalMessages.content,
+            embeds: tables.globalMessages.embeds,
+            logs: tables.globalChannels.logs,
+            author: tables.globalMessages.author,
+            username: tables.globalMessages.username,
+            deleted: tables.globalMessages.deleted,
+        })
+        .from(tables.globalMessages)
+        .innerJoin(tables.globalChannels, eq(tables.globalMessages.channel, tables.globalChannels.id))
+        .where(eq(tables.globalMessages.originMessage, before.id));
+
+    if (!instance || instance.deleted || instance.panic) return;
+
+    if (!after.content && embedsAfter.length === 0 && after.attachments.size === 0 && after.stickers.size === 0) {
+        logDeletion(after.guild, instance);
+        after.delete();
+        return;
+    }
+
+    if (instance.logs)
+        await logToChannel(
+            instance.logs,
+            {
+                embeds: [
+                    ...(instance.content === (after.content || "")
+                        ? []
+                        : [
+                              { title: "Message Updated (Before)", description: instance.content, color: 0x2b2d31 },
+                              { title: "Message Updated (After)", description: after.content || "", color: 0x2b2d31 },
+                          ]),
+                    ...(attachmentsUpdated
+                        ? [
+                              {
+                                  title: "Old Attachments",
+                                  description: (instance.attachments as any[])
+                                      .map((attachment: any) => `[${escapeMarkdown(attachment.name)}](${attachment.attachment})`)
+                                      .join("\n"),
+                                  color: 0x2b2d31,
+                              },
+                          ]
+                        : []),
+                ],
+                files: [
+                    ...(embedsUpdated
+                        ? [
+                              { name: "old-embeds.json", attachment: Buffer.from(JSON.stringify(instance.embeds, null, 4)) },
+                              { name: "new-embeds.json", attachment: Buffer.from(JSON.stringify(embedsAfter, null, 4)) },
+                          ]
+                        : []),
+                ],
+            },
+            instance.author,
+        );
+
+    await globalChatRelayQueue.add("", {
+        type: "start-edit",
+        ref: instance.id,
+        guild: after.guild!.id,
+        channel: after.channel.id,
+        message: after.id,
+        content: contentUpdated ? after.content || "" : undefined,
+        embeds: embedsUpdated ? embedsAfter : undefined,
+        attachments: attachmentsUpdated
+            ? [
+                  ...(await Promise.all(
+                      after.attachments.map(async (attachment) => ({ name: attachment.name, attachment: await addFile(attachment.url), sticker: false })),
+                  )),
+                  ...(instance.attachments as any[]).filter((attachment) => attachment.sticker),
+              ]
+            : undefined,
+    });
+});
+
+makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
+    if (data.type === "post") {
+        const message = await db.query.globalMessages.findFirst({ where: eq(tables.globalMessages.id, data.id) });
+
+        if (!message) return;
+        if (message.deleted) return;
+
+        const guild = await globalBot.guilds.fetch(data.guild).catch(() => null);
+        if (!guild) return;
+
+        const channel = await guild.channels.fetch(data.channel).catch(() => null);
+        if (channel?.type !== ChannelType.GuildText) return;
+
+        if (
+            !channel
+                .permissionsFor(globalBot.user!)
+                ?.has(PermissionFlagsBits.ReadMessageHistory | PermissionFlagsBits.ManageWebhooks | PermissionFlagsBits.ManageMessages)
+        )
+            return;
+
+        const webhook = await getWebhook(channel);
+        if (!webhook) return;
+
+        const post = await webhook?.send({
+            username: message.username,
+            avatarURL: message.avatar,
+            content: message.content || undefined,
+            embeds: message.embeds as any,
+            files: message.attachments as any,
+        });
+
+        await db.insert(tables.globalMessageInstances).values({ ref: message.id, guild: post.guild!.id, channel: post.channel.id, message: post.id });
+    } else if (data.type === "start-delete") {
+        const instances = await db.query.globalMessageInstances.findMany({
+            where: inArray(
+                tables.globalMessageInstances.ref,
+                data.objects.map((object) => object.ref),
+            ),
+        });
+
+        const instanceMap: Record<string, { ref: number; guild: string; message: string }[]> = {};
+
+        for (const { channel, ...instance } of instances) (instanceMap[channel] ??= []).push(instance);
+
+        const batched = new Set(data.objects.map((object) => object.message));
+
+        const ids = new Set(data.objects.map((object) => object.ref));
+
+        const jobs = await globalChatRelayQueue.getJobs();
+
+        for (const job of jobs)
+            if (job.data.type === "post" && ids.has(job.data.id)) await job.remove();
+            else if (job.data.type === "start-edit" && ids.has(job.data.ref)) await job.remove();
+            else if (job.data.type === "edit" && ids.has(job.data.ref)) await job.remove();
+            else if (job.data.type === "delete" && job.data.channel in instanceMap) {
+                const messages = instanceMap[job.data.channel].map((instance) => instance.message);
+                await job.updateData({ ...job.data, messages: [...job.data.messages, ...messages] });
+                for (const message of messages) batched.add(message);
+            }
+
+        await globalChatRelayQueue.addBulk(
+            Object.entries(instanceMap)
+                .map(([channel, instances]) => [channel, instances.filter((instance) => !batched.has(instance.message))] as const)
+                .filter(([, instances]) => instances.length > 0)
+                .map(([channel, instances]) => ({
+                    name: "",
+                    data: { type: "delete", guild: instances[0].guild, channel, messages: instances.map((instance) => instance.message) },
+                    opts: { priority: GlobalChatTaskPriority.Delete },
+                })),
+        );
+    } else if (data.type === "delete") {
+        const guild = await globalBot.guilds.fetch(data.guild).catch(() => null);
+        if (!guild) return;
+
+        const channel = await guild.channels.fetch(data.channel).catch(() => null);
+        if (channel?.type !== ChannelType.GuildText) return;
+
+        if (data.messages.length === 1) await channel.messages.delete(data.messages[0]).catch(() => null);
+        else for (let i = 0; i < data.messages.length; i += 100) await channel.bulkDelete(data.messages.slice(i, i + 100)).catch(() => null);
+    } else if (data.type === "start-edit") {
+        await db
+            .update(tables.globalMessages)
+            .set({ content: data.content, embeds: data.embeds, attachments: data.attachments })
+            .where(eq(tables.globalMessages.id, data.ref));
+
+        const instances = await db.query.globalMessageInstances.findMany({ where: eq(tables.globalMessageInstances.ref, data.ref) });
+
+        await globalChatRelayQueue.addBulk(
+            instances.map((instance) => ({
+                name: "",
+                data: { type: "edit", ref: instance.ref, guild: instance.guild, channel: instance.channel, message: instance.message },
+                opts: { priority: GlobalChatTaskPriority.Edit },
+            })),
+        );
+    } else if (data.type === "edit") {
+        const guild = await globalBot.guilds.fetch(data.guild).catch(() => null);
+        if (!guild) return;
+
+        const channel = await guild.channels.fetch(data.channel).catch(() => null);
+        if (channel?.type !== ChannelType.GuildText) return;
+
+        const message = await channel.messages.fetch(data.message).catch(() => null);
+        if (!message) return;
+
+        const webhook = await message.fetchWebhook().catch(() => null);
+        if (!webhook) return;
+
+        const entry = await db.query.globalMessages.findFirst({
+            columns: { content: true, embeds: true, attachments: true },
+            where: eq(tables.globalMessages.id, data.ref),
+        });
+
+        if (!entry) return;
+
+        await webhook.editMessage(message.id, {
+            content: message.content === entry.content ? undefined : entry.content || null,
+            embeds: entry.embeds as any,
+            files: entry.attachments as any,
+        });
+    }
+});

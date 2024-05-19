@@ -13,7 +13,7 @@ import UserMention from "../../../components/ui/user-mention";
 import { useUserContext } from "../../../context/user";
 import { getAuditLogs } from "./actions";
 
-const types: { label: string; value: string; hide?: boolean }[] = [
+const types: { label: string; value: string }[] = [
     { label: "Add Server", value: "guilds/create" },
     { label: "Remove Server", value: "guilds/delete" },
     { label: "Update Owner", value: "guilds/update/owner" },
@@ -23,23 +23,23 @@ const types: { label: string; value: string; hide?: boolean }[] = [
     { label: "Update Server Invite", value: "guilds/update/invite" },
     { label: "Update Server Mascot", value: "guilds/update/mascot" },
     { label: "Rename Server", value: "guilds/update/name" },
-    { label: "Initiate Application Vote", value: "applications/vote", hide: true },
-    { label: "Rename Application", value: "applications/rename", hide: true },
-    { label: "Nuke Application", value: "applications/nuke", hide: true },
-    { label: "Reset Poll Deadline", value: "polls/reset-deadline", hide: true },
-    { label: "Delete Poll", value: "polls/delete", hide: true },
-    { label: "Set Banshare Channel", value: "banshares/set-channel", hide: true },
-    { label: "Set Banshare Logs", value: "banshares/set-logs", hide: true },
-    { label: "Set Autoban Settings", value: "banshares/autoban", hide: true },
-    { label: "Update Banshare Severity", value: "banshares/update/severity", hide: true },
-    { label: "Lock Banshare", value: "banshares/lock", hide: true },
-    { label: "Unlock Banshare", value: "banshares/unlock", hide: true },
-    { label: "Reject Banshare", value: "banshares/reject", hide: true },
-    { label: "Restore Banshare", value: "banshares/restore", hide: true },
-    { label: "Publish Banshare", value: "banshares/publish", hide: true },
-    { label: "Rescind Banshare", value: "banshares/rescind", hide: true },
-    { label: "Add Pre-Approve Option", value: "polls/update/add-preapprove", hide: true },
-    { label: "Remove Pre-Approve Option", value: "polls/update/remove-preapprove", hide: true },
+    { label: "Initiate Application Vote", value: "applications/vote" },
+    { label: "Rename Application", value: "applications/rename" },
+    { label: "Nuke Application", value: "applications/nuke" },
+    { label: "Reset Poll Deadline", value: "polls/reset-deadline" },
+    { label: "Delete Poll", value: "polls/delete" },
+    { label: "Set Banshare Channel", value: "banshares/set-channel" },
+    { label: "Set Banshare Logs", value: "banshares/set-logs" },
+    { label: "Set Autoban Settings", value: "banshares/autoban" },
+    { label: "Update Banshare Severity", value: "banshares/update/severity" },
+    { label: "Lock Banshare", value: "banshares/lock" },
+    { label: "Unlock Banshare", value: "banshares/unlock" },
+    { label: "Reject Banshare", value: "banshares/reject" },
+    { label: "Restore Banshare", value: "banshares/restore" },
+    { label: "Publish Banshare", value: "banshares/publish" },
+    { label: "Rescind Banshare", value: "banshares/rescind" },
+    { label: "Add Pre-Approve Option", value: "polls/update/add-preapprove" },
+    { label: "Remove Pre-Approve Option", value: "polls/update/remove-preapprove" },
     { label: "Promote Observer", value: "users/promote" },
     { label: "Demote Observer", value: "users/demote" },
     { label: "Refresh Term", value: "users/refresh-term" },
@@ -56,6 +56,13 @@ const types: { label: string; value: string; hide?: boolean }[] = [
     { label: "Set Global Channel Name", value: "global/channels/set-name" },
     { label: "Set Global Channel Visibility", value: "global/channels/set-visible" },
     { label: "Set Global Channel Password", value: "global/channels/set-password" },
+    { label: "Connect Global Channel", value: "global/connect" },
+    { label: "Disconnect Global Channel", value: "global/disconnect" },
+    { label: "Global Panic Activated", value: "global/panic" },
+    { label: "Global Panic Ended", value: "global/end-panic" },
+    { label: "Add Global Mod", value: "global/mods/add" },
+    { label: "Remove Global Mod", value: "global/mods/remove" },
+    { label: "Set Global Channel Filters", value: "global/set-filters" },
 ];
 const typeNames = Object.fromEntries(types.map((x) => [x.value, x.label]));
 
@@ -131,7 +138,7 @@ export default function AuditLogsClient({
                 </div>
                 <b>Action Type:</b>
                 <div className="flex items-center gap-4">
-                    <ComboSelector values={user!.observer ? types : types.filter((x) => !x.hide)} value={type} setValue={setType} />
+                    <ComboSelector values={types} value={type} setValue={setType} />
                     <Button variant="secondary" onClick={() => setType(null)}>
                         <FaXmark />
                     </Button>
@@ -418,6 +425,46 @@ export default function AuditLogsClient({
                                         </>
                                     ) : entry.type === "global/channels/set-password" ? (
                                         <>updated the password of global channel #{entry.data.id}.</>
+                                    ) : entry.type === "global/connect" ? (
+                                        <>
+                                            connected to global channel #{entry.data.channel} (<b>{entry.data.name}</b>) in {guild} (Discord channel ID:{" "}
+                                            <code>{entry.data.location}</code>).
+                                        </>
+                                    ) : entry.type === "global/disconnect" ? (
+                                        <>
+                                            disconnected from global channel #{entry.data.channel} (<b>{entry.data.name}</b>) in {guild}.
+                                        </>
+                                    ) : entry.type === "global/panic" ? (
+                                        <>
+                                            from {guild} activated global panic mode in global channel #{entry.data.channel} (<b>{entry.data.name}</b>).
+                                        </>
+                                    ) : entry.type === "global/end-panic" ? (
+                                        <>
+                                            ended global panic mode in global channel #{entry.data.channel} (<b>{entry.data.name}</b>).
+                                        </>
+                                    ) : entry.type === "global/mods/add" ? (
+                                        <>
+                                            added <UserMention id={entry.data.user} /> to the mod team of global channel #{entry.data.channel} (
+                                            <b>{entry.data.name}</b>).
+                                        </>
+                                    ) : entry.type === "global/mods/remove" ? (
+                                        <>
+                                            removed <UserMention id={entry.data.user} /> from the mod team of global channel #{entry.data.channel} (
+                                            <b>{entry.data.name}</b>).
+                                        </>
+                                    ) : entry.type === "global/set-filters" ? (
+                                        <>
+                                            set the filters for global channel #{entry.data.id} (<b>{entry.data.name}</b>) to{" "}
+                                            {entry.data.filters.length === 0
+                                                ? "(none)"
+                                                : entry.data.filters.map((filter: { id: number; name: string }, index: number) => (
+                                                      <>
+                                                          {index === 0 ? "" : ", "}
+                                                          <b>{filter.name}</b> (<code>{filter.id}</code>)
+                                                      </>
+                                                  ))}
+                                            .
+                                        </>
                                     ) : null}
                                 </p>
                                 {entry.type === "applications/nuke" ? (

@@ -41,6 +41,9 @@ importers:
       zod:
         specifier: ^3.23.4
         version: 3.23.4
+      zx:
+        specifier: ^8.1.0
+        version: 8.1.0
     devDependencies:
       '@types/jsonwebtoken':
         specifier: ^9.0.6
@@ -421,8 +424,17 @@ packages:
   '@trpc/server@11.0.0-rc.354':
     resolution: {integrity: sha512-45QgalVFW3+JnFqrfTWKRuqkDTOtl9tnPps6DG6kf2lwULwSW3v55+YpMWc6ZSrkZdBXGMON0bBR/Ab4hU0zbA==, tarball: https://registry.npmjs.org/@trpc/server/-/server-11.0.0-rc.354.tgz}
 
+  '@types/fs-extra@11.0.4':
+    resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==, tarball: https://registry.npmjs.org/@types/fs-extra/-/fs-extra-11.0.4.tgz}
+
+  '@types/jsonfile@6.1.4':
+    resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==, tarball: https://registry.npmjs.org/@types/jsonfile/-/jsonfile-6.1.4.tgz}
+
   '@types/jsonwebtoken@9.0.6':
     resolution: {integrity: sha512-/5hndP5dCjloafCXns6SZyESp3Ldq7YjH3zwzwczYnjxIT0Fqzk5ROSYVGfFyczIue7IUEj8hkvLbPoLQ18vQw==, tarball: https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.6.tgz}
+
+  '@types/node@20.12.12':
+    resolution: {integrity: sha512-eWLDGF/FOSPtAvEqeRAQ4C8LSA7M1I7i0ky1I8U7kD1J5ITyW3AsRhQrKVoWf5pFKZ2kILsEGJhsI9r93PYnOw==, tarball: https://registry.npmjs.org/@types/node/-/node-20.12.12.tgz}
 
   '@types/node@20.12.7':
     resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==, tarball: https://registry.npmjs.org/@types/node/-/node-20.12.7.tgz}
@@ -921,6 +933,11 @@ packages:
   zod@3.23.4:
     resolution: {integrity: sha512-/AtWOKbBgjzEYYQRNfoGKHObgfAZag6qUJX1VbHo2PRBgS+wfWagEY2mizjfyAPcGesrJOcx/wcl0L9WnVrHFw==, tarball: https://registry.npmjs.org/zod/-/zod-3.23.4.tgz}
 
+  zx@8.1.0:
+    resolution: {integrity: sha512-2BCoOK6JTWikAkwPCV2dFr+1ou29WoY+6XltLu+Ou9dvxrqm/p+HuHCgBtMRMIVFexQzUSGfB5VbYeY8XmGBPQ==, tarball: https://registry.npmjs.org/zx/-/zx-8.1.0.tgz}
+    engines: {node: '>= 12.17.0'}
+    hasBin: true
+
 snapshots:
 
   '@discordjs/builders@1.7.0':
@@ -1156,9 +1173,25 @@ snapshots:
 
   '@trpc/server@11.0.0-rc.354': {}
 
+  '@types/fs-extra@11.0.4':
+    dependencies:
+      '@types/jsonfile': 6.1.4
+      '@types/node': 20.12.12
+    optional: true
+
+  '@types/jsonfile@6.1.4':
+    dependencies:
+      '@types/node': 20.12.12
+    optional: true
+
   '@types/jsonwebtoken@9.0.6':
     dependencies:
       '@types/node': 20.12.7
+
+  '@types/node@20.12.12':
+    dependencies:
+      undici-types: 5.26.5
+    optional: true
 
   '@types/node@20.12.7':
     dependencies:
@@ -1665,3 +1698,8 @@ snapshots:
   yallist@4.0.0: {}
 
   zod@3.23.4: {}
+
+  zx@8.1.0:
+    optionalDependencies:
+      '@types/fs-extra': 11.0.4
+      '@types/node': 20.12.12

@@ -9,6 +9,7 @@ import {
     fixGuildStaffStatusQueue,
     fixUserRolesQueue,
     fixUserStaffStatusQueue,
+    globalChatRelayQueue,
 } from "../queue.js";
 import { proc } from "../trpc.js";
 
@@ -17,6 +18,7 @@ const start = Date.now();
 const roleUpdates: number[] = [];
 const staffUpdates: number[] = [];
 const banshareUpdates: number[] = [];
+const globalTasks: number[] = [];
 
 let counter = 0;
 
@@ -35,6 +37,7 @@ setInterval(async () => {
             (await db.select({ number: count() }).from(tables.banTasks).where(eq(tables.banTasks.status, "pending")))[0].number +
             (await banshareRescindQueue.count()),
     );
+    update(globalTasks, await globalChatRelayQueue.count());
 
     counter = (counter + 1) % 10;
 }, 500);
@@ -46,6 +49,7 @@ export default proc.query(
             roleUpdates,
             staffUpdates,
             banshareUpdates,
+            globalTasks,
         };
     }),
 );

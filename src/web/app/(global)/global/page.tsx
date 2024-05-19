@@ -33,10 +33,6 @@ export default function GlobalHome() {
                         <h2>Chat Filters</h2>
                         <p>Manage global chat filter modules here.</p>
                     </LandingPanel>
-                    <LandingPanel href="/global/monitor">
-                        <h2>Global Monitor</h2>
-                        <p>Monitor the global chat bot here.</p>
-                    </LandingPanel>
                 </>
             ) : null}
         </LandingPage>

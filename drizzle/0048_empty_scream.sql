@@ -1,0 +1,1 @@
+ALTER TABLE `global_message_instances` DROP COLUMN `purged`;

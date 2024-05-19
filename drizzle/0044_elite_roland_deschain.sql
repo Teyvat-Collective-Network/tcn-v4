@@ -1,0 +1,1 @@
+ALTER TABLE `global_messages` ADD `content` text NOT NULL;

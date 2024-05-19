@@ -147,6 +147,10 @@ export default function GlobalFiltersClient({ filters: initial }: { filters: { i
                                             alert("Invalid regex.");
                                             continue;
                                         }
+                                    else if (term.replace(/(^\*|\*$)/g, "").length < 3) {
+                                        alert("Invalid term (must contain at least three characters besides wildcards).");
+                                        continue;
+                                    }
 
                                     break;
                                 } while (true);

@@ -1,0 +1,1 @@
+ALTER TABLE `global_connections` DROP COLUMN `suspended`;

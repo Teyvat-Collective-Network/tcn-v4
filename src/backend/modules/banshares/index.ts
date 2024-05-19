@@ -26,7 +26,7 @@ loop(async () => {
 
     const [{ affectedRows: pending }] = await db.update(tables.banshares).set({ reminded: Date.now() }).where(eq(tables.banshares.status, "pending"));
 
-    await channels.execManagement.send({
+    await channels.observerManagement.send({
         content: `<@&${process.env.ROLE_OBSERVERS}> ${overdue} banshare${overdue === 1 ? " is" : "s are"} overdue (${pending} total pending). Please visit ${
             channels.banshareDashboard
         } for a list of pending banshares.`,

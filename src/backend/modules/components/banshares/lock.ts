@@ -21,6 +21,6 @@ export default async function (interaction: ButtonInteraction) {
 
     await interaction.editReply({ components: await renderBanshareControls(banshare.id) });
 
-    await channels.execManagement.send(`${interaction.message.url} was locked by ${interaction.user}.`);
+    await channels.observerManagement.send(`${interaction.message.url} was locked by ${interaction.user}.`);
     await audit(interaction.user.id, "banshares/lock", null, banshare.id, [interaction.message.id]);
 }

@@ -19,6 +19,7 @@ import exchangeDataForElection from "./actions/exchange-data-for-election.js";
 import getAuditLogs from "./actions/get-audit-logs.js";
 import getCharacters from "./actions/get-characters.js";
 import getElectionHistory from "./actions/get-election-history.js";
+import getFile from "./actions/get-file.js";
 import getFilter from "./actions/get-filter.js";
 import getFilters from "./actions/get-filters.js";
 import getGlobalChannels from "./actions/get-global-channels.js";
@@ -44,6 +45,7 @@ import setCharacterElement from "./actions/set-character-element.js";
 import setCharacterFullName from "./actions/set-character-full-name.js";
 import setCharacterShortName from "./actions/set-character-short-name.js";
 import setDelegated from "./actions/set-delegated.js";
+import setFilters from "./actions/set-filters.js";
 import setGlobalNickname from "./actions/set-global-nickname.js";
 import setInvite from "./actions/set-invite.js";
 import setMascot from "./actions/set-mascot.js";
@@ -77,6 +79,7 @@ export const appRouter = router({
     getAuditLogs,
     getCharacters,
     getElectionHistory,
+    getFile,
     getFilter,
     getFilters,
     getGlobalChannels,
@@ -102,6 +105,7 @@ export const appRouter = router({
     setCharacterFullName,
     setCharacterShortName,
     setDelegated,
+    setFilters,
     setGlobalNickname,
     setInvite,
     setMascot,

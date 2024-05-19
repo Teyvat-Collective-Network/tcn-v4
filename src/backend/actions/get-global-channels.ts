@@ -8,6 +8,12 @@ export default proc.query(
             columns: { id: true, name: true, visible: true, password: true, protected: true, logs: true },
         });
 
-        return channels.map(({ password, ...channel }) => ({ ...channel, hasPassword: password !== null }));
+        const filters = await db.query.globalAppliedFilters.findMany();
+
+        return channels.map(({ password, ...channel }) => ({
+            ...channel,
+            hasPassword: password !== null,
+            filters: filters.filter((filter) => filter.channel === channel.id).map((filter) => filter.filter),
+        }));
     }),
 );

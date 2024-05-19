@@ -3,7 +3,11 @@ import "dotenv/config";
 
 const Intents = IntentsBitField.Flags;
 
-const client = new Client({ intents: Intents.Guilds | Intents.GuildMessages | Intents.MessageContent | Intents.GuildMembers, allowedMentions: { parse: [] } });
+const client = new Client({
+    intents: Intents.Guilds | Intents.GuildMessages | Intents.MessageContent | Intents.GuildMembers,
+    allowedMentions: { parse: [] },
+    sweepers: { messages: { interval: 3600000, lifetime: 60000 } },
+});
 
 const promise = new Promise<Client<true>>((r) => client.on(Events.ClientReady, r));
 await client.login(process.env.TOKEN);
@@ -24,7 +28,7 @@ export const channels = {
     applicants: await get<ForumChannel>("APPLICANTS"),
     officialBusiness: await get<TextChannel>("OFFICIAL_BUSINESS"),
     banshareLogs: await get<TextChannel>("BANSHARE_LOGS"),
-    execManagement: await get<TextChannel>("EXEC_MANAGEMENT"),
+    observerManagement: await get<TextChannel>("OBSERVER_MANAGEMENT"),
     logs: await get<TextChannel>("BOT_LOGS"),
     hubBanshares: await get<TextChannel>("HUB_BANSHARES"),
     banshareDashboard: await get<TextChannel>("BANSHARE_DASHBOARD"),
@@ -32,6 +36,7 @@ export const channels = {
     elections: await get<ForumChannel>("ELECTIONS"),
     hubPartnerList: await get<TextChannel>("HUB_PARTNER_LIST"),
     fileDump: await get<TextChannel>("FILE_DUMP"),
+    globalModLogs: await get<TextChannel>("HUB_GLOBAL_MOD_LOGS"),
 };
 
 async function getRole(guild: Guild, key: string) {

@@ -34,3 +34,7 @@ export function fuzzy(string: string, query: string): boolean {
 
     return true;
 }
+
+export function escapeRegex(regex: string) {
+    return regex.replace(/([()[{*+.$^\\|?])/g, "\\$1");
+}

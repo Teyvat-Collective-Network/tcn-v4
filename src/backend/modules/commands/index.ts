@@ -7,7 +7,7 @@ import application, { handleApplication } from "./application.js";
 import autosync, { handleAutosync } from "./autosync.js";
 import banshares, { handleBanshares } from "./banshares.js";
 import elections, { handleElectionMarkAsStatement, handleElections } from "./elections.js";
-import global, { autocompleteGlobalChannel, handleGlobal } from "./global.js";
+import global, { autocompleteGlobalChannel, handleGlobal, handleGlobalAuthor } from "./global.js";
 import partnerList, { handlePartnerList } from "./partner-list.js";
 import polls, { handlePoll } from "./polls.js";
 import staff, { handleStaff } from "./staff.js";
@@ -100,6 +100,12 @@ globalBot.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";
+            }
+        } else if (interaction.isMessageContextMenuCommand()) {
+            switch (interaction.commandName) {
+                case "Get Author":
+                    await handleGlobalAuthor(interaction);
+                    break;
             }
         }
     } catch (error) {

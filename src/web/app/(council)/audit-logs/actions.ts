@@ -3,8 +3,12 @@
 import getUser from "../../../lib/get-user";
 import { api } from "../../../lib/trpc";
 
+const anonymize = ["banshares/update/severity", "banshares/unlock", "banshares/reject", "banshares/restore", "banshares/publish", "banshares/rescind"];
+
 const publicTypes = [
+    ...anonymize,
     "guilds/create",
+    "guilds/delete",
     "guilds/update/owner",
     "guilds/update/advisor",
     "guilds/update/swap-representatives",
@@ -12,9 +16,17 @@ const publicTypes = [
     "guilds/update/invite",
     "guilds/update/mascot",
     "guilds/update/name",
+    "applications/vote",
+    "applications/rename",
+    "applications/nuke",
+    "polls/reset-deadline",
+    "polls/delete",
+    "polls/update/add-preapprove",
+    "polls/update/remove-preapprove",
+    "users/promote",
+    "users/demote",
+    "users/refresh-term",
 ];
-
-const anonymousTypes = ["banshares/reject"];
 
 export async function getAuditLogs(
     actor: string | null,
@@ -38,5 +50,5 @@ export async function getAuditLogs(
 
     if (user.observer) return data;
 
-    return { pages: data.pages, entries: data.entries.map((item) => (anonymousTypes.includes(item.type) ? { ...item, actor: "hidden" } : item)) };
+    return { pages: data.pages, entries: data.entries.map((item) => (anonymize.includes(item.type) ? { ...item, actor: "hidden" } : item)) };
 }

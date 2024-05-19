@@ -3,20 +3,40 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaPencil, FaPlus, FaTrash } from "react-icons/fa6";
 import { Button } from "../../../../../components/ui/button";
-import { Prose } from "../../../../../components/ui/prose";
+import { ComboMultiSelector } from "../../../../../components/ui/combo-selector";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../components/ui/table";
-import { createChannel, deleteChannel, editGlobalChannelName, editGlobalChannelPassword, editGlobalChannelVisibility, getChannels } from "./actions";
+import {
+    createChannel,
+    deleteChannel,
+    editGlobalChannelName,
+    editGlobalChannelPassword,
+    editGlobalChannelVisibility,
+    getChannels,
+    getFilters,
+    setChannelFilters,
+} from "./actions";
 
 export default function GlobalChannelsClient({
     channels: initial,
+    filters: initialFilters,
 }: {
-    channels: { id: number; name: string; visible: boolean; protected: boolean; hasPassword: boolean; logs: string | null }[];
+    channels: {
+        id: number;
+        name: string;
+        visible: boolean;
+        protected: boolean;
+        hasPassword: boolean;
+        logs: string | null;
+        filters: number[];
+    }[];
+    filters: { id: number; name: string }[];
 }) {
     const [channels, setChannels] = useState(initial);
+    const [filters, setFilters] = useState(initialFilters);
 
     async function reload() {
-        const channels = await getChannels();
-        setChannels(channels);
+        setChannels(await getChannels());
+        setFilters(await getFilters());
     }
 
     async function newChannel(visible: boolean) {
@@ -35,7 +55,7 @@ export default function GlobalChannelsClient({
     }
 
     return (
-        <Prose>
+        <div>
             <div className="flex items-center gap-4">
                 <Button variant="secondary" className="flex items-center gap-2" onClick={() => newChannel(false)}>
                     <FaPlus />
@@ -47,12 +67,13 @@ export default function GlobalChannelsClient({
                 </Button>
             </div>
             <br />
-            <Table>
+            <Table className="prose">
                 <TableHeader>
                     <TableRow>
                         <TableHead>ID</TableHead>
-                        <TableHead>Channel Name</TableHead>
+                        <TableHead className="whitespace-nowrap">Channel Name</TableHead>
                         <TableHead>Visibility</TableHead>
+                        <TableHead>Applied Filters</TableHead>
                         <TableHead />
                     </TableRow>
                 </TableHeader>
@@ -70,7 +91,7 @@ export default function GlobalChannelsClient({
                                         if (name === undefined) return;
                                         if (name.length > 80) return alert("Channel name exceeds maximum length.");
 
-                                        const password = channel.hasPassword ? prompt("Enter your password:")?.trim() : null;
+                                        const password = channel.hasPassword ? prompt("Enter the channel's password:")?.trim() : null;
                                         if (password === undefined) return;
                                         if (password === "") return alert("Password cannot be empty.");
 
@@ -85,6 +106,27 @@ export default function GlobalChannelsClient({
                                 {channel.name}
                             </TableCell>
                             <TableCell>{channel.visible ? "Public" : "Private"}</TableCell>
+                            <TableCell>
+                                <ComboMultiSelector
+                                    values={filters.map((filter) => ({ label: filter.name, value: `${filter.id}` }))}
+                                    selected={channel.filters.map((x) => `${x}`)}
+                                    setSelected={async (selected) => {
+                                        const password = channel.hasPassword ? prompt("Enter the channel's password:")?.trim() : null;
+                                        if (password === undefined) return;
+                                        if (password === "") return alert("Password cannot be empty.");
+
+                                        const error = await setChannelFilters(
+                                            channel.id,
+                                            selected.map((x) => +x),
+                                            password,
+                                        );
+
+                                        if (error) alert(error);
+                                        reload();
+                                    }}
+                                    placeholder="Select filters to apply."
+                                ></ComboMultiSelector>
+                            </TableCell>
                             <TableCell className="flex items-center gap-4">
                                 <Button
                                     variant="secondary"
@@ -92,7 +134,7 @@ export default function GlobalChannelsClient({
                                     onClick={async () => {
                                         if (!confirm("Are you sure you want to delete this channel?")) return;
 
-                                        const password = channel.hasPassword ? prompt("Enter your password:")?.trim() : null;
+                                        const password = channel.hasPassword ? prompt("Enter the channel's password:")?.trim() : null;
                                         if (password === undefined) return;
                                         if (password === "") return alert("Password cannot be empty.");
 
@@ -109,7 +151,7 @@ export default function GlobalChannelsClient({
                                     onClick={async () => {
                                         if (!confirm(`Are you sure you want to make this channel ${channel.visible ? "private" : "public"}?`)) return;
 
-                                        const password = channel.hasPassword ? prompt("Enter your password:")?.trim() : null;
+                                        const password = channel.hasPassword ? prompt("Enter the channel's password:")?.trim() : null;
                                         if (password === undefined) return;
                                         if (password === "") return alert("Password cannot be empty.");
 
@@ -140,12 +182,16 @@ export default function GlobalChannelsClient({
                                 >
                                     Edit Password
                                 </Button>
-                                {channel.logs ? null : <Button variant="destructive" onClick={() => alert("Please set this channel's logs using /global logs set.")}>!</Button>}
+                                {channel.logs ? null : (
+                                    <Button variant="destructive" onClick={() => alert("Please set this channel's logs using /global logs set.")}>
+                                        !
+                                    </Button>
+                                )}
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
-        </Prose>
+        </div>
     );
 }

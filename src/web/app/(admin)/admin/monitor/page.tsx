@@ -15,6 +15,7 @@ export default function Monitor() {
     const [roleUpdates, setRoleUpdates] = useState<number[]>([]);
     const [staffUpdates, setStaffUpdates] = useState<number[]>([]);
     const [banshareUpdates, setBanshareUpdates] = useState<number[]>([]);
+    const [globalTasks, setGlobalTasks] = useState<number[]>([]);
 
     useEffect(() => {
         getMonitor().then((data) => {
@@ -23,6 +24,7 @@ export default function Monitor() {
             setRoleUpdates(data.roleUpdates);
             setStaffUpdates(data.staffUpdates);
             setBanshareUpdates(data.banshareUpdates);
+            setGlobalTasks(data.globalTasks);
         });
 
         const interval = setInterval(async () => {
@@ -32,6 +34,7 @@ export default function Monitor() {
             setRoleUpdates(data.roleUpdates);
             setStaffUpdates(data.staffUpdates);
             setBanshareUpdates(data.banshareUpdates);
+            setGlobalTasks(data.globalTasks);
         }, 5000);
 
         return () => clearInterval(interval);
@@ -54,6 +57,19 @@ export default function Monitor() {
             <p>
                 System up since <TimeMentionFull time={upSince} />. Last updated {elapsed} second{elapsed === "1" ? "" : "s"} ago.
             </p>
+            <Panel>
+                <div className="prose">
+                    <h2>Global Chat Tasks</h2>
+                    <LineChart
+                        className="h-72"
+                        data={globalTasks.map((x) => ({ label: "", "Queue Size": x }))}
+                        index="label"
+                        categories={["Queue Size"]}
+                        colors={["blue"]}
+                    />
+                </div>
+            </Panel>
+            <br />
             <Panel>
                 <div className="prose">
                     <h2>Role Synchronizaton Queue</h2>

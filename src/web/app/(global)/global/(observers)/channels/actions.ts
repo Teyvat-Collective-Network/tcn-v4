@@ -7,6 +7,10 @@ export async function getChannels() {
     return await api.getGlobalChannels.query();
 }
 
+export async function getFilters() {
+    return await api.getFilters.query();
+}
+
 export async function createChannel(name: string, visible: boolean, password: string | null) {
     return await withUserId(async (actor) => await api.createGlobalChannel.mutate({ actor, name, visible, password }));
 }
@@ -25,4 +29,8 @@ export async function editGlobalChannelVisibility(id: number, visible: boolean, 
 
 export async function editGlobalChannelName(id: number, name: string, password: string | null) {
     return await withUserId(async (actor) => await api.editGlobalChannelName.mutate({ actor, id, name, password }));
+}
+
+export async function setChannelFilters(channel: number, filters: number[], password: string | null) {
+    return await withUserId(async (actor) => await api.setFilters.mutate({ actor, channel, filters, password }));
 }
