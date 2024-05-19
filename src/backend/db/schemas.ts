@@ -455,6 +455,7 @@ export const globalChannels = mysqlTable("global_channels", {
     panic: boolean("panic").notNull().default(false),
     protected: boolean("protected").notNull().default(false),
     important: boolean("important").notNull().default(false),
+    infoOnUserPlugin: boolean("info_on_user_plugin").notNull().default(false),
     logs: varchar("logs", { length: 20 }),
 });
 
@@ -588,6 +589,35 @@ export const globalModLogs = mysqlTable("global_mod_logs", {
     action: mysqlEnum("action", ["warn", "ban", "unban"]).notNull(),
     reason: varchar("reason", { length: 256 }),
 });
+
+export const globalInfoOnUserRequestInstances = mysqlTable(
+    "global_info_on_user_request_instances",
+    {
+        ref: int("ref")
+            .references(() => globalMessages.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        guild: varchar("guild", { length: 20 }).notNull(),
+        channel: varchar("channel", { length: 20 }).notNull(),
+        message: varchar("message", { length: 20 }).primaryKey(),
+    },
+    (t) => ({
+        idx_ref: index("idx_ref").on(t.ref),
+    }),
+);
+
+export const globalInfoRequestGuilds = mysqlTable(
+    "global_info_request_guilds",
+    {
+        ref: int("ref")
+            .references(() => globalMessages.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .notNull(),
+        guild: varchar("guild", { length: 20 }).notNull(),
+        name: text("name").notNull(),
+    },
+    (t) => ({
+        pk_ref_guild: primaryKey({ columns: [t.ref, t.guild] }),
+    }),
+);
 
 export const files = mysqlTable("files", {
     uuid: varchar("uuid", { length: 36 }).primaryKey(),

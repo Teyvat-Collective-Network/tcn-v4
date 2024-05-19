@@ -15,7 +15,8 @@ export type GlobalChatRelayTask =
     | { type: "start-delete"; objects: { ref: number; guild: string; channel: string; message: string }[] }
     | { type: "delete"; guild: string; channel: string; messages: string[] }
     | { type: "start-edit"; ref: number; guild: string; channel: string; message: string; content?: string; embeds?: any; attachments: any }
-    | { type: "edit"; ref: number; guild: string; channel: string; message: string };
+    | { type: "edit"; ref: number; guild: string; channel: string; message: string }
+    | { type: "start-info-on-user"; ref: number };
 
 export const dmReminderQueue = new Queue<DMReminderTask>("tcn:dm-reminders", qoptions);
 export const repostDeletedApplicationThreadsQueue = new Queue("tcn:repost-deleted-application-threads", qoptions);

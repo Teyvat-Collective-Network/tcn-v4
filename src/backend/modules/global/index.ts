@@ -16,7 +16,7 @@ import { fstatSync, openSync } from "fs";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
 import globalBot from "../../global-bot.js";
-import { escapeRegex } from "../../lib.js";
+import { englishList, escapeRegex } from "../../lib.js";
 import { code } from "../../lib/bot-lib.js";
 import { addFile } from "../../lib/files.js";
 import { getWebhook, isGlobalWebhook, logDeletion, logToChannel } from "../../lib/global.js";
@@ -68,7 +68,12 @@ globalBot.on(Events.MessageCreate, async (message) => {
     if (await isGlobalWebhook(message.webhookId)) return;
 
     const [channel] = await db
-        .select({ id: tables.globalChannels.id, panic: tables.globalChannels.panic, logs: tables.globalChannels.logs })
+        .select({
+            id: tables.globalChannels.id,
+            panic: tables.globalChannels.panic,
+            logs: tables.globalChannels.logs,
+            infoOnUserPlugin: tables.globalChannels.infoOnUserPlugin,
+        })
         .from(tables.globalConnections)
         .innerJoin(tables.globalChannels, eq(tables.globalConnections.channel, tables.globalChannels.id))
         .where(eq(tables.globalConnections.location, message.channel.id));
@@ -248,6 +253,48 @@ globalBot.on(Events.MessageCreate, async (message) => {
                 opts: { priority: GlobalChatTaskPriority.Post },
             })),
     );
+
+    if (channel.infoOnUserPlugin && message.content.match(/info.*on.*[1-9][0-9]{16,19}/im)) {
+        const reply = await message.reply({
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            style: ButtonStyle.Success,
+                            customId: "create-info-on-user",
+                            label: "Set up info-on-user request utility",
+                        },
+                        {
+                            type: ComponentType.Button,
+                            style: ButtonStyle.Danger,
+                            customId: "delete",
+                            label: "Delete",
+                        },
+                    ],
+                },
+            ],
+            flags: MessageFlags.SuppressNotifications,
+        });
+
+        const response = await reply
+            .awaitMessageComponent({
+                time: 5 * 60 * 1000,
+                filter: (x) => x.user.id === message.author.id,
+                componentType: ComponentType.Button,
+            })
+            .catch(() => null);
+
+        reply.delete();
+
+        if (response?.customId !== "create-info-on-user") return;
+
+        const now = await db.query.globalMessages.findFirst({ where: eq(tables.globalMessages.id, insertId) });
+        if (!now || now.deleted) return;
+
+        await globalChatRelayQueue.add("", { type: "start-info-on-user", ref: insertId }, { priority: GlobalChatTaskPriority.Post });
+    }
 });
 
 globalBot.on(Events.MessageDelete, async (message) => {
@@ -525,5 +572,96 @@ makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
             embeds: entry.embeds as any,
             files: entry.attachments as any,
         });
+    } else if (data.type === "start-info-on-user") {
+        const instances = await db
+            .select({
+                content: tables.globalMessages.content,
+                guild: tables.globalMessageInstances.guild,
+                channel: tables.globalMessageInstances.channel,
+                message: tables.globalMessageInstances.message,
+            })
+            .from(tables.globalMessageInstances)
+            .innerJoin(tables.globalMessages, eq(tables.globalMessageInstances.ref, tables.globalMessages.id))
+            .where(eq(tables.globalMessages.id, data.ref));
+
+        const messages: Message[] = [];
+
+        for (const instance of instances)
+            try {
+                const guild = await globalBot.guilds.fetch(instance.guild).catch(() => null);
+                if (!guild) continue;
+
+                const channel = await guild.channels.fetch(instance.channel).catch(() => null);
+                if (channel?.type !== ChannelType.GuildText) continue;
+
+                const message = await channel.messages.fetch(instance.message).catch(() => null);
+                if (!message) continue;
+
+                messages.push(await message.reply({ ...infoOnUserRequestMessage([]), flags: MessageFlags.SuppressNotifications }));
+            } catch {}
+
+        await db
+            .insert(tables.globalInfoOnUserRequestInstances)
+            .values(messages.map((message) => ({ ref: data.ref, guild: message.guild!.id, channel: message.channel.id, message: message.id })));
     }
 });
+
+globalBot.on(Events.InteractionCreate, async (interaction) => {
+    if (interaction.isButton() && interaction.customId === "info-on-user-declare-none") {
+        await interaction.deferUpdate();
+
+        const data = await db.query.globalInfoOnUserRequestInstances.findFirst({
+            where: eq(tables.globalInfoOnUserRequestInstances.message, interaction.message.id),
+        });
+
+        if (!data) return;
+
+        const entry = await db.query.guilds.findFirst({ where: eq(tables.guilds.id, interaction.guild!.id) });
+
+        try {
+            await db
+                .insert(tables.globalInfoRequestGuilds)
+                .values({ ref: data.ref, guild: data.guild, name: escapeMarkdown(entry?.name ?? interaction.guild!.name) });
+        } catch {
+            return;
+        }
+
+        const entries = await db.query.globalInfoRequestGuilds.findMany({ columns: { name: true }, where: eq(tables.globalInfoRequestGuilds.ref, data.ref) });
+        const names = entries.map((entry) => entry.name);
+
+        const instances = await db.query.globalInfoOnUserRequestInstances.findMany({ where: eq(tables.globalInfoOnUserRequestInstances.ref, data.ref) });
+
+        for (const instance of instances)
+            try {
+                const guild = await globalBot.guilds.fetch(instance.guild).catch(() => null);
+                if (!guild) continue;
+
+                const channel = await guild.channels.fetch(instance.channel).catch(() => null);
+                if (channel?.type !== ChannelType.GuildText) continue;
+
+                const message = await channel.messages.fetch(instance.message).catch(() => null);
+                if (!message) continue;
+
+                await message.edit(infoOnUserRequestMessage(names));
+            } catch {}
+    }
+});
+
+function infoOnUserRequestMessage(guilds: string[]): BaseMessageOptions {
+    return {
+        embeds: [{ title: "Info-On-User Request", description: `Reported no info: ${guilds.length === 0 ? "(none)" : englishList(guilds)}`, color: 0x2b2d31 }],
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        type: ComponentType.Button,
+                        customId: "info-on-user-declare-none",
+                        style: ButtonStyle.Secondary,
+                        label: `No Info Here (${guilds.length})`,
+                    },
+                ],
+            },
+        ],
+    };
+}
