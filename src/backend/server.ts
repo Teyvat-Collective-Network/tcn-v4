@@ -24,8 +24,8 @@ import getFilter from "./actions/get-filter.js";
 import getFilters from "./actions/get-filters.js";
 import getGlobalChannels from "./actions/get-global-channels.js";
 import getGuild from "./actions/get-guild.js";
-import getGuildsForBanshare from "./actions/get-guilds-for-banshare.js";
 import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
+import getGuildsForReports from "./actions/get-guilds-for-reports.js";
 import getInvite from "./actions/get-invite.js";
 import getMonitor from "./actions/get-monitor.js";
 import getObserverList from "./actions/get-observer-list.js";
@@ -34,9 +34,11 @@ import getPartnerList from "./actions/get-partner-list.js";
 import getServerCount from "./actions/get-server-count.js";
 import getServerListForAdmin from "./actions/get-server-list-for-admin.js";
 import getTag from "./actions/get-tag.js";
+import getTxt from "./actions/get-txt.js";
 import getUserForAdmin from "./actions/get-user-for-admin.js";
 import getUser from "./actions/get-user.js";
 import getVoteTracker from "./actions/get-vote-tracker.js";
+import hasPassedReportQuiz from "./actions/has-passed-report-quiz.js";
 import refreshTerm from "./actions/refresh-term.js";
 import removeGuild from "./actions/remove-guild.js";
 import renameFilter from "./actions/rename-filter.js";
@@ -53,8 +55,9 @@ import setName from "./actions/set-name.js";
 import setObserver from "./actions/set-observer.js";
 import setOwner from "./actions/set-owner.js";
 import submitApplication from "./actions/submit-application.js";
-import submitBanshare from "./actions/submit-banshare.js";
 import submitElectionVote from "./actions/submit-election-vote.js";
+import submitQuiz from "./actions/submit-quiz.js";
+import submitReport from "./actions/submit-report.js";
 import swapRepresentatives from "./actions/swap-representatives.js";
 import validateInvite from "./actions/validate-invite.js";
 import { router } from "./trpc.js";
@@ -84,8 +87,8 @@ export const appRouter = router({
     getFilters,
     getGlobalChannels,
     getGuild,
-    getGuildsForBanshare,
     getGuildsForDropdown,
+    getGuildsForReports,
     getInvite,
     getMonitor,
     getObserverList,
@@ -94,9 +97,11 @@ export const appRouter = router({
     getServerCount,
     getServerListForAdmin,
     getTag,
+    getTxt,
     getUser,
     getUserForAdmin,
     getVoteTracker,
+    hasPassedReportQuiz,
     refreshTerm,
     removeGuild,
     renameFilter,
@@ -113,8 +118,9 @@ export const appRouter = router({
     setObserver,
     setOwner,
     submitApplication,
-    submitBanshare,
     submitElectionVote,
+    submitQuiz,
+    submitReport,
     swapRepresentatives,
     validateInvite,
 });

@@ -14,7 +14,7 @@ export default function Monitor() {
     const [upSince, setUpSince] = useState<number>(0);
     const [roleUpdates, setRoleUpdates] = useState<number[]>([]);
     const [staffUpdates, setStaffUpdates] = useState<number[]>([]);
-    const [banshareUpdates, setBanshareUpdates] = useState<number[]>([]);
+    const [reportUpdates, setReportUpdates] = useState<number[]>([]);
     const [globalTasks, setGlobalTasks] = useState<number[]>([]);
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export default function Monitor() {
             setUpSince(data.upSince);
             setRoleUpdates(data.roleUpdates);
             setStaffUpdates(data.staffUpdates);
-            setBanshareUpdates(data.banshareUpdates);
+            setReportUpdates(data.reportUpdates);
             setGlobalTasks(data.globalTasks);
         });
 
@@ -33,7 +33,7 @@ export default function Monitor() {
             setUpSince(data.upSince);
             setRoleUpdates(data.roleUpdates);
             setStaffUpdates(data.staffUpdates);
-            setBanshareUpdates(data.banshareUpdates);
+            setReportUpdates(data.reportUpdates);
             setGlobalTasks(data.globalTasks);
         }, 5000);
 
@@ -98,10 +98,10 @@ export default function Monitor() {
             <br />
             <Panel>
                 <div className="prose">
-                    <h2>Banshare Action Queue</h2>
+                    <h2>Network User Reports Action Queue</h2>
                     <LineChart
                         className="h-72"
-                        data={banshareUpdates.map((x) => ({ label: "", "Queue Size": x }))}
+                        data={reportUpdates.map((x) => ({ label: "", "Queue Size": x }))}
                         index="label"
                         categories={["Queue Size"]}
                         colors={["blue"]}

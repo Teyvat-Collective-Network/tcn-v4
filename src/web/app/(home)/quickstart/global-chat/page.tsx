@@ -12,9 +12,9 @@ export default function QuickstartGlobalChat() {
                         <FaAnglesLeft /> Return to Quickstart Home
                     </Button>
                 </a>
-                <a href="/quickstart/banshares">
+                <a href="/quickstart/network-user-reports">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft /> Banshares
+                        <FaAngleLeft /> Network User Reports
                     </Button>
                 </a>
             </div>

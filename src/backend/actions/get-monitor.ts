@@ -3,13 +3,13 @@ import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 import trpcify from "../lib/trpcify.js";
 import {
-    bansharePublishQueue,
-    banshareRescindQueue,
     fixGuildRolesQueue,
     fixGuildStaffStatusQueue,
     fixUserRolesQueue,
     fixUserStaffStatusQueue,
     globalChatRelayQueue,
+    reportPublishQueue,
+    reportRescindQueue,
 } from "../queue.js";
 import { proc } from "../trpc.js";
 
@@ -17,7 +17,7 @@ const start = Date.now();
 
 const roleUpdates: number[] = [];
 const staffUpdates: number[] = [];
-const banshareUpdates: number[] = [];
+const reportUpdates: number[] = [];
 const globalTasks: number[] = [];
 
 let counter = 0;
@@ -32,10 +32,10 @@ setInterval(async () => {
     update(roleUpdates, (await fixUserRolesQueue.count()) + (await fixGuildRolesQueue.count()));
     update(staffUpdates, (await fixUserStaffStatusQueue.count()) + (await fixGuildStaffStatusQueue.count()));
     update(
-        banshareUpdates,
-        (await bansharePublishQueue.count()) +
-            (await db.select({ number: count() }).from(tables.banTasks).where(eq(tables.banTasks.status, "pending")))[0].number +
-            (await banshareRescindQueue.count()),
+        reportUpdates,
+        (await reportPublishQueue.count()) +
+            (await db.select({ number: count() }).from(tables.reportTasks).where(eq(tables.reportTasks.status, "pending")))[0].number +
+            (await reportRescindQueue.count()),
     );
     update(globalTasks, await globalChatRelayQueue.count());
 
@@ -48,7 +48,7 @@ export default proc.query(
             upSince: start,
             roleUpdates,
             staffUpdates,
-            banshareUpdates,
+            reportUpdates,
             globalTasks,
         };
     }),

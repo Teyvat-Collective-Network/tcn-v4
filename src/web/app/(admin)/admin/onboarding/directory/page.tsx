@@ -121,13 +121,13 @@ export default function OnboardingGuideDirectory() {
                 </li>
                 <li>
                     <Mention>
-                        <FaAt /> Banshare Ping
+                        <FaAt /> Network User Reports Ping
                     </Mention>{" "}
-                    &mdash; pinged when banshares are submitted to{" "}
+                    &mdash; pinged when network user reports are submitted to{" "}
                     <Mention>
-                        <FaHashtag /> banshare-logs
+                        <FaHashtag /> network-user-reports
                     </Mention>{" "}
-                    (urgent banshares will ping all observers).
+                    (urgent reports will ping all observers).
                 </li>
             </ul>
             <a href="/admin/onboarding/responsibilities">

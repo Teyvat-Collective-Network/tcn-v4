@@ -50,9 +50,9 @@ export default function OnboardingGuideTechnical() {
                     <h2>Applications</h2>
                     <p>Learn about the application workflow.</p>
                 </LandingPanel>
-                <LandingPanel href="/admin/onboarding/technical/banshares">
-                    <h2>Banshares</h2>
-                    <p>Learn how to process banshares.</p>
+                <LandingPanel href="/admin/onboarding/technical/network-user-reports">
+                    <h2>Network User Reports</h2>
+                    <p>Learn how to process network user reports.</p>
                 </LandingPanel>
                 <LandingPanel href="/admin/onboarding/technical/votes">
                     <h2>Votes</h2>

@@ -15,7 +15,7 @@ export function TopBar({ root }: { root: string }) {
 
     const sites = [
         { url: "/", name: "Home", description: "Home/landing page for the TCN — learn about the network here" },
-        { url: "/forms", name: "Forms", description: "TCN forms — apply to the TCN or submit banshares here" },
+        { url: "/forms", name: "Forms", description: "TCN forms — apply to the TCN or submit network user reports here" },
     ];
 
     if (user?.council) sites.push({ url: "/council", name: "Council", description: "Section for the TCN Council" });
@@ -82,8 +82,8 @@ export function TopBar({ root }: { root: string }) {
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="/banshare" className="link">
-                                                Submit a Banshare
+                                            <a href="/report" className="link">
+                                                Submit a Network User Report
                                             </a>
                                         </li>
                                     </ul>

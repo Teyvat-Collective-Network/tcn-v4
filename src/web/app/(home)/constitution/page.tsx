@@ -189,7 +189,7 @@ export default function Constituution() {
                         <li>Administrative tasks such as handling and executing server changes and decisions made by the council.</li>
                         <li>Manage votes, including elections.</li>
                         <li>Represent the network when acting on behalf of the council in line with what has been agreed upon by vote.</li>
-                        <li>Review and publish banshares and network event posts.</li>
+                        <li>Review and publish network user reports and network event posts.</li>
                         <li>Enforce rules.</li>
                         <li>
                             Ensure civility.

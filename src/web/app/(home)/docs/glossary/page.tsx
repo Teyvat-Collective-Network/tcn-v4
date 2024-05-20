@@ -22,8 +22,8 @@ export default function DocsGlossary() {
                 <TableBody>
                     <TableRow>
                         <TableCell>
-                            <a href="/docs/banshares" className="link" target="_blank">
-                                Banshare
+                            <a href="/docs/network-user-reports" className="link" target="_blank">
+                                Network User Reports
                             </a>
                         </TableCell>
                         <TableCell>

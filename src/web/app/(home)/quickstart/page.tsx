@@ -7,11 +7,11 @@ export default function Quickstart() {
                 <h2>Requirements</h2>
                 <p>Just the essentials. This is all that is required of you, and it&apos;s easy to set up, so we recommend starting here.</p>
             </LandingPanel>
-            <LandingPanel href="/quickstart/banshares">
-                <h2>Banshares</h2>
+            <LandingPanel href="/quickstart/network-user-reports">
+                <h2>Network User Reports</h2>
                 <p>
-                    Setting up banshares in your server allows you to receive them there directly and enable automatic banning instead of copy-pasting from HQ
-                    each time.
+                    Setting up network user reports in your server allows you to receive them there directly and enable automatic banning instead of
+                    copy-pasting from HQ each time.
                 </p>
             </LandingPanel>
             <LandingPanel href="/quickstart/global-chat">
@@ -25,7 +25,7 @@ export default function Quickstart() {
                 <h2>Staff Link</h2>
                 <p>
                     Configuring the staff link allows you to automatically sync your server&apos;s staff with the TCN system, allowing them to receive access
-                    roles in the TCN Hub and gain permission to submit banshares.
+                    roles in the TCN Hub and gain permission to submit network user reports.
                 </p>
             </LandingPanel>
             <LandingPanel href="/quickstart/other-bots">

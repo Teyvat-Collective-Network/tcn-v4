@@ -49,10 +49,10 @@ export default function OnboardingGuideTCNHub() {
                 </li>
                 <li>
                     <Mention>
-                        <FaHashtag /> banshares
+                        <FaHashtag /> network-user-reports
                     </Mention>{" "}
-                    receives published banshares and acts like any other banshare-receiving server. It is visible to all registered staff in the network. Note
-                    that banshares are never executed as the Hub is used for ban appeals. Rescind messages will also be forwarded here.
+                    receives published reports and acts like any other report-receiving server. It is visible to all registered staff in the network. Note that
+                    reports are never executed as the Hub is used for ban appeals. Rescind messages will also be forwarded here.
                 </li>
                 <li>
                     <Mention>

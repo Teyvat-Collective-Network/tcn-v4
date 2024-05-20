@@ -36,9 +36,9 @@ export default function OnboardingGuideExpectations() {
                 </p>
                 <h3>Be punctual</h3>
                 <p>
-                    While things aren&apos;t very time-sensitive, we have an expectation as a team to address things in a timely fashion. For example, banshares
-                    should be published within a reasonable time frame, events should be crossposted without excessive delay, and the weekly summary should be
-                    done on time.
+                    While things aren&apos;t very time-sensitive, we have an expectation as a team to address things in a timely fashion. For example, network
+                    user reports should be published within a reasonable time frame, events should be crossposted without excessive delay, and the weekly
+                    summary should be done on time.
                 </p>
                 <h3>Be present.</h3>
                 <p>

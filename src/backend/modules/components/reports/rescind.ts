@@ -5,8 +5,8 @@ export default async function (interaction: ButtonInteraction) {
     await ensureObserver(interaction);
 
     await interaction.showModal({
-        title: "Rescind Banshare",
-        customId: ":banshares/confirm-rescind",
+        title: "Rescind Network User Report",
+        customId: ":reports/confirm-rescind",
         components: [
             {
                 type: ComponentType.ActionRow,

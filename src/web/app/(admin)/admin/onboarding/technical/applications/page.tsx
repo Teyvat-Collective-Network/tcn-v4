@@ -103,9 +103,9 @@ export default function OnboardingTechnicalApplications() {
                 is wrong for any reason, you can fix it by just editing the thread tag; the bot uses the tag as the single source of truth and does not keep
                 track internally.
             </p>
-            <a href="/admin/onboarding/technical/banshares">
+            <a href="/admin/onboarding/technical/network-user-reports">
                 <Button className="flex items-center gap-2">
-                    Banshares <FaAngleRight />
+                    Network User Reports <FaAngleRight />
                 </Button>
             </a>
         </Prose>

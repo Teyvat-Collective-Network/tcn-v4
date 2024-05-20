@@ -1,5 +1,5 @@
 import { ApplicationCommandDataResolvable, ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction } from "discord.js";
-import { updateBanshareDashboard } from "../../lib/banshares.js";
+import { updateReportsDashboard } from "../../lib/reports.js";
 import { cmdKey, ensureObserver, template } from "../../lib/bot-lib.js";
 import { repostDeletedApplicationThreadsQueue, repostDeletedOpenPollsQueue } from "../../queue.js";
 import { fixAllGuildRoles, fixAllUserRoles } from "../rolesync/index.js";
@@ -22,7 +22,7 @@ export default {
                     required: true,
                     choices: [
                         { name: "Repost Deleted Application Threads", value: "repost-deleted-application-threads" },
-                        { name: "Update Banshare Dashboard", value: "update-banshare-dashboard" },
+                        { name: "Update Report Dashboard", value: "update-report-dashboard" },
                         { name: "Repost Deleted Open Polls", value: "repost-deleted-open-polls" },
                         { name: "Fix Missing Guild Roles", value: "fix-missing-guild-roles" },
                         { name: "Update All User Roles", value: "update-all-user-roles" },
@@ -45,8 +45,8 @@ export async function handleAdmin(interaction: ChatInputCommandInteraction) {
             case "repost-deleted-application-threads":
                 await repostDeletedApplicationThreadsQueue.add("", null);
                 break;
-            case "update-banshare-dashboard":
-                updateBanshareDashboard();
+            case "update-report-dashboard":
+                updateReportsDashboard();
                 break;
             case "repost-deleted-open-polls":
                 repostDeletedOpenPollsQueue.add("", null);

@@ -42,7 +42,7 @@ export default function DocsExitProcedures() {
                 </li>
                 <li>
                     Kick <UserMention id={process.env.CLIENT_ID!} />. Staff autosync will stop working once your server is formally removed and your
-                    server&apos;s dedicated role will be removed. Banshares will no longer be forwarded.
+                    server&apos;s dedicated role will be removed. Network user reports will no longer be forwarded.
                 </li>
             </ul>
             <p>

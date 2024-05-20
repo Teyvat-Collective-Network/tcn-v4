@@ -71,9 +71,9 @@ export default function QuickstartRequirements() {
                 You must follow <code>#network-events</code> in a publicly visible channel in your server. You can make this the same channel as where you post
                 other partner events.
             </p>
-            <a href="/quickstart/banshares">
+            <a href="/quickstart/network-user-reports">
                 <Button className="flex items-center gap-2">
-                    Banshares <FaAngleRight />
+                    Network User Reports <FaAngleRight />
                 </Button>
             </a>
         </Prose>

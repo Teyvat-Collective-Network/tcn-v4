@@ -29,7 +29,7 @@ export default function OnboardingGuideResponsibilities() {
                     <b>Elections:</b> ensure elections are run on a timely basis.
                 </li>
                 <li>
-                    <b>Banshares:</b> ensure banshares are reviewed on a timely basis and oversee quality standards.
+                    <b>Network User Reports:</b> ensure reports are reviewed on a timely basis and oversee quality standards.
                 </li>
             </ul>
             <h2>Internal Affairs</h2>

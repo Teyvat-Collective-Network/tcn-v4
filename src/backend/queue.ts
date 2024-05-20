@@ -6,8 +6,8 @@ export const qoptions = {
 } as const;
 
 export type DMReminderTask = { id: number; url: string; user: string };
-export type BansharePublishTask = { id: number; guild: string };
-export type BanshareRescindTask = { id: number; guild: string; channel: string; message: string; explanation: string };
+export type ReportPublishTask = { id: number; guild: string };
+export type ReportRescindTask = { id: number; guild: string; channel: string; message: string; explanation: string };
 export type FixUserStaffStatusTask = { guild: string; user: string };
 
 export type GlobalChatRelayTask =
@@ -25,9 +25,9 @@ export const fixGuildRolesQueue = new Queue<string>("tcn:fix-guild-roles", qopti
 export const fixUserRolesQueue = new Queue<string>("tcn:fix-user-roles", qoptions);
 export const fixUserStaffStatusQueue = new Queue<FixUserStaffStatusTask>("tcn:fix-user-staff-status", qoptions);
 export const fixGuildStaffStatusQueue = new Queue<string>("tcn:fix-guild-staff-status", qoptions);
-export const bansharePublishQueue = new Queue<BansharePublishTask>("tcn:banshare-publish", qoptions);
-export const banshareActionQueue = new Queue<null>("tcn:banshare-action", qoptions);
-export const banshareRescindQueue = new Queue<BanshareRescindTask>("tcn:banshare-rescind", qoptions);
+export const reportPublishQueue = new Queue<ReportPublishTask>("tcn:report-publish", qoptions);
+export const reportActionQueue = new Queue<null>("tcn:report-action", qoptions);
+export const reportRescindQueue = new Queue<ReportRescindTask>("tcn:report-rescind", qoptions);
 export const globalChatRelayQueue = new Queue<GlobalChatRelayTask>("tcn:global-chat-relay", qoptions);
 
 export function makeWorker<T>(name: string, handler: (data: T) => unknown) {

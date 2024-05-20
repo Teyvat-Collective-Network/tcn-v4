@@ -13,14 +13,14 @@ import { Prose } from "../../../components/ui/prose";
 import { Switch } from "../../../components/ui/switch";
 import { Textarea } from "../../../components/ui/textarea";
 import UserMention from "../../../components/ui/user-mention";
-import { submitBanshare } from "./actions";
+import { submitReport } from "./actions";
 
-export default function BanshareFormClient({ guilds }: { guilds: { id: string; name: string }[] }) {
+export default function ReportFormClient({ guilds }: { guilds: { id: string; name: string }[] }) {
     const [ids, setIds] = useState<string>("");
     const [reason, setReason] = useState<string>("");
     const [evidence, setEvidence] = useState<string>("");
     const [server, setServer] = useState<string | null>(null);
-    const [severity, setSeverity] = useState<string | null>(null);
+    const [category, setCategory] = useState<string | null>(null);
     const [urgent, setUrgent] = useState<boolean>(false);
 
     const [open, setOpen] = useState<boolean>(false);
@@ -30,13 +30,13 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
     if (done)
         return (
             <Prose>
-                <h2>Thank you for submitting a banshare.</h2>
+                <h2>Thank you for submitting a report.</h2>
                 <p>
                     We will review it and you should see it in{" "}
                     <Mention>
-                        <FaHashtag /> banshares
+                        <FaHashtag /> network-user-reports
                     </Mention>{" "}
-                    in the TCN Hub shortly. We will reach out to you if we believe the banshare does not meet our standards.
+                    in the TCN Hub shortly. We will reach out to you if we believe the report does not meet our standards.
                 </p>
                 <div className="flex items-center gap-4">
                     <a href="/">
@@ -51,7 +51,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                             setReason("");
                             setEvidence("");
                             setServer(null);
-                            setSeverity(null);
+                            setCategory(null);
                             setUrgent(false);
 
                             setDone(false);
@@ -66,13 +66,11 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
     return (
         <FormLogin>
             <Prose>
-                <h1>Submit Banshare</h1>
+                <h1>Submit Network User Report</h1>
                 <p>
-                    If this is your first banshare, please read the{" "}
-                    <a href="/docs/banshares" className="link">
-                        banshare usage guide &amp; policy
-                    </a>{" "}
-                    first.
+                    <a href="/docs/network-user-reports" className="link" target="_blank">
+                        Documentation &amp; Policy
+                    </a>
                 </p>
                 <Panel>
                     <h2 className="mt-4">ID(s) of the offender(s)</h2>
@@ -80,7 +78,7 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                     <br />
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
-                            <Button disabled={!ids.trim()}>Check IDs</Button>
+                            <Button disabled={!ids.trim() || ids.trim().split(/\s+/).length > 20}>Check IDs (20- users)</Button>
                         </DialogTrigger>
                         <DialogContent>
                             {open
@@ -109,14 +107,14 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                     <hr className="my-8" />
                     <h2>Reason</h2>
                     <p>
-                        The reason should be suitable for an audit log reason. Keep it concise but adequately informative. Formality is expected and banshares
+                        The reason should be suitable for an audit log reason. Keep it concise but adequately informative. Formality is expected and reports
                         with non-serious reasons will not be accepted.
                     </p>
                     <Textarea
-                        placeholder="Required &mdash; maximum 498 characters"
+                        placeholder="Required &mdash; maximum 480 characters"
                         value={reason}
                         onChange={({ currentTarget: { value } }) => setReason(value)}
-                        maxLength={498}
+                        maxLength={480}
                         rows={4}
                     />
                     <hr className="my-8" />
@@ -139,34 +137,33 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                     <hr className="my-8" />
                     <h2>Server</h2>
                     <p>
-                        Identify the server from which you are submitting this banshare. This is just for auditing/contact, so if you are not in the server
-                        where the incident happened or it spans multiple servers, just pick whichever one you staff most actively in.
+                        Identify the server from which you are submitting this report. This is just for auditing/contact, so if you are not in the server where
+                        the incident happened or it spans multiple servers, just pick whichever one you staff most actively in.
                     </p>
                     <ComboSelector values={guilds.map((guild) => ({ label: guild.name, value: guild.id }))} value={server} setValue={setServer} />
                     <hr className="my-8" />
-                    <h2>Severity</h2>
+                    <h2>Category</h2>
                     <p>
-                        The severity is used to determine autobanning. P0 indicates the greatest threat. Refer to the{" "}
-                        <a href="/docs/banshares#severity" className="link" target="_blank" tabIndex={-1}>
+                        Refer to the{" "}
+                        <a href="/docs/network-user-reports#categories" className="link" target="_blank" tabIndex={-1}>
                             info page
                         </a>{" "}
                         for more information.
                     </p>
                     <ComboSelector
                         values={[
-                            { label: "P0 (Critical)", value: "P0" },
-                            { label: "P1 (Medium)", value: "P1" },
-                            { label: "P2 (Low)", value: "P2" },
-                            { label: "DM Scam", value: "DM" },
+                            { label: "Banshare", value: "banshare" },
+                            { label: "Advisory Report", value: "advisory" },
+                            { label: "Hacked Account Report", value: "hacked" },
                         ]}
-                        value={severity}
-                        setValue={setSeverity}
+                        value={category}
+                        setValue={setCategory}
                     />
                     <hr className="my-8" />
                     <h2>Urgency</h2>
-                    <p>Check the box below to ping all observers to review this banshare urgently.</p>
+                    <p>Check the box below to ping all observers to review this report urgently.</p>
                     <div className="flex items-center gap-4">
-                        <Switch checked={urgent} onCheckedChange={setUrgent} /> This banshare is urgent.
+                        <Switch checked={urgent} onCheckedChange={setUrgent} /> This report is urgent.
                     </div>
                 </Panel>
                 <br />
@@ -181,12 +178,12 @@ export default function BanshareFormClient({ guilds }: { guilds: { id: string; n
                             if (!ids.match(/^\s*[1-9][0-9]{16,19}(\s+[1-9][0-9]{16,19})*\s*$/))
                                 return alert('ID list format is invalid. Click "Check IDs" for more information.');
 
-                            if (!reason.trim()) return alert("Please enter the reason for this banshare.");
-                            if (!evidence.trim()) return alert("Please enter the evidence for this banshare.");
-                            if (!server) return alert("Please select a server from which to submit this banshare.");
-                            if (!severity) return alert("Please select the severity of this banshare.");
+                            if (!reason.trim()) return alert("Please enter the reason for this report.");
+                            if (!evidence.trim()) return alert("Please enter the evidence for this report.");
+                            if (!server) return alert("Please select a server from which to submit this report.");
+                            if (!category) return alert("Please select the severity of this report.");
 
-                            const error = await submitBanshare(ids, reason, evidence, server, severity, urgent);
+                            const error = await submitReport(ids, reason, evidence, server, category, urgent);
                             if (error) return alert(error);
 
                             setDone(true);

@@ -10,9 +10,9 @@ export default function Documentation() {
                     additional commands.
                 </p>
             </LandingPanel>
-            <LandingPanel href="/docs/banshares">
-                <h2>Banshares</h2>
-                <p>This section contains the banshare philosophy, submission guide, and lifecycle information section.</p>
+            <LandingPanel href="/docs/network-user-reports">
+                <h2>Network User Reports</h2>
+                <p>This section contains the network user report philosophy, submission guide, and lifecycle information section.</p>
             </LandingPanel>
             <LandingPanel href="/docs/global-chat">
                 <h2>Global Chat</h2>

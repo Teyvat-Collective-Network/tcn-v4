@@ -6,6 +6,7 @@ export const users = mysqlTable("users", {
     observer: boolean("observer").notNull().default(false),
     observerSince: bigint("observer_since", { mode: "number" }).notNull().default(0),
     globalNickname: varchar("global_nickname", { length: 40 }).default(sql`null`),
+    reportsQuizPassed: boolean("reports_quiz_passed").notNull().default(false),
 });
 
 export const guilds = mysqlTable("guilds", {
@@ -223,23 +224,23 @@ export const inductionVotes = mysqlTable(
     (t) => ({ pk_ref_user: primaryKey({ columns: [t.ref, t.user] }) }),
 );
 
-export const banlists = mysqlTable("banlists", {
+export const txts = mysqlTable("txts", {
     uuid: varchar("uuid", { length: 36 }).primaryKey(),
     content: text("content").notNull(),
 });
 
-export const banshares = mysqlTable(
-    "banshares",
+export const networkUserReports = mysqlTable(
+    "network_user_reports",
     {
         id: int("id").autoincrement().primaryKey(),
         message: varchar("message", { length: 20 }).notNull(),
         author: varchar("author", { length: 20 }).notNull(),
         display: varchar("display", { length: 1024 }).notNull(),
         usernames: varchar("usernames", { length: 1024 }).notNull(),
-        reason: varchar("reason", { length: 498 }).notNull(),
+        reason: varchar("reason", { length: 480 }).notNull(),
         evidence: varchar("evidence", { length: 1000 }).notNull(),
         server: varchar("server", { length: 20 }).notNull(),
-        severity: varchar("severity", { length: 8 }).notNull(),
+        category: mysqlEnum("category", ["banshare", "advisory", "hacked"]).notNull(),
         urgent: boolean("urgent").notNull(),
         reminded: bigint("reminded", { mode: "number" }).notNull(),
         status: mysqlEnum("status", ["pending", "locked", "rejected", "published", "rescinded"]).notNull(),
@@ -249,45 +250,36 @@ export const banshares = mysqlTable(
     }),
 );
 
-export const banshareIds = mysqlTable(
-    "banshare_ids",
+export const reportIds = mysqlTable(
+    "report_ids",
     {
         ref: int("ref")
-            .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .references(() => networkUserReports.id, { onDelete: "cascade", onUpdate: "cascade" })
             .notNull(),
         user: varchar("user", { length: 20 }).notNull(),
     },
     (t) => ({ pk_ref_user: primaryKey({ columns: [t.ref, t.user] }) }),
 );
 
-export const banshareSettings = mysqlTable("banshare_settings", {
+export const reportSettings = mysqlTable("report_settings", {
     guild: varchar("guild", { length: 20 })
         .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
         .primaryKey(),
     channel: varchar("channel", { length: 20 }),
     logs: varchar("logs", { length: 20 }),
+    autoban: boolean("autoban").notNull().default(false),
+    autokick: boolean("autokick").notNull().default(false),
+    autobanMemberThreshold: bigint("autoban_member_threshold", { mode: "number" }).notNull().default(0),
+    receiveBanshare: boolean("receive_banshare").notNull().default(true),
+    receiveAdvisory: boolean("receive_advisory").notNull().default(true),
+    receiveHacked: boolean("receive_hacked").notNull().default(true),
 });
 
-export const banshareActionSettings = mysqlTable(
-    "banshare_action_settings",
-    {
-        guild: varchar("guild", { length: 20 })
-            .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
-            .notNull(),
-        severity: varchar("severity", { length: 8 }).notNull(),
-        member: boolean("member").notNull(),
-        ban: boolean("ban").notNull(),
-    },
-    (t) => ({
-        pk_guild_severity_member: primaryKey({ columns: [t.guild, t.severity, t.member] }),
-    }),
-);
-
-export const banshareCrossposts = mysqlTable(
-    "banshare_crossposts",
+export const reportCrossposts = mysqlTable(
+    "report_crossposts",
     {
         ref: int("ref")
-            .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .references(() => networkUserReports.id, { onDelete: "cascade", onUpdate: "cascade" })
             .notNull(),
         guild: varchar("guild", { length: 20 })
             .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
@@ -301,28 +293,27 @@ export const banshareCrossposts = mysqlTable(
     }),
 );
 
-export const banshareHubPosts = mysqlTable("banshare_hub_posts", {
+export const reportHubPosts = mysqlTable("report_hub_posts", {
     ref: int("ref")
-        .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+        .references(() => networkUserReports.id, { onDelete: "cascade", onUpdate: "cascade" })
         .primaryKey(),
     channel: varchar("channel", { length: 20 }).notNull(),
     message: varchar("message", { length: 20 }).notNull(),
 });
 
-export const banTasks = mysqlTable(
-    "ban_tasks",
+export const reportTasks = mysqlTable(
+    "report_tasks",
     {
         id: int("id").autoincrement().primaryKey(),
         ref: int("ref")
-            .references(() => banshares.id, { onDelete: "cascade", onUpdate: "cascade" })
+            .references(() => networkUserReports.id, { onDelete: "cascade", onUpdate: "cascade" })
             .notNull(),
         guild: varchar("guild", { length: 20 })
             .references(() => guilds.id, { onDelete: "cascade", onUpdate: "cascade" })
             .notNull(),
         user: varchar("user", { length: 20 }).notNull(),
-        status: mysqlEnum("status", ["pending", "skipped", "banned", "failed", "hold"]).notNull(),
-        member: boolean("member"),
-        autoban: boolean("autoban").notNull(),
+        status: mysqlEnum("status", ["pending", "skipped", "success", "failed", "hold"]).notNull(),
+        auto: boolean("auto").notNull(),
     },
     (t) => ({
         unq_ref_guild_user: unique("idx_ref_guild_user").on(t.ref, t.guild, t.user),

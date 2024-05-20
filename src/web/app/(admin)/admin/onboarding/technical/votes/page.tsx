@@ -12,9 +12,9 @@ export default function OnboardingTechnicalVotes() {
                         <FaAnglesLeft /> Return to Technical Guide Home
                     </Button>
                 </a>
-                <a href="/admin/onboarding/technical/banshares">
+                <a href="/admin/onboarding/technical/network-user-reports">
                     <Button className="flex items-center gap-2">
-                        <FaAngleLeft /> Banshares
+                        <FaAngleLeft /> Network User Reports
                     </Button>
                 </a>
             </div>

@@ -3,7 +3,7 @@
 import getUser from "../../../lib/get-user";
 import { api } from "../../../lib/trpc";
 
-const anonymize = ["banshares/update/severity", "banshares/unlock", "banshares/reject", "banshares/restore", "banshares/publish", "banshares/rescind"];
+const anonymize = ["reports/update/severity", "reports/unlock", "reports/reject", "reports/restore", "reports/publish", "reports/rescind"];
 
 const publicTypes = [
     ...anonymize,

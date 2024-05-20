@@ -28,16 +28,12 @@ const types: { label: string; value: string }[] = [
     { label: "Nuke Application", value: "applications/nuke" },
     { label: "Reset Poll Deadline", value: "polls/reset-deadline" },
     { label: "Delete Poll", value: "polls/delete" },
-    { label: "Set Banshare Channel", value: "banshares/set-channel" },
-    { label: "Set Banshare Logs", value: "banshares/set-logs" },
-    { label: "Set Autoban Settings", value: "banshares/autoban" },
-    { label: "Update Banshare Severity", value: "banshares/update/severity" },
-    { label: "Lock Banshare", value: "banshares/lock" },
-    { label: "Unlock Banshare", value: "banshares/unlock" },
-    { label: "Reject Banshare", value: "banshares/reject" },
-    { label: "Restore Banshare", value: "banshares/restore" },
-    { label: "Publish Banshare", value: "banshares/publish" },
-    { label: "Rescind Banshare", value: "banshares/rescind" },
+    { label: "Lock Network User Report", value: "reports/lock" },
+    { label: "Unlock Network User Report", value: "reports/unlock" },
+    { label: "Reject Network User Report", value: "reports/reject" },
+    { label: "Restore Network User Report", value: "reports/restore" },
+    { label: "Publish Network User Report", value: "reports/publish" },
+    { label: "Rescind Network User Report", value: "reports/rescind" },
     { label: "Add Pre-Approve Option", value: "polls/update/add-preapprove" },
     { label: "Remove Pre-Approve Option", value: "polls/update/remove-preapprove" },
     { label: "Promote Observer", value: "users/promote" },
@@ -314,47 +310,18 @@ export default function AuditLogsClient({
                                         <>reset the deadline of poll #{entry.data}.</>
                                     ) : entry.type === "polls/delete" ? (
                                         <>deleted poll #{entry.data.id}. Data is shown below.</>
-                                    ) : entry.type === "banshares/set-channel" ? (
-                                        <>
-                                            set the banshare channel in {guild} to <code>{entry.data}</code>.
-                                        </>
-                                    ) : entry.type === "banshares/set-logs" ? (
-                                        entry.data ? (
-                                            <>
-                                                set the banshare log channel in {guild} to <code>{entry.data}</code>.
-                                            </>
-                                        ) : (
-                                            <>removed the banshare log channel in {guild} (logs will be posted in the main channel if applicable).</>
-                                        )
-                                    ) : entry.type === "banshares/autoban" ? (
-                                        <>
-                                            set the autoban settings in {guild} to <code>{entry.data.ban ? "on" : "off"}</code> for{" "}
-                                            {entry.data.severity ? (
-                                                <>
-                                                    <code>{entry.data.severity}</code> banshares
-                                                </>
-                                            ) : (
-                                                "all severities"
-                                            )}{" "}
-                                            against{" "}
-                                            {entry.data.memberMode === null ? "members and non-members" : entry.data.memberMode ? "members" : "non-members"}.
-                                        </>
-                                    ) : entry.type === "banshares/update/severity" ? (
-                                        <>
-                                            updated the severity of banshare #{entry.data.banshare} to <code>{entry.data.severity}</code>.
-                                        </>
-                                    ) : entry.type === "banshares/lock" ? (
-                                        <>locked banshare #{entry.data}.</>
-                                    ) : entry.type === "banshares/unlock" ? (
-                                        <>unlocked banshare #{entry.data}.</>
-                                    ) : entry.type === "banshares/reject" ? (
-                                        <>rejected banshare #{entry.data}.</>
-                                    ) : entry.type === "banshares/restore" ? (
-                                        <>restored banshare #{entry.data}.</>
-                                    ) : entry.type === "banshares/publish" ? (
-                                        <>published banshare #{entry.data}.</>
-                                    ) : entry.type === "banshares/rescind" ? (
-                                        <>rescinded banshare #{entry.data.banshare}. Explanation is shown below.</>
+                                    ) : entry.type === "reports/lock" ? (
+                                        <>locked network user report #{entry.data}.</>
+                                    ) : entry.type === "reports/unlock" ? (
+                                        <>unlocked network user report #{entry.data}.</>
+                                    ) : entry.type === "reports/reject" ? (
+                                        <>rejected network user report #{entry.data}.</>
+                                    ) : entry.type === "reports/restore" ? (
+                                        <>restored network user report #{entry.data}.</>
+                                    ) : entry.type === "reports/publish" ? (
+                                        <>published network user report #{entry.data}.</>
+                                    ) : entry.type === "reports/rescind" ? (
+                                        <>rescinded network user report #{entry.data.report}. Explanation is shown below.</>
                                     ) : entry.type === "polls/update/add-preapprove" ? (
                                         <>added the pre-approve option to poll #{entry.data}.</>
                                     ) : entry.type === "polls/update/remove-preapprove" ? (
@@ -475,7 +442,7 @@ export default function AuditLogsClient({
                                     <pre>
                                         <code>{JSON.stringify((({ id, ...data }) => data)(entry.data), null, 4)}</code>
                                     </pre>
-                                ) : entry.type === "banshares/rescind" ? (
+                                ) : entry.type === "reports/rescind" ? (
                                     <pre>
                                         <code>{entry.data.explanation}</code>
                                     </pre>

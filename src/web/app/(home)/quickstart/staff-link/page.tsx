@@ -19,7 +19,7 @@ export default function QuickstartStaffLink() {
                 </a>
             </div>
             <p>
-                You can register your staff in the API (which gives them the role in the TCN Hub and allows them to publish banshares) using{" "}
+                You can register your staff in the API (which gives them the role in the TCN Hub and allows them to submit network user reports) using{" "}
                 <code>/staff add</code> on the TCN bot. You can link roles to automatically add and remove staff when their roles change in your server.
             </p>
             <p>
