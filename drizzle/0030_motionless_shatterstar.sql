@@ -1,1 +1,0 @@
-ALTER TABLE `election_history` ADD PRIMARY KEY(`wave`,`user`);

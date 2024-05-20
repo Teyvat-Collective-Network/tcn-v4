@@ -1,1 +1,0 @@
-ALTER TABLE `global_messages` DROP COLUMN `suppress_embeds`;

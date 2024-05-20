@@ -14,7 +14,7 @@ export const attributes = mysqlTable("attributes", {
 	}
 });
 
-export const banTasks = mysqlTable("ban_tasks", {
+export const reportTasks = mysqlTable("ban_tasks", {
 	id: int("id").autoincrement().notNull(),
 	guild: varchar("guild", { length: 20 }).notNull(),
 	user: varchar("user", { length: 20 }).notNull(),
@@ -26,7 +26,7 @@ export const banTasks = mysqlTable("ban_tasks", {
 (table) => {
 	return {
 		idxGuildMessage: index("idx_guild_message").on(table.guild, table.message),
-		banTasksId: primaryKey({ columns: [table.id], name: "ban_tasks_id"}),
+		reportTasksId: primaryKey({ columns: [table.id], name: "ban_tasks_id"}),
 	}
 });
 
@@ -53,13 +53,13 @@ export const banshareCrossposts = mysqlTable("banshare_crossposts", {
 	}
 });
 
-export const banshareIds = mysqlTable("banshare_ids", {
+export const reportIds = mysqlTable("banshare_ids", {
 	message: varchar("message", { length: 20 }).notNull().references(() => banshares.message, { onDelete: "cascade", onUpdate: "cascade" } ),
 	user: varchar("user", { length: 20 }).notNull(),
 },
 (table) => {
 	return {
-		banshareIdsMessageUser: primaryKey({ columns: [table.message, table.user], name: "banshare_ids_message_user"}),
+		reportIdsMessageUser: primaryKey({ columns: [table.message, table.user], name: "banshare_ids_message_user"}),
 	}
 });
 

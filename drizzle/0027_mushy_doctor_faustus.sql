@@ -1,1 +1,0 @@
-ALTER TABLE `audit_logs` MODIFY COLUMN `data` json;

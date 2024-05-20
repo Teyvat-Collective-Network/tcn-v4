@@ -1,1 +1,0 @@
-ALTER TABLE `election_polls` ADD `autopromoted` boolean NOT NULL;

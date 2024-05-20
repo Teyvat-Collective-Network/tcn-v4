@@ -1,1 +1,0 @@
-ALTER TABLE `global_channels` ADD `info_on_user_plugin` boolean DEFAULT false NOT NULL;

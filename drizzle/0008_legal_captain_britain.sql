@@ -1,1 +1,0 @@
-ALTER TABLE `polls` MODIFY COLUMN `reminder` bigint;
