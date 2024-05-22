@@ -8,10 +8,6 @@ export default function GlobalHome() {
 
     return (
         <LandingPage>
-            <LandingPanel href="/global/onboarding">
-                <h2>Onboarding</h2>
-                <p>Get started with the Global Chat system.</p>
-            </LandingPanel>
             <LandingPanel href="/global/moderation">
                 <h2>Moderation</h2>
                 <p>

@@ -81,11 +81,7 @@ export function Menu({ root }: { root: string }) {
         );
 
     if (root === "/global")
-        links.push(
-            ["/global/onboarding", "Onboarding", FaDoorOpen],
-            ["/global/moderation", "Moderation", FaClipboardList],
-            ["/global/moderator-agreement", "Moderator Agreement", FaClipboardCheck],
-        );
+        links.push(["/global/moderation", "Moderation", FaClipboardList], ["/global/moderator-agreement", "Moderator Agreement", FaClipboardCheck]);
 
     if (root === "/global" && user?.observer) links.push(["/global/channels", "Global Channels", FaEarthAsia], ["/global/filters", "Chat Filters", FaFilter]);
 
