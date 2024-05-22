@@ -60,4 +60,7 @@ async function check() {
     for (const text of texts) await channels.observerManagement.send(text);
 }
 
-setTimeout(() => setInterval(check, 86400000), (86400000 - Date.now()) % 86400000);
+setTimeout(() => {
+    check();
+    setInterval(check, 86400000);
+}, 86400000 - (Date.now() % 86400000));
