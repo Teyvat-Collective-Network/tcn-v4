@@ -32,6 +32,8 @@ import {
 } from "react-icons/fa6";
 import { IconType } from "react-icons/lib";
 import { useUserContext } from "../context/user";
+import Account from "./account";
+import { NavigationMenu, NavigationMenuList } from "./ui/navigation-menu";
 
 export function Menu({ root }: { root: string }) {
     const user = useUserContext();
@@ -109,6 +111,13 @@ export function Menu({ root }: { root: string }) {
                         </button>
                     </div>
                     <div className="flex flex-col">
+                        <div className="md:hidden flex flex-col items-center mb-4">
+                            <NavigationMenu>
+                                <NavigationMenuList>
+                                    <Account />
+                                </NavigationMenuList>
+                            </NavigationMenu>
+                        </div>
                         <button className="px-4 py-2 hidden dark:flex items-center gap-2 hover:bg-foreground/5" onClick={() => setTheme("light")}>
                             <FaSun />
                             Switch to Light Mode
