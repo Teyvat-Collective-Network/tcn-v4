@@ -111,7 +111,7 @@ export function Menu({ root }: { root: string }) {
                         </button>
                     </div>
                     <div className="flex flex-col">
-                        <div className="md:hidden flex flex-col items-center mb-4">
+                        <div className="md:hidden ml-4 mb-4">
                             <NavigationMenu>
                                 <NavigationMenuList>
                                     <Account />
