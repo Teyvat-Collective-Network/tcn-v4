@@ -533,6 +533,7 @@ export const globalMessages = mysqlTable(
             .references(() => globalChannels.id, { onDelete: "cascade", onUpdate: "cascade" })
             .notNull(),
         author: varchar("author", { length: 20 }).notNull(),
+        replyTo: int("reply_to"),
         originGuild: varchar("origin_guild", { length: 20 }).notNull(),
         originChannel: varchar("origin_channel", { length: 20 }).notNull(),
         originMessage: varchar("origin_message", { length: 20 }).notNull(),
@@ -542,6 +543,7 @@ export const globalMessages = mysqlTable(
         embeds: json("embeds"),
         attachments: json("attachments"),
         username: varchar("username", { length: 80 }).notNull(),
+        replyUsername: varchar("reply_username", { length: 80 }).notNull(),
         avatar: text("avatar").notNull(),
     },
     (t) => ({
@@ -558,7 +560,6 @@ export const globalMessageInstances = mysqlTable(
         guild: varchar("guild", { length: 20 }).notNull(),
         channel: varchar("channel", { length: 20 }).notNull(),
         message: varchar("message", { length: 20 }).notNull(),
-        neverDelete: boolean("never_delete").notNull().default(false),
     },
     (t) => ({
         idx_message: index("idx_message").on(t.message),

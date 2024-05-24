@@ -11,7 +11,7 @@ import {
     PermissionFlagsBits,
     escapeMarkdown,
 } from "discord.js";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull, or } from "drizzle-orm";
 import { fstatSync, openSync } from "fs";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -99,9 +99,9 @@ globalBot.on(Events.MessageCreate, async (message) => {
         return;
     }
 
-    if (message.content.length > 2000) {
+    if (message.content.length > (message.type === MessageType.Reply ? 1800 : 2000)) {
         message.reply({
-            content: "This message is too long. Webhooks can only send messages up to 2000 characters long, so please send a shorter message.",
+            content: "This message is too long (max accepted length is 1800 for replies and 2000 otherwise).",
             components: deleteButton,
             flags: MessageFlags.SuppressNotifications,
         });
@@ -132,6 +132,10 @@ globalBot.on(Events.MessageCreate, async (message) => {
     const user = message.member ?? message.author;
 
     const username = `${(entry?.globalNickname ?? user.displayName).slice(0, 40)} from ${guildEntry?.name ?? message.guild.name}`.slice(0, 80);
+
+    const replyUsername = `**${`${escapeMarkdown(entry?.globalNickname ?? user.displayName).slice(0, 40)}** from **${escapeMarkdown(
+        guildEntry?.name ?? message.guild.name,
+    )}`.slice(0, 76)}**`;
 
     for (const { term, regex } of filters)
         try {
@@ -226,6 +230,15 @@ globalBot.on(Events.MessageCreate, async (message) => {
     const [{ insertId }] = await db.insert(tables.globalMessages).values({
         channel: channel.id,
         author: message.author.id,
+        replyTo:
+            message.type === MessageType.Reply && message.reference?.messageId
+                ? (
+                      await db.query.globalMessageInstances.findFirst({
+                          columns: { ref: true },
+                          where: eq(tables.globalMessageInstances.message, message.reference.messageId),
+                      })
+                  )?.ref
+                : null,
         originGuild: message.guild.id,
         originChannel: message.channel.id,
         originMessage: message.id,
@@ -234,6 +247,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
         embeds: getEmbeds(message),
         attachments,
         username,
+        replyUsername,
         avatar: user.displayAvatarURL({ extension: "png", size: 256 }),
     });
 
@@ -477,10 +491,38 @@ makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
         const webhook = await getWebhook(channel);
         if (!webhook) return;
 
+        let prefix = "";
+
+        if (message.replyTo !== null) {
+            prefix += `${process.env.EMOJI_GLOBAL_REPLY} `;
+
+            const [reference] = await db
+                .select({
+                    replyUsername: tables.globalMessages.replyUsername,
+                    channel: tables.globalMessageInstances.channel,
+                    message: tables.globalMessageInstances.message,
+                })
+                .from(tables.globalMessages)
+                .leftJoin(tables.globalMessageInstances, eq(tables.globalMessages.id, tables.globalMessageInstances.ref))
+                .where(
+                    and(
+                        eq(tables.globalMessages.id, message.replyTo),
+                        or(eq(tables.globalMessageInstances.guild, data.guild), isNull(tables.globalMessageInstances.guild)),
+                    ),
+                );
+
+            if (reference) {
+                prefix += reference.replyUsername ? `${reference.replyUsername}: ` : "";
+
+                if (reference.channel) prefix += `https://discord.com/channels/${data.guild}/${reference.channel}/${reference.message}\n`;
+                else prefix += `**[original not found]**\n`;
+            } else prefix += "**[invalid message]**\n";
+        }
+
         const post = await webhook?.send({
             username: message.username,
             avatarURL: message.avatar,
-            content: message.content || undefined,
+            content: prefix + message.content || undefined,
             embeds: message.embeds as any,
             files: message.attachments as any,
         });
