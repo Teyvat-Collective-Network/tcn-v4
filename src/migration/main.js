@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import { SnowflakeUtil } from "discord.js";
 import { sql } from "drizzle-orm";
+import { HQ } from "../backend/bot.ts";
 import { db } from "../backend/db/db.ts";
 import tables from "../backend/db/tables.ts";
 import src, { connect } from "./mongo.ts";
@@ -45,20 +46,38 @@ await db.insert(tables.characters).values(characters);
 
 console.log("exporting guilds");
 
-const guilds = (await src.guilds.find().toArray()).map((guild) => ({
-    id: guild.id,
-    mascot: guild.mascot,
-    name: guild.name,
-    invite: guild.invite,
-    image: "",
-    owner: guild.owner,
-    advisor: guild.advisor || null,
-    delegated: guild.delegated || false,
-    roleColor: 0,
-    roleName: "",
-    hqRole: "",
-    hubRole: "",
-}));
+const hqEntry = await src.rolesync.findOne({ guild: process.env.HQ });
+const hubEntry = await src.rolesync.findOne({ guild: process.env.HUB });
+
+const guilds = await Promise.all(
+    (
+        await src.guilds.find().toArray()
+    ).map(async (guild) => {
+        try {
+            const hqRoleId = hqEntry.apiToRole.find((item) => item.value === "council" && item.guild === guild.id).roles[0];
+            const hubRoleId = hubEntry.apiToRole.find((item) => item.value === "staff" && item.guild === guild.id).roles[0];
+
+            const role = await HQ.roles.fetch(hqRoleId);
+
+            return {
+                id: guild.id,
+                mascot: guild.mascot,
+                name: guild.name,
+                invite: guild.invite,
+                image: "",
+                owner: guild.owner,
+                advisor: guild.advisor || null,
+                delegated: guild.delegated || false,
+                roleColor: role.color,
+                roleName: role.name,
+                hqRole: hqRoleId,
+                hubRole: hubRoleId,
+            };
+        } catch {
+            console.log("Failed role import for:", guild.id, guild.name);
+        }
+    }),
+);
 
 await db.delete(tables.guilds);
 await db.insert(tables.guilds).values(guilds);
