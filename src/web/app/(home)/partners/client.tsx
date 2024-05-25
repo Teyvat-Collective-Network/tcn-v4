@@ -90,7 +90,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                             .filter(({ mascot, name }) => fuzzy(mascot, query) || fuzzy(name, query))
                             .map(({ id, name, invite, image }) => (
                                 <Panel key={id} className="flex items-center gap-8">
-                                    <Image src={image} alt={`${name} Icon`} width={100} height={100} />
+                                    <Image className="rounded-full" src={image} alt={`${name} Icon`} width={100} height={100} />
                                     <div className="flex flex-col gap-2">
                                         <a href={`/server/${id}`} className="link text-xl font-semibold">
                                             {name}
