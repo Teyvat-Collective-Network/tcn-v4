@@ -241,6 +241,7 @@ export async function handleElections(interaction: ChatInputCommandInteraction) 
                 {
                     title: "Election Candidate Statements",
                     description: `In no particular order:\n\n${messages.map((message) => `- <@${message.author.id}>: ${message.url}`).join("\n")}`,
+                    color: 0x2b2d31,
                 },
             ],
         });
