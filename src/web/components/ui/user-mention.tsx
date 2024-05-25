@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, use, useEffect, useState } from "react";
-import { FaAt, FaSpinner } from "react-icons/fa6";
+import { FaAt, FaServer, FaSpinner, FaUser } from "react-icons/fa6";
 import { useTagsContext } from "../../context/tags";
 import { getTag } from "../../lib/actions";
 import Mention from "./mention";
@@ -28,6 +28,20 @@ export default function UserMention({ id }: { id: string }) {
     );
 
     if (!isClient) return loading;
+
+    if (id === "111111111111111111")
+        return (
+            <Mention>
+                <FaServer /> System
+            </Mention>
+        );
+
+    if (id === "hidden")
+        return (
+            <Mention>
+                <FaUser /> Hidden
+            </Mention>
+        );
 
     return (
         <Suspense fallback={loading}>

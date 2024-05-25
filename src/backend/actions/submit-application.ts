@@ -1,3 +1,4 @@
+import { escapeMarkdown } from "discord.js";
 import { z } from "zod";
 import bot, { channels } from "../bot.js";
 import { db } from "../db/db.js";
@@ -40,6 +41,13 @@ export default proc
                     goals,
                     history,
                     additional,
+                });
+
+                await channels.officialBusiness.send({
+                    content: `<@&${process.env.ROLE_NEW_APPLICANT_ALERT}> <@${user}> submitted an application for **${escapeMarkdown(
+                        data.guild.name,
+                    )}**. See the application here: ${thread.url}/${thread.id}`,
+                    allowedMentions: { roles: [process.env.ROLE_NEW_APPLICANT_ALERT!] },
                 });
 
                 return null;
