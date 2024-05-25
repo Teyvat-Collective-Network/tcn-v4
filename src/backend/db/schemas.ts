@@ -242,6 +242,7 @@ export const networkUserReports = mysqlTable(
         server: varchar("server", { length: 20 }).notNull(),
         category: mysqlEnum("category", ["banshare", "advisory", "hacked"]).notNull(),
         urgent: boolean("urgent").notNull(),
+        created: bigint("created", { mode: "number" }).notNull(),
         reminded: bigint("reminded", { mode: "number" }).notNull(),
         status: mysqlEnum("status", ["pending", "locked", "rejected", "published", "rescinded"]).notNull(),
     },

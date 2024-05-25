@@ -75,6 +75,8 @@ export default proc
                     break;
                 } while (true);
 
+            const now = Date.now();
+
             const [{ insertId }] = await db.insert(tables.networkUserReports).values({
                 message: "",
                 author,
@@ -85,7 +87,8 @@ export default proc
                 server,
                 category,
                 urgent,
-                reminded: Date.now(),
+                created: now,
+                reminded: now,
                 status: "pending",
             });
 

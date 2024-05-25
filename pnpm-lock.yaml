@@ -32,6 +32,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      mongodb:
+        specifier: ^6.6.2
+        version: 6.6.2
       mysql2:
         specifier: ^3.9.4
         version: 3.9.4
@@ -374,6 +377,9 @@ packages:
   '@ioredis/commands@1.2.0':
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==, tarball: https://registry.npmjs.org/@ioredis/commands/-/commands-1.2.0.tgz}
 
+  '@mongodb-js/saslprep@1.1.7':
+    resolution: {integrity: sha512-dCHW/oEX0KJ4NjDULBo3JiOaK5+6axtpBbS+ao2ZInoAL9/YRQLhXzSNAFz7hP4nzLkIqsfYAK/PDE3+XHny0Q==, tarball: https://registry.npmjs.org/@mongodb-js/saslprep/-/saslprep-1.1.7.tgz}
+
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.2':
     resolution: {integrity: sha512-9bfjwDxIDWmmOKusUcqdS4Rw+SETlp9Dy39Xui9BEGEk19dDwH0jhipwFzEff/pFg95NKymc6TOTbRKcWeRqyQ==, tarball: https://registry.npmjs.org/@msgpackr-extract/msgpackr-extract-darwin-arm64/-/msgpackr-extract-darwin-arm64-3.0.2.tgz}
     cpu: [arm64]
@@ -442,6 +448,12 @@ packages:
   '@types/wcag-contrast@3.0.3':
     resolution: {integrity: sha512-oprevfwJSLfpQK4KaWsRKJuNoebV76+xhmbXiWJGy+FkS34LpCgCMNIwRXWTb8xmmSxUE2ycFOYE7uyRVRm3LA==, tarball: https://registry.npmjs.org/@types/wcag-contrast/-/wcag-contrast-3.0.3.tgz}
 
+  '@types/webidl-conversions@7.0.3':
+    resolution: {integrity: sha512-CiJJvcRtIgzadHCYXw7dqEnMNRjhGZlYK05Mj9OyktqV8uVT8fD2BFOB7S1uwBE3Kj2Z+4UyPmFw/Ixgw/LAlA==, tarball: https://registry.npmjs.org/@types/webidl-conversions/-/webidl-conversions-7.0.3.tgz}
+
+  '@types/whatwg-url@11.0.5':
+    resolution: {integrity: sha512-coYR071JRaHa+xoEvvYqvnIHaVqaYrLPbsufM9BF63HkwI5Lgmy2QR8Q5K/lYDYo5AK82wOvSOS0UsLTpTG7uQ==, tarball: https://registry.npmjs.org/@types/whatwg-url/-/whatwg-url-11.0.5.tgz}
+
   '@types/ws@8.5.9':
     resolution: {integrity: sha512-jbdrY0a8lxfdTp/+r7Z4CkycbOFN8WX+IOchLJr3juT/xzbJ8URyTVSJ/hvNdadTgM1mnedb47n+Y31GsFnQlg==, tarball: https://registry.npmjs.org/@types/ws/-/ws-8.5.9.tgz}
 
@@ -454,6 +466,10 @@ packages:
 
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==, tarball: https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.1.tgz}
+
+  bson@6.7.0:
+    resolution: {integrity: sha512-w2IquM5mYzYZv6rs3uN2DZTOBe2a0zXLj53TGDqwF4l6Sz/XsISrisXOJihArF9+BZ6Cq/GjVht7Sjfmri7ytQ==, tarball: https://registry.npmjs.org/bson/-/bson-6.7.0.tgz}
+    engines: {node: '>=16.20.1'}
 
   buffer-equal-constant-time@1.0.1:
     resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==, tarball: https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz}
@@ -790,6 +806,9 @@ packages:
   memoizee@0.4.15:
     resolution: {integrity: sha512-UBWmJpLZd5STPm7PMUlOw/TSy972M+z8gcyQ5veOnSDRREz/0bmpyTfKt3/51DhEBqCZQn1udM/5flcSPYhkdQ==, tarball: https://registry.npmjs.org/memoizee/-/memoizee-0.4.15.tgz}
 
+  memory-pager@1.5.0:
+    resolution: {integrity: sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==, tarball: https://registry.npmjs.org/memory-pager/-/memory-pager-1.5.0.tgz}
+
   minimatch@5.1.6:
     resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==, tarball: https://registry.npmjs.org/minimatch/-/minimatch-5.1.6.tgz}
     engines: {node: '>=10'}
@@ -797,6 +816,36 @@ packages:
   minimatch@7.4.6:
     resolution: {integrity: sha512-sBz8G/YjVniEz6lKPNpKxXwazJe4c19fEfV2GDMX6AjFz+MX9uDWIZW8XreVhkFW3fkIdTv/gxWr/Kks5FFAVw==, tarball: https://registry.npmjs.org/minimatch/-/minimatch-7.4.6.tgz}
     engines: {node: '>=10'}
+
+  mongodb-connection-string-url@3.0.1:
+    resolution: {integrity: sha512-XqMGwRX0Lgn05TDB4PyG2h2kKO/FfWJyCzYQbIhXUxz7ETt0I/FqHjUeqj37irJ+Dl1ZtU82uYyj14u2XsZKfg==, tarball: https://registry.npmjs.org/mongodb-connection-string-url/-/mongodb-connection-string-url-3.0.1.tgz}
+
+  mongodb@6.6.2:
+    resolution: {integrity: sha512-ZF9Ugo2JCG/GfR7DEb4ypfyJJyiKbg5qBYKRintebj8+DNS33CyGMkWbrS9lara+u+h+yEOGSRiLhFO/g1s1aw==, tarball: https://registry.npmjs.org/mongodb/-/mongodb-6.6.2.tgz}
+    engines: {node: '>=16.20.1'}
+    peerDependencies:
+      '@aws-sdk/credential-providers': ^3.188.0
+      '@mongodb-js/zstd': ^1.1.0
+      gcp-metadata: ^5.2.0
+      kerberos: ^2.0.1
+      mongodb-client-encryption: '>=6.0.0 <7'
+      snappy: ^7.2.2
+      socks: ^2.7.1
+    peerDependenciesMeta:
+      '@aws-sdk/credential-providers':
+        optional: true
+      '@mongodb-js/zstd':
+        optional: true
+      gcp-metadata:
+        optional: true
+      kerberos:
+        optional: true
+      mongodb-client-encryption:
+        optional: true
+      snappy:
+        optional: true
+      socks:
+        optional: true
 
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==, tarball: https://registry.npmjs.org/ms/-/ms-2.1.2.tgz}
@@ -828,6 +877,10 @@ packages:
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==, tarball: https://registry.npmjs.org/once/-/once-1.4.0.tgz}
+
+  punycode@2.3.1:
+    resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==, tarball: https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz}
+    engines: {node: '>=6'}
 
   redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==, tarball: https://registry.npmjs.org/redis-errors/-/redis-errors-1.2.0.tgz}
@@ -867,6 +920,9 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==, tarball: https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz}
     engines: {node: '>=0.10.0'}
 
+  sparse-bitfield@3.0.3:
+    resolution: {integrity: sha512-kvzhi7vqKTfkh0PZU+2D2PIllw2ymqJKujUcyPMd9Y75Nv4nPbGJZXNhxsgdQab2BmlDct1YnfQCguEvHr7VsQ==, tarball: https://registry.npmjs.org/sparse-bitfield/-/sparse-bitfield-3.0.3.tgz}
+
   sqlstring@2.3.3:
     resolution: {integrity: sha512-qC9iz2FlN7DQl3+wjwn3802RTyjCx7sDvfQEXchwa6CWOx07/WVfh91gBmQ9fahw8snwGEWU3xGzOt4tFyHLxg==, tarball: https://registry.npmjs.org/sqlstring/-/sqlstring-2.3.3.tgz}
     engines: {node: '>= 0.6'}
@@ -880,6 +936,10 @@ packages:
 
   timers-ext@0.1.7:
     resolution: {integrity: sha512-b85NUNzTSdodShTIbky6ZF02e8STtVVfD+fu4aXXShEELpozH+bCpJLYMPZbsABN2wDH7fJpqIoXxJpzbf0NqQ==, tarball: https://registry.npmjs.org/timers-ext/-/timers-ext-0.1.7.tgz}
+
+  tr46@4.1.1:
+    resolution: {integrity: sha512-2lv/66T7e5yNyhAAC4NaKe5nVavzuGJQVVtRYLyQ2OI8tsJ61PMLlelehb0wi2Hx6+hT/OJUWZcw8MjlSRnxvw==, tarball: https://registry.npmjs.org/tr46/-/tr46-4.1.1.tgz}
+    engines: {node: '>=14'}
 
   ts-mixer@6.0.4:
     resolution: {integrity: sha512-ufKpbmrugz5Aou4wcr5Wc1UUFWOLhq+Fm6qa6P0w0K5Qw2yhaUoiWszhCVuNQyNwrlGiscHOmqYoAox1PtvgjA==, tarball: https://registry.npmjs.org/ts-mixer/-/ts-mixer-6.0.4.tgz}
@@ -908,6 +968,14 @@ packages:
 
   wcag-contrast@3.0.0:
     resolution: {integrity: sha512-RWbpg/S7FOXDCwqC2oFhN/vh8dHzj0OS6dpyOSDHyQFSmqmR+lAUStV/ziTT1GzDqL9wol+nZQB4vCi5yEak+w==, tarball: https://registry.npmjs.org/wcag-contrast/-/wcag-contrast-3.0.0.tgz}
+
+  webidl-conversions@7.0.0:
+    resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==, tarball: https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-7.0.0.tgz}
+    engines: {node: '>=12'}
+
+  whatwg-url@13.0.0:
+    resolution: {integrity: sha512-9WWbymnqj57+XEuqADHrCJ2eSXzn8WXIW/YSGaZtb2WKAInQ6CHfaUUcTyyver0p8BDg5StLQq8h1vtZuwmOig==, tarball: https://registry.npmjs.org/whatwg-url/-/whatwg-url-13.0.0.tgz}
+    engines: {node: '>=16'}
 
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==, tarball: https://registry.npmjs.org/wordwrap/-/wordwrap-1.0.0.tgz}
@@ -1140,6 +1208,10 @@ snapshots:
 
   '@ioredis/commands@1.2.0': {}
 
+  '@mongodb-js/saslprep@1.1.7':
+    dependencies:
+      sparse-bitfield: 3.0.3
+
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.2':
     optional: true
 
@@ -1199,6 +1271,12 @@ snapshots:
 
   '@types/wcag-contrast@3.0.3': {}
 
+  '@types/webidl-conversions@7.0.3': {}
+
+  '@types/whatwg-url@11.0.5':
+    dependencies:
+      '@types/webidl-conversions': 7.0.3
+
   '@types/ws@8.5.9':
     dependencies:
       '@types/node': 20.12.7
@@ -1210,6 +1288,8 @@ snapshots:
   brace-expansion@2.0.1:
     dependencies:
       balanced-match: 1.0.2
+
+  bson@6.7.0: {}
 
   buffer-equal-constant-time@1.0.1: {}
 
@@ -1568,6 +1648,8 @@ snapshots:
       next-tick: 1.1.0
       timers-ext: 0.1.7
 
+  memory-pager@1.5.0: {}
+
   minimatch@5.1.6:
     dependencies:
       brace-expansion: 2.0.1
@@ -1575,6 +1657,17 @@ snapshots:
   minimatch@7.4.6:
     dependencies:
       brace-expansion: 2.0.1
+
+  mongodb-connection-string-url@3.0.1:
+    dependencies:
+      '@types/whatwg-url': 11.0.5
+      whatwg-url: 13.0.0
+
+  mongodb@6.6.2:
+    dependencies:
+      '@mongodb-js/saslprep': 1.1.7
+      bson: 6.7.0
+      mongodb-connection-string-url: 3.0.1
 
   ms@2.1.2: {}
 
@@ -1620,6 +1713,8 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
+  punycode@2.3.1: {}
+
   redis-errors@1.2.0: {}
 
   redis-parser@3.0.0:
@@ -1651,6 +1746,10 @@ snapshots:
 
   source-map@0.6.1: {}
 
+  sparse-bitfield@3.0.3:
+    dependencies:
+      memory-pager: 1.5.0
+
   sqlstring@2.3.3: {}
 
   standard-as-callback@2.1.0: {}
@@ -1663,6 +1762,10 @@ snapshots:
     dependencies:
       es5-ext: 0.10.64
       next-tick: 1.1.0
+
+  tr46@4.1.1:
+    dependencies:
+      punycode: 2.3.1
 
   ts-mixer@6.0.4: {}
 
@@ -1688,6 +1791,13 @@ snapshots:
   wcag-contrast@3.0.0:
     dependencies:
       relative-luminance: 2.0.1
+
+  webidl-conversions@7.0.0: {}
+
+  whatwg-url@13.0.0:
+    dependencies:
+      tr46: 4.1.1
+      webidl-conversions: 7.0.0
 
   wordwrap@1.0.0: {}
 

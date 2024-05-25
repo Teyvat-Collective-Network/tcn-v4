@@ -3,6 +3,7 @@ import { z } from "zod";
 import { HQ, HUB } from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
+import { audit } from "../lib/audit.js";
 import trpcify from "../lib/trpcify.js";
 import zs from "../lib/zs.js";
 import { syncPartnerLists } from "../modules/autosync/index.js";
@@ -15,7 +16,7 @@ export default proc
     .mutation(
         trpcify(async ({ actor, id }) => {
             const guild = await db.query.guilds.findFirst({
-                columns: { owner: true, advisor: true, hqRole: true, hubRole: true },
+                columns: { name: true, owner: true, advisor: true, hqRole: true, hubRole: true },
                 where: eq(tables.guilds.id, id),
             });
 
@@ -38,6 +39,8 @@ export default proc
             await fixUserRolesQueue.addBulk(
                 [...new Set([guild.owner, guild.advisor || [], staff.map((entry) => entry.user)].flat())].map((id) => ({ name: "", data: id })),
             );
+
+            await audit(actor, "guilds/delete", id, { name: guild.name, owner: guild.owner, advisor: guild.advisor });
 
             syncPartnerLists();
 

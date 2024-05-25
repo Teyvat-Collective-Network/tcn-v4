@@ -95,8 +95,6 @@ export default function AuditLogsClient({
             <code>Guild: {id}</code>
         );
 
-    const none = <span className="opacity-50">(none)</span>;
-
     return (
         <>
             <div className="grid grid-cols-[max-content_1fr] items-center gap-4">
@@ -228,11 +226,11 @@ export default function AuditLogsClient({
                                         </>
                                     ) : entry.type === "guilds/delete" ? (
                                         <>
-                                            removed {guild} from the TCN (owner was <UserMention id={entry.data[0]} />
-                                            {entry.data[1] ? (
+                                            removed {guild} (<b>{entry.data.name}</b>) from the TCN (owner was <UserMention id={entry.data.owner} />
+                                            {entry.data.advisor ? (
                                                 <>
                                                     {" "}
-                                                    and advisor was <UserMention id={entry.data[1]} />
+                                                    and advisor was <UserMention id={entry.data.advisor} />
                                                 </>
                                             ) : null}
                                             )
