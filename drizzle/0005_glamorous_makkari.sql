@@ -1,0 +1,1 @@
+ALTER TABLE `network_user_reports` ADD `created` bigint NOT NULL;
