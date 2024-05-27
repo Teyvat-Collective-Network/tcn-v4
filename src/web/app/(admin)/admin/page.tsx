@@ -28,6 +28,10 @@ export default function AdminHome() {
                 <h2>Vote Tracker</h2>
                 <p>View users&apos; voting history here.</p>
             </LandingPanel>
+            <LandingPanel href="/admin/metrics">
+                <h2>Metrics</h2>
+                <p>Track system metrics here.</p>
+            </LandingPanel>
         </LandingPage>
     );
 }

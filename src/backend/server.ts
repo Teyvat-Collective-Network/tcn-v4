@@ -27,6 +27,7 @@ import getGuild from "./actions/get-guild.js";
 import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
 import getGuildsForReports from "./actions/get-guilds-for-reports.js";
 import getInvite from "./actions/get-invite.js";
+import getMetrics from "./actions/get-metrics.js";
 import getMonitor from "./actions/get-monitor.js";
 import getObserverList from "./actions/get-observer-list.js";
 import getPartialGuildFromThread from "./actions/get-partial-guild-from-thread.js";
@@ -90,6 +91,7 @@ export const appRouter = router({
     getGuildsForDropdown,
     getGuildsForReports,
     getInvite,
+    getMetrics,
     getMonitor,
     getObserverList,
     getPartialGuildFromThread,

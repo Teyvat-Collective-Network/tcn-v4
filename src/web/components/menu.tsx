@@ -8,6 +8,7 @@ import {
     FaBookBookmark,
     FaBuildingColumns,
     FaCalendarWeek,
+    FaChartBar,
     FaChartLine,
     FaCheckToSlot,
     FaCircleInfo,
@@ -73,6 +74,7 @@ export function Menu({ root }: { root: string }) {
             ["/admin/users", "Manage Users", FaUserGroup],
             ["/admin/characters", "Manage Characters", FaUserSecret],
             ["/admin/vote-tracker", "Vote Tracker", FaClipboardCheck],
+            ["/admin/metrics", "Metrics", FaChartBar],
         );
 
     if (root === "/council")
