@@ -1,3 +1,4 @@
+import { Mutex } from "async-mutex";
 import { Events, Guild, GuildMember, Role, escapeMarkdown } from "discord.js";
 import { and, count, eq } from "drizzle-orm";
 import bot, { HQ, HUB, channels, roles } from "../../bot.js";
@@ -25,72 +26,84 @@ async function createHubRole(color: number, name: string) {
     return await createRole(color, name, HUB, roles.hubMainsAnchor, roles.hubMainsEnd);
 }
 
+const metaMutex = new Mutex();
+const mutexes = new Map<string, Mutex>();
+
 async function fixRoles(guild: { id: string; roleColor: number; roleName: string; hqRole: string; hubRole: string; owner: string; advisor: string | null }) {
-    let changed = false;
-    let changedColor = false;
-    let changedName = false;
-    let postChangeHQ = false;
+    metaMutex.runExclusive(() => {
+        if (mutexes.has(guild.id)) return;
+        mutexes.set(guild.id, new Mutex());
+    });
 
-    let role = await HQ.roles.fetch(guild.hqRole).catch(console.error);
-    let roleInHQ: Role;
+    const mutex = mutexes.get(guild.id)!;
 
-    if (!role) {
-        await channels.logs.send(
-            `Recreating HQ role for ${guild.id}: **${escapeMarkdown(guild.roleName)}**, #${guild.roleColor.toString(16).padStart(6, "0")}`,
-        );
+    await mutex.runExclusive(async () => {
+        let changed = false;
+        let changedColor = false;
+        let changedName = false;
+        let postChangeHQ = false;
 
-        role = await createHQRole(guild.roleColor, guild.roleName);
-        guild.hqRole = role.id;
-        changed = true;
-    } else {
-        if (role.color !== guild.roleColor) {
-            guild.roleColor = role.color;
-            changedColor = true;
+        let role = await HQ.roles.fetch(guild.hqRole).catch(console.error);
+        let roleInHQ: Role;
+
+        if (!role) {
+            await channels.logs.send(
+                `Recreating HQ role for ${guild.id}: **${escapeMarkdown(guild.roleName)}**, #${guild.roleColor.toString(16).padStart(6, "0")}`,
+            );
+
+            role = await createHQRole(guild.roleColor, guild.roleName);
+            guild.hqRole = role.id;
             changed = true;
+        } else {
+            if (role.color !== guild.roleColor) {
+                guild.roleColor = role.color;
+                changedColor = true;
+                changed = true;
+            }
+
+            if (role.name !== guild.roleName) {
+                guild.roleName = role.name;
+                changedName = true;
+                changed = true;
+            }
         }
 
-        if (role.name !== guild.roleName) {
-            guild.roleName = role.name;
-            changedName = true;
+        roleInHQ = role;
+
+        role = await HUB.roles.fetch(guild.hubRole).catch(console.error);
+
+        if (!role) {
+            await channels.logs.send(
+                `Recreating HUB role for ${guild.id}: **${escapeMarkdown(guild.roleName)}**, #${guild.roleColor.toString(16).padStart(6, "0")}`,
+            );
+
+            role = await createHubRole(guild.roleColor, guild.roleName);
+            guild.hubRole = role.id;
             changed = true;
-        }
-    }
+        } else {
+            if (!changedColor && role.color !== guild.roleColor) {
+                guild.roleColor = role.color;
+                postChangeHQ = changed = true;
+            }
 
-    roleInHQ = role;
-
-    role = await HUB.roles.fetch(guild.hubRole).catch(console.error);
-
-    if (!role) {
-        await channels.logs.send(
-            `Recreating HUB role for ${guild.id}: **${escapeMarkdown(guild.roleName)}**, #${guild.roleColor.toString(16).padStart(6, "0")}`,
-        );
-
-        role = await createHubRole(guild.roleColor, guild.roleName);
-        guild.hubRole = role.id;
-        changed = true;
-    } else {
-        if (!changedColor && role.color !== guild.roleColor) {
-            guild.roleColor = role.color;
-            postChangeHQ = changed = true;
+            if (!changedName && role.name !== guild.roleName) {
+                guild.roleName = role.name;
+                postChangeHQ = changed = true;
+            }
         }
 
-        if (!changedName && role.name !== guild.roleName) {
-            guild.roleName = role.name;
-            postChangeHQ = changed = true;
+        if (postChangeHQ) await roleInHQ.edit({ color: guild.roleColor, name: guild.roleName });
+
+        if (changed) {
+            await db
+                .update(tables.guilds)
+                .set({ roleColor: guild.roleColor, roleName: guild.roleName, hqRole: guild.hqRole, hubRole: guild.hubRole })
+                .where(eq(tables.guilds.id, guild.id));
+
+            await fixUserRolesQueue.add("", guild.owner);
+            if (guild.advisor) fixUserRolesQueue.add("", guild.advisor);
         }
-    }
-
-    if (postChangeHQ) await roleInHQ.edit({ color: guild.roleColor, name: guild.roleName });
-
-    if (changed) {
-        await db
-            .update(tables.guilds)
-            .set({ roleColor: guild.roleColor, roleName: guild.roleName, hqRole: guild.hqRole, hubRole: guild.hubRole })
-            .where(eq(tables.guilds.id, guild.id));
-
-        await fixUserRolesQueue.add("", guild.owner);
-        if (guild.advisor) fixUserRolesQueue.add("", guild.advisor);
-    }
+    });
 }
 
 makeWorker<string>("tcn:fix-guild-roles", async (id) => {
