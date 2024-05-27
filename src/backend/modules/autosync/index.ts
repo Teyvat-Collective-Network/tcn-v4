@@ -87,7 +87,10 @@ export async function syncPartnerLists() {
 
         for (const entry of settings) await syncPartnerList(entry, data).catch(() => null);
     } catch (error) {
-        channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> An error occurred syncing partner lists: ${error}`);
+        channels.logs.send({
+            content: `<@&${process.env.ROLE_TECH_TEAM}> An error occurred syncing partner lists: ${error}`,
+            allowedMentions: { roles: [process.env.ROLE_TECH_TEAM!] },
+        });
         console.error(error);
     }
 }

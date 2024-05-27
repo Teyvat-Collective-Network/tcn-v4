@@ -152,7 +152,9 @@ export async function displayPartnerList(excludeHub: boolean): Promise<BaseMessa
     const count = new Map<string, number>();
     for (const { mascot } of guilds) count.set(mascot, (count.get(mascot) ?? 0) + 1);
 
-    const links = Object.fromEntries(["pyro", "hydro", "anemo", "electro", "dendro", "cryo", "geo"].map<[string, string[]]>((element) => [element, []]));
+    const links = Object.fromEntries(
+        ["pyro", "hydro", "anemo", "electro", "dendro", "cryo", "geo", "other"].map<[string, string[]]>((element) => [element, []]),
+    );
 
     for (const { mascot, short, long, element, name, invite } of guilds)
         links[element].push(`- [${(count.get(mascot) ?? 0) > 1 ? name : short ?? long}](https://discord.gg/${invite})`);

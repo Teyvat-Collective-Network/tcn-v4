@@ -124,6 +124,7 @@ export default function AdminCharactersClient({ characters: initial }: { charact
                                         { label: "Dendro", value: "dendro" },
                                         { label: "Cryo", value: "cryo" },
                                         { label: "Geo", value: "geo" },
+                                        { label: "Other", value: "other" },
                                     ]}
                                     value={character.element}
                                     setValue={async (element) => {
@@ -160,7 +161,7 @@ export default function AdminCharactersClient({ characters: initial }: { charact
 
                     const element = prompt("Enter an element.")?.trim()?.toLowerCase();
                     if (!element) return;
-                    if (!["pyro", "hydro", "anemo", "electro", "dendro", "cryo", "geo"].includes(element)) return alert("Invalid element.");
+                    if (!["pyro", "hydro", "anemo", "electro", "dendro", "cryo", "geo", "other"].includes(element)) return alert("Invalid element.");
 
                     const valid = await addCharacter(id, short, name, element);
                     if (!valid) return alert("Failed to add character. Check if the ID is duplicated.");
