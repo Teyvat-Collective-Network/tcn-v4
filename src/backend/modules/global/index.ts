@@ -472,24 +472,24 @@ makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
     if (data.type === "post") {
         const message = await db.query.globalMessages.findFirst({ where: eq(tables.globalMessages.id, data.id) });
 
-        if (!message) return;
-        if (message.deleted) return;
+        if (!message) throw "Failed to fetch message.";
+        if (message.deleted) throw "Message is already deleted.";
 
         const guild = await globalBot.guilds.fetch(data.guild).catch(() => null);
-        if (!guild) return;
+        if (!guild) throw "Failed to fetch guild.";
 
         const channel = await guild.channels.fetch(data.channel).catch(() => null);
-        if (channel?.type !== ChannelType.GuildText) return;
+        if (channel?.type !== ChannelType.GuildText) throw "Failed to fetch channel, or type is wrong.";
 
         if (
             !channel
                 .permissionsFor(globalBot.user!)
                 ?.has(PermissionFlagsBits.ReadMessageHistory | PermissionFlagsBits.ManageWebhooks | PermissionFlagsBits.ManageMessages)
         )
-            return;
+            throw "Bot is missing required permissions.";
 
         const webhook = await getWebhook(channel);
-        if (!webhook) return;
+        if (!webhook) throw "Could not get webhook for this channel.";
 
         let prefix = "";
 
