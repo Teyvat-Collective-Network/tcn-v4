@@ -1,6 +1,6 @@
-import { Events, Guild, GuildMember, Role } from "discord.js";
+import { Events, Guild, GuildMember, Role, escapeMarkdown } from "discord.js";
 import { and, count, eq } from "drizzle-orm";
-import bot, { HQ, HUB, roles } from "../../bot.js";
+import bot, { HQ, HUB, channels, roles } from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
 import { loop } from "../../lib/loop.js";
@@ -31,10 +31,14 @@ async function fixRoles(guild: { id: string; roleColor: number; roleName: string
     let changedName = false;
     let postChangeHQ = false;
 
-    let role = await HQ.roles.fetch(guild.hqRole).catch(() => null);
+    let role = await HQ.roles.fetch(guild.hqRole).catch(console.error);
     let roleInHQ: Role;
 
     if (!role) {
+        await channels.logs.send(
+            `Recreating HQ role for ${guild.id}: **${escapeMarkdown(guild.roleName)}**, #${guild.roleColor.toString(16).padStart(6, "0")}`,
+        );
+
         role = await createHQRole(guild.roleColor, guild.roleName);
         guild.hqRole = role.id;
         changed = true;
@@ -54,9 +58,13 @@ async function fixRoles(guild: { id: string; roleColor: number; roleName: string
 
     roleInHQ = role;
 
-    role = await HUB.roles.fetch(guild.hubRole).catch(() => null);
+    role = await HUB.roles.fetch(guild.hubRole).catch(console.error);
 
     if (!role) {
+        await channels.logs.send(
+            `Recreating HUB role for ${guild.id}: **${escapeMarkdown(guild.roleName)}**, #${guild.roleColor.toString(16).padStart(6, "0")}`,
+        );
+
         role = await createHubRole(guild.roleColor, guild.roleName);
         guild.hubRole = role.id;
         changed = true;
