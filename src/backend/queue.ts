@@ -35,6 +35,7 @@ export function makeWorker<T>(name: string, handler: (data: T) => unknown) {
         name,
         async ({ data }) => {
             try {
+                if (process.env.LOG_WORKERS) console.log(`Running worker for queue ${name}. Data is ${JSON.stringify(data)}.`);
                 await handler(data);
             } catch (error) {
                 console.error(`Error in worker for queue ${name}. Data was ${JSON.stringify(data)}`);
