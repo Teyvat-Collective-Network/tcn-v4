@@ -83,6 +83,20 @@ export async function syncPartnerLists() {
             .values({ id: 0, message: hubMessage.id })
             .onDuplicateKeyUpdate({ set: { message: hubMessage.id } });
 
+        const hqEntry = await db.query.hqPartnerListLocation.findFirst();
+
+        if (hqEntry) {
+            const message = await channels.hqPartnerList.messages.fetch(hqEntry.message).catch(() => null);
+            message?.delete();
+        }
+
+        const hqMessage = await channels.hqPartnerList.send(data);
+
+        await db
+            .insert(tables.hqPartnerListLocation)
+            .values({ id: 0, message: hqMessage.id })
+            .onDuplicateKeyUpdate({ set: { message: hqMessage.id } });
+
         const settings = await db.query.autosyncSettings.findMany({ where: not(eq(tables.autosyncSettings.location, "disabled")) });
 
         for (const entry of settings) await syncPartnerList(entry, data).catch(() => null);

@@ -434,6 +434,11 @@ export const autosyncSettings = mysqlTable("autosync_settings", {
     repost: boolean("repost").notNull().default(false),
 });
 
+export const hqPartnerListLocation = mysqlTable("hq_partner_list_location", {
+    id: int("id").primaryKey(),
+    message: varchar("message", { length: 20 }).notNull(),
+});
+
 export const hubPartnerListLocation = mysqlTable("hub_partner_list_location", {
     id: int("id").primaryKey(),
     message: varchar("message", { length: 20 }).notNull(),

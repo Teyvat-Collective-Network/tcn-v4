@@ -34,6 +34,7 @@ export const channels = {
     reportsDashboard: await get<TextChannel>("REPORTS_DASHBOARD"),
     voteHere: await get<TextChannel>("VOTE_HERE"),
     elections: await get<ForumChannel>("ELECTIONS"),
+    hqPartnerList: await get<TextChannel>("HQ_PARTNER_LIST"),
     hubPartnerList: await get<TextChannel>("HUB_PARTNER_LIST"),
     fileDump: await get<TextChannel>("FILE_DUMP"),
     globalModLogs: await get<TextChannel>("HUB_GLOBAL_MOD_LOGS"),
