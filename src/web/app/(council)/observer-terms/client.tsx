@@ -19,30 +19,32 @@ export default function ObserverTermsClient({ observers }: { observers: { id: st
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {observers.map((observer) => {
-                        const end = new Date(observer.observerSince);
-                        end.setMonth(end.getMonth() + 6);
+                    {observers
+                        .sort((x, y) => x.observerSince - y.observerSince)
+                        .map((observer) => {
+                            const end = new Date(observer.observerSince);
+                            end.setMonth(end.getMonth() + 6);
 
-                        const election = new Date(end);
-                        election.setDate(election.getDate() - 9);
+                            const election = new Date(end);
+                            election.setDate(election.getDate() - 9);
 
-                        return (
-                            <TableRow key={observer.id}>
-                                <TableCell className="flex items-center gap-4">
-                                    <UserMention id={observer.id} />
-                                </TableCell>
-                                <TableCell>
-                                    <TimeMention time={observer.observerSince} />
-                                </TableCell>
-                                <TableCell>
-                                    <TimeMention time={end} />
-                                </TableCell>
-                                <TableCell>
-                                    <TimeMention time={election} />
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
+                            return (
+                                <TableRow key={observer.id}>
+                                    <TableCell className="flex items-center gap-4">
+                                        <UserMention id={observer.id} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TimeMention time={observer.observerSince} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TimeMention time={end} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TimeMention time={election} />
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                 </TableBody>
             </Table>
         </Prose>
