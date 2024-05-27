@@ -1,7 +1,19 @@
 import { ApplicationCommandDataResolvable, ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction } from "discord.js";
-import { updateReportsDashboard } from "../../lib/reports.js";
 import { cmdKey, ensureObserver, template } from "../../lib/bot-lib.js";
-import { repostDeletedApplicationThreadsQueue, repostDeletedOpenPollsQueue } from "../../queue.js";
+import { updateReportsDashboard } from "../../lib/reports.js";
+import {
+    dmReminderQueue,
+    fixGuildRolesQueue,
+    fixGuildStaffStatusQueue,
+    fixUserRolesQueue,
+    fixUserStaffStatusQueue,
+    globalChatRelayQueue,
+    reportActionQueue,
+    reportPublishQueue,
+    reportRescindQueue,
+    repostDeletedApplicationThreadsQueue,
+    repostDeletedOpenPollsQueue,
+} from "../../queue.js";
 import { fixAllGuildRoles, fixAllUserRoles } from "../rolesync/index.js";
 import { updateAllGuildStaff } from "../staffsync/index.js";
 
@@ -28,6 +40,21 @@ export default {
                         { name: "Update All User Roles", value: "update-all-user-roles" },
                         { name: "Synchronize All Staff", value: "synchronize-all-staff" },
                     ],
+                },
+            ],
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: "obliterate-queues",
+            description: "obliterate all task queues",
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: "confirm",
+                    description: "type 'confirm' to obliterate all task queues",
+                    required: true,
+                    minLength: 7,
+                    maxLength: 7,
                 },
             ],
         },
@@ -65,5 +92,23 @@ export async function handleAdmin(interaction: ChatInputCommandInteraction) {
         }
 
         await interaction.editReply(template.ok("Task has been queued in the background."));
+    } else if (key === "obliterate-queues") {
+        if (interaction.options.getString("confirm", true) !== "confirm") throw "Confirmation string does not match.";
+
+        await Promise.all([
+            dmReminderQueue.drain(),
+            repostDeletedApplicationThreadsQueue.drain(),
+            repostDeletedOpenPollsQueue.drain(),
+            fixGuildRolesQueue.drain(),
+            fixUserRolesQueue.drain(),
+            fixUserStaffStatusQueue.drain(),
+            fixGuildStaffStatusQueue.drain(),
+            reportPublishQueue.drain(),
+            reportActionQueue.drain(),
+            reportRescindQueue.drain(),
+            globalChatRelayQueue.drain(),
+        ]);
+
+        await interaction.editReply(template.ok("All task queues have been obliterated."));
     }
 }
