@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import { and, eq, inArray, notInArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import bot from "../../bot.js";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -55,21 +55,17 @@ makeWorker<string>("tcn:fix-guild-staff-status", async (guild) => {
 
     for (const role of roles) for (const id of role.members.keys()) if (!block.has(id)) staff.add(id);
 
-    const currentlyStaff = await db.query.guildStaff.findMany({ columns: { user: true }, where: eq(tables.guildStaff.guild, guild) });
+    const currentlyStaff = new Set(
+        (await db.query.guildStaff.findMany({ columns: { user: true }, where: eq(tables.guildStaff.guild, guild) })).map((entry) => entry.user),
+    );
 
-    if (staff.size > 0) {
-        const ids = [...staff];
+    const add = [...staff].filter((id) => !currentlyStaff.has(id));
+    const remove = [...currentlyStaff].filter((id) => !staff.has(id));
 
-        await db
-            .insert(tables.guildStaff)
-            .values(ids.map((id) => ({ guild, user: id })))
-            .onDuplicateKeyUpdate({ set: { guild } });
+    if (add.length > 0) await db.insert(tables.guildStaff).values(add.map((id) => ({ guild, user: id })));
+    if (remove.length > 0) await db.delete(tables.guildStaff).where(and(eq(tables.guildStaff.guild, guild), inArray(tables.guildStaff.user, remove)));
 
-        await db.delete(tables.guildStaff).where(and(eq(tables.guildStaff.guild, guild), notInArray(tables.guildStaff.user, ids)));
-    } else await db.delete(tables.guildStaff).where(eq(tables.guildStaff.guild, guild));
-
-    const toUpdate = [...new Set([...staff, ...currentlyStaff.map((entry) => entry.user)])];
-    await fixUserRolesQueue.addBulk(toUpdate.map((id) => ({ name: "", data: id })));
+    await fixUserRolesQueue.addBulk([...add, ...remove].map((id) => ({ name: "", data: id })));
 });
 
 export async function updateAllGuildStaff() {
