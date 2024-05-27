@@ -14,7 +14,7 @@ async function createRole(color: number, name: string, guild: Guild, anchor: Rol
             .filter((role) => role.position < anchor.position && role.position > end.position)
             .find((role) => role.name.toLowerCase().localeCompare(name.toLowerCase()) > 0)?.position ?? end.position) + 1;
 
-    return await guild.roles.create({ name, color, position });
+    return await guild.roles.create({ name, color, position, permissions: 0n });
 }
 
 async function createHQRole(color: number, name: string) {
