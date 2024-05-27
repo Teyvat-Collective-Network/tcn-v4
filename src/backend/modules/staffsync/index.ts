@@ -65,6 +65,7 @@ makeWorker<string>("tcn:fix-guild-staff-status", async (guild) => {
     if (add.length > 0) await db.insert(tables.guildStaff).values(add.map((id) => ({ guild, user: id })));
     if (remove.length > 0) await db.delete(tables.guildStaff).where(and(eq(tables.guildStaff.guild, guild), inArray(tables.guildStaff.user, remove)));
 
+    console.log(`Fixed staff for guild ${guild}. Added ${add.length} and removed ${remove.length} staff.`);
     await fixUserRolesQueue.addBulk([...add, ...remove].map((id) => ({ name: "", data: id })));
 });
 
