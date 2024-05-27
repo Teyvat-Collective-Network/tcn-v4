@@ -658,6 +658,7 @@ export async function getAuthor(id: string) {
 }
 
 export async function handleGlobalAuthor(interaction: MessageContextMenuCommandInteraction) {
+    await interaction.deferReply({ ephemeral: true });
     const text = await getAuthor(interaction.targetId);
-    await interaction.reply(template.info(text));
+    await interaction.editReply(template.info(text));
 }
