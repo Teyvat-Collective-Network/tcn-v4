@@ -28,19 +28,20 @@ function update(list: number[], value: number) {
     while (list.length > 60) list.shift();
 }
 
-setInterval(async () => {
-    update(roleUpdates, (await fixUserRolesQueue.count()) + (await fixGuildRolesQueue.count()));
-    update(staffUpdates, (await fixUserStaffStatusQueue.count()) + (await fixGuildStaffStatusQueue.count()));
-    update(
-        reportUpdates,
-        (await reportPublishQueue.count()) +
-            (await db.select({ number: count() }).from(tables.reportTasks).where(eq(tables.reportTasks.status, "pending")))[0].number +
-            (await reportRescindQueue.count()),
-    );
-    update(globalTasks, await globalChatRelayQueue.count());
+if (1 < 0)
+    setInterval(async () => {
+        update(roleUpdates, (await fixUserRolesQueue.count()) + (await fixGuildRolesQueue.count()));
+        update(staffUpdates, (await fixUserStaffStatusQueue.count()) + (await fixGuildStaffStatusQueue.count()));
+        update(
+            reportUpdates,
+            (await reportPublishQueue.count()) +
+                (await db.select({ number: count() }).from(tables.reportTasks).where(eq(tables.reportTasks.status, "pending")))[0].number +
+                (await reportRescindQueue.count()),
+        );
+        update(globalTasks, await globalChatRelayQueue.count());
 
-    counter = (counter + 1) % 10;
-}, 500);
+        counter = (counter + 1) % 10;
+    }, 500);
 
 export default proc.query(
     trpcify(async () => {
