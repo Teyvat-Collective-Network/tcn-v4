@@ -18,7 +18,7 @@ makeWorker<FixUserStaffStatusTask>("tcn:fix-user-staff-status", async ({ guild, 
 
     if (staff === undefined) {
         const obj = await bot.guilds.fetch(guild);
-        const member = await obj.members.fetch(user);
+        const member = await obj.members.fetch(user).catch(() => null);
 
         if (member) {
             const roles = member.roles.cache.map((role) => role.id);
