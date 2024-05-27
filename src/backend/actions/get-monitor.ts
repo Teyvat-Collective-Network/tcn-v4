@@ -20,11 +20,8 @@ const staffUpdates: number[] = [];
 const reportUpdates: number[] = [];
 const globalTasks: number[] = [];
 
-let counter = 0;
-
 function update(list: number[], value: number) {
-    if (counter === 0) list.push(value);
-    else list[list.length - 1] = Math.max(list[list.length - 1], value);
+    list.push(value);
     while (list.length > 60) list.shift();
 }
 
@@ -38,9 +35,7 @@ setInterval(async () => {
             (await reportRescindQueue.count()),
     );
     update(globalTasks, await globalChatRelayQueue.count());
-
-    counter = (counter + 1) % 10;
-}, 500);
+}, 5000);
 
 export default proc.query(
     trpcify(async () => {
