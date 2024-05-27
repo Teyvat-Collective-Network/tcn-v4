@@ -40,13 +40,12 @@ export default {
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: "reset",
-            description: "reset a user's staff status to automatic assignment",
+            description: "reset a user's (or all users') staff status to automatic assignment",
             options: [
                 {
                     type: ApplicationCommandOptionType.User,
                     name: "user",
-                    description: "the user to reset",
-                    required: true,
+                    description: "the user to reset (leave blank to reset all)",
                 },
             ],
         },
@@ -138,13 +137,15 @@ export async function handleStaff(interaction: ChatInputCommandInteraction) {
 
         await fixUserRolesQueue.add("", user);
     } else if (key === "reset") {
-        const user = interaction.options.getUser("user", true).id;
+        const user = interaction.options.getUser("user", true)?.id;
 
-        await db.delete(tables.forcedStaff).where(and(eq(tables.forcedStaff.guild, interaction.guild.id), eq(tables.forcedStaff.user, user)));
+        if (!user) await db.delete(tables.forcedStaff).where(eq(tables.forcedStaff.guild, interaction.guild.id));
+        else await db.delete(tables.forcedStaff).where(and(eq(tables.forcedStaff.guild, interaction.guild.id), eq(tables.forcedStaff.user, user)));
 
-        await interaction.editReply(template.ok(`<@${user}>'s staff status has been reset to automatic assignment.`));
+        await interaction.editReply(template.ok(`${user ? `<@${user}>'s` : "All users'"} staff status has been reset to automatic assignment.`));
 
-        await fixUserStaffStatusQueue.add("", { guild: interaction.guild.id, user });
+        if (user) await fixUserStaffStatusQueue.add("", { guild: interaction.guild.id, user });
+        else await fixGuildStaffStatusQueue.add("", interaction.guild.id);
     } else if (key === "list") {
         const entries = await db.query.guildStaff.findMany({ columns: { user: true }, where: eq(tables.guildStaff.guild, interaction.guild.id) });
         if (entries.length === 0) return void interaction.editReply(template.info("There are no staff members in your server."));
