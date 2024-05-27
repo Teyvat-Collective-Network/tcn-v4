@@ -7,33 +7,32 @@ import { loop } from "../../lib/loop.js";
 import { FixUserStaffStatusTask, fixGuildStaffStatusQueue, fixUserRolesQueue, fixUserStaffStatusQueue, makeWorker } from "../../queue.js";
 
 makeWorker<FixUserStaffStatusTask>("tcn:fix-user-staff-status", async ({ guild, user }) => {
+    const isStaff = !!(await db.query.guildStaff.findFirst({ where: and(eq(tables.guildStaff.guild, guild), eq(tables.guildStaff.user, user)) }));
+
     const force = await db.query.forcedStaff.findFirst({
         columns: { staff: true },
         where: and(eq(tables.forcedStaff.guild, guild), eq(tables.forcedStaff.user, user)),
     });
 
-    if (force) {
-        if (force.staff) await db.insert(tables.guildStaff).values({ guild, user }).onDuplicateKeyUpdate({ set: { user } });
-        else await db.delete(tables.guildStaff).where(and(eq(tables.guildStaff.guild, guild), eq(tables.guildStaff.user, user)));
-        await fixUserRolesQueue.add("", user);
-        return;
+    let staff = force?.staff;
+
+    if (staff === undefined) {
+        const obj = await bot.guilds.fetch(guild);
+        const member = await obj.members.fetch(user);
+
+        if (member) {
+            const roles = member.roles.cache.map((role) => role.id);
+
+            staff = !!(await db.query.autoStaffRoles.findFirst({
+                where: and(eq(tables.autoStaffRoles.guild, guild), inArray(tables.autoStaffRoles.role, roles)),
+            }));
+        } else staff = false;
     }
 
-    const obj = await bot.guilds.fetch(guild);
-    const member = await obj.members.fetch(user);
+    if (staff === isStaff) return;
 
-    if (!member) {
-        await db.delete(tables.guildStaff).where(and(eq(tables.guildStaff.guild, guild), eq(tables.guildStaff.user, user)));
-        await fixUserRolesQueue.add("", user);
-        return;
-    }
-
-    const roles = member.roles.cache.map((role) => role.id);
-
-    if (await db.query.autoStaffRoles.findFirst({ where: and(eq(tables.autoStaffRoles.guild, guild), inArray(tables.autoStaffRoles.role, roles)) }))
-        await db.insert(tables.guildStaff).values({ guild, user }).onDuplicateKeyUpdate({ set: { user } });
+    if (staff) await db.insert(tables.guildStaff).values({ guild, user }).onDuplicateKeyUpdate({ set: { user } });
     else await db.delete(tables.guildStaff).where(and(eq(tables.guildStaff.guild, guild), eq(tables.guildStaff.user, user)));
-
     await fixUserRolesQueue.add("", user);
 });
 
