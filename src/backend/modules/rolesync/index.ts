@@ -204,17 +204,6 @@ export async function fixAllGuildRoles() {
 
 loop(fixAllGuildRoles, 3600000);
 
-export async function fixAllUserRoles() {
-    const users = new Set<string>();
-
-    for (const [id] of await HQ.members.fetch()) users.add(id);
-    for (const [id] of await HUB.members.fetch()) users.add(id);
-
-    for (const id of users) await fixUserRolesQueue.add("", id);
-}
-
-loop(fixAllUserRoles, 86400000);
-
 bot.on(Events.GuildMemberUpdate, async (before, after) => {
     if (after.guild !== HQ && after.guild !== HUB) return;
 

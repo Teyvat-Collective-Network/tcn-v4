@@ -14,7 +14,7 @@ import {
     repostDeletedApplicationThreadsQueue,
     repostDeletedOpenPollsQueue,
 } from "../../queue.js";
-import { fixAllGuildRoles, fixAllUserRoles } from "../rolesync/index.js";
+import { fixAllGuildRoles } from "../rolesync/index.js";
 import { updateAllGuildStaff } from "../staffsync/index.js";
 
 export default {
@@ -37,7 +37,6 @@ export default {
                         { name: "Update Report Dashboard", value: "update-report-dashboard" },
                         { name: "Repost Deleted Open Polls", value: "repost-deleted-open-polls" },
                         { name: "Fix Missing Guild Roles", value: "fix-missing-guild-roles" },
-                        { name: "Update All User Roles", value: "update-all-user-roles" },
                         { name: "Synchronize All Staff", value: "synchronize-all-staff" },
                     ],
                 },
@@ -80,9 +79,6 @@ export async function handleAdmin(interaction: ChatInputCommandInteraction) {
                 break;
             case "fix-missing-guild-roles":
                 fixAllGuildRoles();
-                break;
-            case "update-all-user-roles":
-                fixAllUserRoles();
                 break;
             case "synchronize-all-staff":
                 updateAllGuildStaff();
