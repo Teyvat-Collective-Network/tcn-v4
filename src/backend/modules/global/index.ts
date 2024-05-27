@@ -67,16 +67,17 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
     if (await isGlobalWebhook(message.webhookId)) return;
 
-    const [channel] = await db
-        .select({
-            id: tables.globalChannels.id,
-            panic: tables.globalChannels.panic,
-            logs: tables.globalChannels.logs,
-            infoOnUserPlugin: tables.globalChannels.infoOnUserPlugin,
-        })
-        .from(tables.globalConnections)
-        .innerJoin(tables.globalChannels, eq(tables.globalConnections.channel, tables.globalChannels.id))
-        .where(eq(tables.globalConnections.location, message.channel.id));
+    const connection = await db.query.globalConnections.findFirst({
+        columns: { channel: true },
+        where: eq(tables.globalConnections.location, message.channel.id),
+    });
+
+    if (!connection) return;
+
+    const channel = await db.query.globalChannels.findFirst({
+        columns: { id: true, panic: true, logs: true, infoOnUserPlugin: true },
+        where: eq(tables.globalChannels.id, connection.channel),
+    });
 
     if (!channel) return;
 

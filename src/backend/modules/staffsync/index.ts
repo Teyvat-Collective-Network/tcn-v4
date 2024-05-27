@@ -78,5 +78,6 @@ loop(updateAllGuildStaff, 86400000);
 
 bot.on(Events.GuildMemberUpdate, async (before, after) => {
     if (before.roles.cache.equals(after.roles.cache)) return;
+    if (!(await db.query.guilds.findFirst({ columns: { id: true }, where: eq(tables.guilds.id, after.guild.id) }))) return;
     await fixUserStaffStatusQueue.add("", { guild: after.guild.id, user: after.id });
 });
