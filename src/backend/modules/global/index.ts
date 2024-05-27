@@ -328,7 +328,7 @@ globalBot.on(Events.MessageDelete, async (message) => {
         .from(tables.globalMessageInstances)
         .innerJoin(tables.globalMessages, eq(tables.globalMessageInstances.ref, tables.globalMessages.id))
         .innerJoin(tables.globalChannels, eq(tables.globalMessages.channel, tables.globalChannels.id))
-        .where(eq(tables.globalMessageInstances.message, message.id));
+        .where(and(eq(tables.globalMessageInstances.message, message.id), eq(tables.globalMessages.deleted, false)));
 
     if (!instance) return;
 
@@ -355,7 +355,7 @@ globalBot.on(Events.MessageBulkDelete, async (messages) => {
         .from(tables.globalMessageInstances)
         .innerJoin(tables.globalMessages, eq(tables.globalMessageInstances.ref, tables.globalMessages.id))
         .innerJoin(tables.globalChannels, eq(tables.globalMessages.channel, tables.globalChannels.id))
-        .where(inArray(tables.globalMessageInstances.message, [...messages.keys()]));
+        .where(and(inArray(tables.globalMessageInstances.message, [...messages.keys()]), eq(tables.globalMessages.deleted, false)));
 
     if (instances.length === 0) return;
 
