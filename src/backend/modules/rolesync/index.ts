@@ -26,17 +26,9 @@ async function createHubRole(color: number, name: string) {
     return await createRole(color, name, HUB, roles.hubMainsAnchor, roles.hubMainsEnd);
 }
 
-const metaMutex = new Mutex();
-const mutexes = new Map<string, Mutex>();
+const mutex = new Mutex();
 
 async function fixRoles(guild: { id: string; roleColor: number; roleName: string; hqRole: string; hubRole: string; owner: string; advisor: string | null }) {
-    metaMutex.runExclusive(() => {
-        if (mutexes.has(guild.id)) return;
-        mutexes.set(guild.id, new Mutex());
-    });
-
-    const mutex = mutexes.get(guild.id)!;
-
     await mutex.runExclusive(async () => {
         let changed = false;
         let changedColor = false;
