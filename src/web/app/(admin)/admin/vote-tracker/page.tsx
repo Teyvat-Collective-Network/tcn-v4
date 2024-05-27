@@ -9,7 +9,7 @@ export default async function VoteTracker() {
     const data = await api.getVoteTracker.query();
 
     const ids = Object.keys(data).sort((a, b) => +b - +a);
-    const reversed = ids.toReversed();
+    const reversed = [...ids].reverse();
     const users = new Set<string>();
 
     for (const column of Object.values(data)) for (const user of Object.keys(column)) users.add(user);
