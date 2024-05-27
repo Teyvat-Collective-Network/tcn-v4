@@ -258,6 +258,8 @@ globalBot.on(Events.MessageCreate, async (message) => {
         where: eq(tables.globalConnections.channel, channel.id),
     });
 
+    if (process.env.VERBOSE) console.log(`[GLOBAL] Relaying message to ${connections.length - 1} guild(s).`);
+
     await globalChatRelayQueue.addBulk(
         connections
             .filter((connection) => connection.guild !== message.guild!.id)
@@ -332,6 +334,8 @@ globalBot.on(Events.MessageDelete, async (message) => {
 
     await logDeletion(message.guild!, instance);
 
+    if (process.env.VERBOSE) console.log("[GLOBAL] Triggering deletion.");
+
     await globalChatRelayQueue.add(
         "",
         { type: "start-delete", objects: [{ ref: instance.id, guild: message.guild!.id, channel: message.channel.id, message: message.id }] },
@@ -374,6 +378,8 @@ globalBot.on(Events.MessageBulkDelete, async (messages) => {
             ],
             files: [{ name: "deleted-messages.json", attachment: Buffer.from(JSON.stringify(instances, null, 4)) }],
         });
+
+    if (process.env.VERBOSE) console.log(`[GLOBAL] Triggering bulk deletion (${instances.length} item(s)).`);
 
     await globalChatRelayQueue.add("", { type: "start-delete", objects: instances }, { priority: GlobalChatTaskPriority.Delete });
 });
@@ -448,6 +454,8 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
             },
             instance.author,
         );
+
+    if (process.env.VERBOSE) console.log("[GLOBAL] Triggering edit.");
 
     await globalChatRelayQueue.add("", {
         type: "start-edit",
