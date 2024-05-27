@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { TextChannel } from "discord.js";
 import { eq } from "drizzle-orm";
 import bot, { channels } from "../bot.js";
