@@ -95,6 +95,11 @@ makeWorker<string>("tcn:fix-guild-roles", async (id) => {
 });
 
 makeWorker<string>("tcn:fix-user-roles", async (id) => {
+    const hqMember = await HQ.members.fetch(id).catch(() => null);
+    const hubMember = await HUB.members.fetch(id).catch(() => null);
+
+    if (!hqMember && !hubMember) return;
+
     const guilds = await db.query.guilds.findMany({
         columns: { id: true, owner: true, advisor: true, delegated: true, hqRole: true, hubRole: true, roleColor: true, roleName: true },
     });
@@ -124,9 +129,6 @@ makeWorker<string>("tcn:fix-user-roles", async (id) => {
                 .innerJoin(tables.globalChannels, eq(tables.globalMods.channel, tables.globalChannels.id))
                 .where(and(eq(tables.globalMods.user, id), eq(tables.globalChannels.important, true)))
         )[0].number > 0;
-
-    const hqMember = await HQ.members.fetch(id).catch(() => null);
-    const hubMember = await HUB.members.fetch(id).catch(() => null);
 
     const hqAdd: string[] = [];
     const hqRemove: string[] = [];
