@@ -18,7 +18,7 @@ export type GlobalChatRelayTask =
     | { type: "edit"; ref: number; guild: string; channel: string; message: string }
     | { type: "start-info-on-user"; ref: number };
 
-const queues = new Map<string, Queue<unknown>>();
+export const queues = new Map<string, Queue<unknown>>();
 
 function createQueue<T>(name: string) {
     const queue = new Queue<T>(name, qoptions);

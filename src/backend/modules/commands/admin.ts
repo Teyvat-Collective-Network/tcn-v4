@@ -8,6 +8,7 @@ import {
     fixUserRolesQueue,
     fixUserStaffStatusQueue,
     globalChatRelayQueue,
+    queues,
     reportActionQueue,
     reportPublishQueue,
     reportRescindQueue,
@@ -56,6 +57,11 @@ export default {
                     maxLength: 7,
                 },
             ],
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: "check-queues",
+            description: "check the queue sizes",
         },
     ],
 } satisfies ApplicationCommandDataResolvable;
@@ -106,5 +112,9 @@ export async function handleAdmin(interaction: ChatInputCommandInteraction) {
         ]);
 
         await interaction.editReply(template.ok("All task queues have been obliterated."));
+    } else if (key === "check-queues") {
+        await interaction.editReply(
+            template.info((await Promise.all([...queues.entries()].map(async ([name, queue]) => `\`${name}\`: ${await queue.count()}`))).join("\n")),
+        );
     }
 }
