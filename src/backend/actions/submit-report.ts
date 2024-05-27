@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { Message } from "discord.js";
 import { and, eq, inArray, or } from "drizzle-orm";
 import { z } from "zod";

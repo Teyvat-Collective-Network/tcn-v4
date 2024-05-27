@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { Events } from "discord.js";
 import bot, { HQ, HUB, channels } from "../../bot.js";
 import globalBot from "../../global-bot.js";

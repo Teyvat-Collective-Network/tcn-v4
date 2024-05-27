@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { Events } from "discord.js";
 import bot, { channels } from "../../bot.js";
 import { reply, template } from "../../lib/bot-lib.js";
