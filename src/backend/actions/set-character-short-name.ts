@@ -11,7 +11,7 @@ export default proc
     .input(z.object({ id: zs.id, short: z.string().max(32) }))
     .output(z.boolean())
     .mutation(
-        trpcify(async ({ id, short }) => {
+        trpcify("api:set-character-short-name", async ({ id, short }) => {
             try {
                 const [{ affectedRows }] = await db
                     .update(tables.characters)

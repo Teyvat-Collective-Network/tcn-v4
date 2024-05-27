@@ -13,7 +13,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, guild: zs.snowflake, invite: z.string() }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, guild, invite }) => {
+        trpcify("api:set-invite", async ({ actor, guild, invite }) => {
             const obj = await db.query.guilds.findFirst({ columns: { invite: true }, where: eq(tables.guilds.id, guild) });
             if (!obj) return "Guild not found.";
 

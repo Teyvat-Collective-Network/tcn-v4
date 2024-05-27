@@ -1,6 +1,7 @@
 import { Guild, Invite, InviteGuild, escapeMarkdown } from "discord.js";
 import { channels } from "../bot.js";
 import { timeinfo } from "../lib.js";
+import { trackMetrics } from "./metrics.js";
 
 export const applicationThreadTagToStatus = {
     [process.env.TAG_APPLICANT_PENDING!]: "pending",
@@ -36,28 +37,30 @@ export async function createApplicationThread(
     additional: string,
     name?: string,
 ) {
-    name ??= guild.name;
+    return await trackMetrics("fn:create-application-thread", async () => {
+        name ??= guild.name;
 
-    return await channels.applicants.threads.create({
-        name: name.slice(0, 80),
-        message: {
-            content: `${invite}`,
-            embeds: [
-                {
-                    title: "New Application",
-                    description: `<@${user}> applied for **${escapeMarkdown(name)}**. The server has ${
-                        invite.memberCount
-                    } members and was created on ${timeinfo(guild.createdAt)}}.`,
-                    color: 0x2b2d31,
-                    fields: [
-                        { name: "Prior Experience", value: experience || "N/A" },
-                        { name: "Future Goals", value: goals || "N/A" },
-                        { name: "Server History", value: history || "N/A" },
-                        { name: "Additional", value: additional || "N/A" },
-                    ],
-                },
-            ],
-        },
-        appliedTags: [process.env.TAG_APPLICANT_PENDING!],
+        return await channels.applicants.threads.create({
+            name: name.slice(0, 80),
+            message: {
+                content: `${invite}`,
+                embeds: [
+                    {
+                        title: "New Application",
+                        description: `<@${user}> applied for **${escapeMarkdown(name)}**. The server has ${
+                            invite.memberCount
+                        } members and was created on ${timeinfo(guild.createdAt)}}.`,
+                        color: 0x2b2d31,
+                        fields: [
+                            { name: "Prior Experience", value: experience || "N/A" },
+                            { name: "Future Goals", value: goals || "N/A" },
+                            { name: "Server History", value: history || "N/A" },
+                            { name: "Additional", value: additional || "N/A" },
+                        ],
+                    },
+                ],
+            },
+            appliedTags: [process.env.TAG_APPLICANT_PENDING!],
+        });
     });
 }

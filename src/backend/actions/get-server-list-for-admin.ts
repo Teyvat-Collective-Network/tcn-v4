@@ -5,7 +5,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.output(z.object({ id: zs.snowflake, name: z.string() }).array()).query(
-    trpcify(async () => {
+    trpcify("api:get-server-list-for-admin", async () => {
         return await db.query.guilds.findMany({ columns: { id: true, name: true } });
     }),
 );

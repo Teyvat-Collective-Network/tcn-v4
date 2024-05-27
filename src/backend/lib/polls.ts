@@ -6,6 +6,7 @@ import tables from "../db/tables.js";
 import { englishList, shuffle, timeinfo } from "../lib.js";
 import { getQuorum, getTurnoutAndQuorum, getVoters } from "./api-lib.js";
 import { template } from "./bot-lib.js";
+import { trackMetrics } from "./metrics.js";
 
 export const unrestrictedTypes: string[] = ["election"];
 export const majorTypes: string[] = ["cancel-observation"];
@@ -28,67 +29,71 @@ export async function newPoll(
     fn: (ref: number) => Promise<Message>,
     config?: { reminder?: number; deadline?: number },
 ) {
-    const reminder = config?.reminder ?? 86400000;
-    const deadline = config?.deadline ?? 172800000;
+    return await trackMetrics("poll:new-poll", async () => {
+        const reminder = config?.reminder ?? 86400000;
+        const deadline = config?.deadline ?? 172800000;
 
-    const [{ insertId }] = await db.insert(tables.polls).values({
-        type,
-        message: "",
-        reminder: Date.now() + reminder,
-        deadline: Date.now() + deadline,
-        closed: false,
-        trulyClosed: false,
+        const [{ insertId }] = await db.insert(tables.polls).values({
+            type,
+            message: "",
+            reminder: Date.now() + reminder,
+            deadline: Date.now() + deadline,
+            closed: false,
+            trulyClosed: false,
+        });
+
+        const message = await fn(insertId);
+
+        await db.update(tables.polls).set({ message: message.id }).where(eq(tables.polls.id, insertId));
+
+        return { ref: insertId, message };
     });
-
-    const message = await fn(insertId);
-
-    await db.update(tables.polls).set({ message: message.id }).where(eq(tables.polls.id, insertId));
-
-    return { ref: insertId, message };
 }
 
 export async function renderPoll(id: number): Promise<BaseMessageOptions> {
-    const base = await db.query.polls.findFirst({ where: eq(tables.polls.id, id) });
-    if (!base) return template.error(`Poll #${id} does not exist in the database.`);
+    return await trackMetrics("poll:render-poll", async () => {
+        const base = await db.query.polls.findFirst({ where: eq(tables.polls.id, id) });
+        if (!base) return template.error(`Poll #${id} does not exist in the database.`);
 
-    const [turnout, quorum] = await getTurnoutAndQuorum(id, base.type);
+        const [turnout, quorum] = await getTurnoutAndQuorum(id, base.type);
 
-    return {
-        embeds: [
-            {
-                author: { name: `Poll #${id}` },
-                title: `${(turnout * 100).toFixed(2)}% Turnout Reached`,
-                description: await renderDescription(id, base.type),
-                color: 0x2b2d31,
-                fields: base.closed
-                    ? [
-                          {
-                              name: "Results",
-                              value: quorum ? await renderResults(id, base.type) : "Quorum not met. Results are not shown.",
-                          },
-                      ]
-                    : [{ name: "Deadline", value: timeinfo(base.deadline) }],
-            },
-        ],
-        components: [
-            ...(await renderComponents(id, base.type, base.closed)),
-            {
-                type: ComponentType.ActionRow,
-                components: [
-                    {
-                        type: ComponentType.Button,
-                        customId: `:poll/view:${base.type}`,
-                        style: ButtonStyle.Secondary,
-                        label: "View My Vote",
-                        disabled: base.closed,
-                    },
-                    { type: ComponentType.Button, customId: `:poll/info:${base.type}`, style: ButtonStyle.Primary, label: "Info" },
-                    { type: ComponentType.Button, customId: `:poll/delete:${base.type}`, style: ButtonStyle.Danger, label: "Delete" },
-                    { type: ComponentType.Button, customId: `:poll/reset-deadline:${base.type}`, style: ButtonStyle.Danger, label: "Reset Deadline" },
-                ],
-            },
-        ],
-    };
+        return {
+            embeds: [
+                {
+                    author: { name: `Poll #${id}` },
+                    title: `${(turnout * 100).toFixed(2)}% Turnout Reached`,
+                    description: await renderDescription(id, base.type),
+                    color: 0x2b2d31,
+                    fields: base.closed
+                        ? [
+                              {
+                                  name: "Results",
+                                  value: quorum ? await renderResults(id, base.type) : "Quorum not met. Results are not shown.",
+                              },
+                          ]
+                        : [{ name: "Deadline", value: timeinfo(base.deadline) }],
+                },
+            ],
+            components: [
+                ...(await renderComponents(id, base.type, base.closed)),
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            customId: `:poll/view:${base.type}`,
+                            style: ButtonStyle.Secondary,
+                            label: "View My Vote",
+                            disabled: base.closed,
+                        },
+                        { type: ComponentType.Button, customId: `:poll/info:${base.type}`, style: ButtonStyle.Primary, label: "Info" },
+                        { type: ComponentType.Button, customId: `:poll/delete:${base.type}`, style: ButtonStyle.Danger, label: "Delete" },
+                        { type: ComponentType.Button, customId: `:poll/reset-deadline:${base.type}`, style: ButtonStyle.Danger, label: "Reset Deadline" },
+                    ],
+                },
+            ],
+        };
+    });
 }
 
 export async function renderDescription(id: number, type: string): Promise<string> {

@@ -19,7 +19,7 @@ export default proc
         }),
     )
     .query(
-        trpcify(async (id) => {
+        trpcify("api:get-user-for-admin", async (id) => {
             const base = (await db.query.users.findFirst({ where: eq(tables.users.id, id) })) ?? { observer: false, observerSince: 0, globalNickname: null };
 
             const guilds = await db.query.guilds.findMany({

@@ -9,7 +9,7 @@ export default proc
     .input(z.string())
     .output(z.string().nullable())
     .query(
-        trpcify(async (uuid) => {
+        trpcify("api:get-txt", async (uuid) => {
             const entry = await db.query.txts.findFirst({ columns: { content: true }, where: eq(tables.txts.uuid, uuid) });
             return entry?.content ?? null;
         }),

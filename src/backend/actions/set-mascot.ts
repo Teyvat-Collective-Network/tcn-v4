@@ -12,7 +12,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, guild: zs.snowflake, mascot: zs.id }))
     .output(z.boolean())
     .mutation(
-        trpcify(async ({ actor, guild, mascot }) => {
+        trpcify("api:set-mascot", async ({ actor, guild, mascot }) => {
             try {
                 const obj = await db.query.guilds.findFirst({ columns: { mascot: true }, where: eq(tables.guilds.id, guild) });
                 if (!obj) return false;

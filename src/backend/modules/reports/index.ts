@@ -8,58 +8,66 @@ import { loop } from "../../lib/loop.js";
 import { renderHQReport, renderReport, updateReportsDashboard } from "../../lib/reports.js";
 import { ReportPublishTask, ReportRescindTask, makeWorker, reportActionQueue } from "../../queue.js";
 
-loop(async () => {
-    const [{ overdue }] = await db
-        .select({ overdue: count() })
-        .from(tables.networkUserReports)
-        .where(
-            and(
-                eq(tables.networkUserReports.status, "pending"),
-                or(
-                    and(eq(tables.networkUserReports.urgent, false), lt(tables.networkUserReports.reminded, Date.now() - 21600000)),
-                    and(eq(tables.networkUserReports.urgent, true), lt(tables.networkUserReports.reminded, Date.now() - 7200000)),
+loop(
+    "remind-overdue-reports",
+    async () => {
+        const [{ overdue }] = await db
+            .select({ overdue: count() })
+            .from(tables.networkUserReports)
+            .where(
+                and(
+                    eq(tables.networkUserReports.status, "pending"),
+                    or(
+                        and(eq(tables.networkUserReports.urgent, false), lt(tables.networkUserReports.reminded, Date.now() - 21600000)),
+                        and(eq(tables.networkUserReports.urgent, true), lt(tables.networkUserReports.reminded, Date.now() - 7200000)),
+                    ),
                 ),
-            ),
-        );
+            );
 
-    if (overdue === 0) return;
+        if (overdue === 0) return;
 
-    const [{ affectedRows: pending }] = await db
-        .update(tables.networkUserReports)
-        .set({ reminded: Date.now() })
-        .where(eq(tables.networkUserReports.status, "pending"));
+        const [{ affectedRows: pending }] = await db
+            .update(tables.networkUserReports)
+            .set({ reminded: Date.now() })
+            .where(eq(tables.networkUserReports.status, "pending"));
 
-    await channels.observerManagement.send({
-        content: `<@&${process.env.ROLE_OBSERVERS}> ${overdue} report${overdue === 1 ? " is" : "s are"} overdue (${pending} total pending). Please visit ${
-            channels.reportsDashboard
-        } for a list of pending reports.`,
-        allowedMentions: { roles: [process.env.ROLE_OBSERVERS!] },
-    });
-}, 60000);
+        await channels.observerManagement.send({
+            content: `<@&${process.env.ROLE_OBSERVERS}> ${overdue} report${overdue === 1 ? " is" : "s are"} overdue (${pending} total pending). Please visit ${
+                channels.reportsDashboard
+            } for a list of pending reports.`,
+            allowedMentions: { roles: [process.env.ROLE_OBSERVERS!] },
+        });
+    },
+    60000,
+);
 
-loop(async () => {
-    const reports = await db.query.networkUserReports.findMany({
-        columns: { id: true, message: true },
-        where: or(eq(tables.networkUserReports.status, "pending"), eq(tables.networkUserReports.status, "locked")),
-    });
+loop(
+    "re-update-reports-dashboard",
+    async () => {
+        const reports = await db.query.networkUserReports.findMany({
+            columns: { id: true, message: true },
+            where: or(eq(tables.networkUserReports.status, "pending"), eq(tables.networkUserReports.status, "locked")),
+        });
 
-    let updated = false;
+        let updated = false;
 
-    for (const report of reports)
-        try {
-            const message = await channels.reports.messages.fetch(report.message).catch(() => null);
-            if (message) continue;
+        for (const report of reports)
+            try {
+                const message = await channels.reports.messages.fetch(report.message).catch(() => null);
+                if (message) continue;
 
-            const { id } = await channels.reports.send(await renderHQReport(report.id));
+                const { id } = await channels.reports.send(await renderHQReport(report.id));
 
-            await db.update(tables.networkUserReports).set({ message: id }).where(eq(tables.networkUserReports.id, report.id));
-            await db.update(tables.auditEntryTargets).set({ target: id }).where(eq(tables.auditEntryTargets.target, report.message));
+                await db.update(tables.networkUserReports).set({ message: id }).where(eq(tables.networkUserReports.id, report.id));
+                await db.update(tables.auditEntryTargets).set({ target: id }).where(eq(tables.auditEntryTargets.target, report.message));
 
-            updated = true;
-        } catch {}
+                updated = true;
+            } catch {}
 
-    if (updated) await updateReportsDashboard();
-}, 60000);
+        if (updated) await updateReportsDashboard();
+    },
+    60000,
+);
 
 bot.on(Events.MessageDelete, async (message) => {
     if (message.channel !== channels.reports) return;

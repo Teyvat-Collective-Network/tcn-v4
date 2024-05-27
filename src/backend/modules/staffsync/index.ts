@@ -77,7 +77,7 @@ export async function updateAllGuildStaff() {
     await fixGuildStaffStatusQueue.addBulk(entries.map((entry) => ({ name: "", data: entry.id })));
 }
 
-loop(updateAllGuildStaff, 86400000);
+loop("update-all-guild-staff", updateAllGuildStaff, 86400000);
 
 bot.on(Events.GuildMemberUpdate, async (before, after) => {
     if (before.roles.cache.equals(after.roles.cache)) return;

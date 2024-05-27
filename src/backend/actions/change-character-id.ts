@@ -10,7 +10,7 @@ export default proc
     .input(z.object({ old: zs.id, set: zs.id }))
     .output(z.boolean())
     .mutation(
-        trpcify(async ({ old, set }) => {
+        trpcify("api:change-character-id", async ({ old, set }) => {
             try {
                 const [{ affectedRows }] = await db.update(tables.characters).set({ id: set }).where(eq(tables.characters.id, old));
                 if (affectedRows === 0) throw null;

@@ -11,7 +11,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, channel: z.number().int().min(1), filters: z.number().int().min(1).array(), password: z.string().nullable() }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, channel, filters, password }) => {
+        trpcify("api:set-filters", async ({ actor, channel, filters, password }) => {
             const obj = await db.query.globalChannels.findFirst({ columns: { name: true, password: true }, where: eq(tables.globalChannels.id, channel) });
             if (!obj) return "Channel not found.";
             if (obj.password !== null && obj.password !== password) return "Incorrect password.";

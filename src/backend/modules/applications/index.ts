@@ -54,5 +54,5 @@ async function repostDeletedApplicationThreads() {
 
 makeWorker("tcn:repost-deleted-application-threads", repostDeletedApplicationThreads);
 
-loop(async () => repostDeletedApplicationThreadsQueue.add("", null), 300000);
+loop("full-trigger-repost-deleted-application-threads", async () => repostDeletedApplicationThreadsQueue.add("", null), 300000);
 bot.on(Events.ThreadDelete, (thread) => void (thread.parent === channels.applicants && repostDeletedApplicationThreadsQueue.add("", null)));

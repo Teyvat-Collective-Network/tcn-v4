@@ -7,7 +7,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.input(z.object({ actor: zs.snowflake, user: zs.snowflake, name: z.string().max(40) })).mutation(
-    trpcify(async ({ actor, user, name }) => {
+    trpcify("api:set-global-nickname", async ({ actor, user, name }) => {
         await db
             .insert(tables.users)
             .values({ id: user, globalNickname: name || null })

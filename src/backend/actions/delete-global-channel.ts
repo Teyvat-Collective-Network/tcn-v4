@@ -7,7 +7,7 @@ import trpcify from "../lib/trpcify.js";
 import { proc } from "../trpc.js";
 
 export default proc.input(z.object({ actor: z.string(), id: z.number().int().min(1), password: z.string().nullable() })).mutation(
-    trpcify(async ({ actor, id, password }) => {
+    trpcify("api:delete-global-channel", async ({ actor, id, password }) => {
         const entry = await db.query.globalChannels.findFirst({
             columns: { name: true, visible: true, password: true, protected: true },
             where: eq(tables.globalChannels.id, id),

@@ -9,7 +9,7 @@ export default proc
     .input(z.string())
     .output(z.union([z.string(), z.object({ id: zs.snowflake, name: z.string(), image: z.string().nullable() })]))
     .query(
-        trpcify(async (query) => {
+        trpcify("api:get-invite", async (query) => {
             const invite = await bot.fetchInvite(query).catch(() => null);
 
             const error = await validateInvite(invite);

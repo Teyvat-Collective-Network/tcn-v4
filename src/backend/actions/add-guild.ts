@@ -28,7 +28,7 @@ export default proc
     )
     .output(z.string().nullable())
     .query(
-        trpcify(async ({ actor, id, mascot, name, invite, owner, advisor, delegated, roleColor, roleName }) => {
+        trpcify("api:add-guild", async ({ actor, id, mascot, name, invite, owner, advisor, delegated, roleColor, roleName }) => {
             const data = await bot.fetchInvite(invite).catch(() => null);
 
             if (!!(await db.query.guilds.findFirst({ where: eq(tables.guilds.id, id) }))) return "This guild is already in the network.";

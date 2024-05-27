@@ -8,7 +8,7 @@ export default proc
     .input(z.object({ guild: zs.snowflake, invite: z.string() }))
     .output(z.string().nullable())
     .query(
-        trpcify(async ({ guild, invite }) => {
+        trpcify("api:validate-invite", async ({ guild, invite }) => {
             return await validateInvite(invite, guild);
         }),
     );

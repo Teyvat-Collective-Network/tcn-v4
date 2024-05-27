@@ -22,7 +22,7 @@ export default proc
         }),
     )
     .query(
-        trpcify(async (token) => {
+        trpcify("api:exchange-data-for-election", async (token) => {
             try {
                 let data: { type: string; id: number; user: string; time: number };
 

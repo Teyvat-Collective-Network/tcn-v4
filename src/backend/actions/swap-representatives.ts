@@ -12,7 +12,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, guild: zs.snowflake }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, guild }) => {
+        trpcify("api:swap-representatives", async ({ actor, guild }) => {
             const obj = await db.query.guilds.findFirst({ where: eq(tables.guilds.id, guild) });
 
             if (!obj) return "Guild not found.";

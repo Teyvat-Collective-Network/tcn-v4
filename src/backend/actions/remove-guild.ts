@@ -14,7 +14,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, id: zs.snowflake }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, id }) => {
+        trpcify("api:remove-guild", async ({ actor, id }) => {
             const guild = await db.query.guilds.findFirst({
                 columns: { name: true, owner: true, advisor: true, hqRole: true, hubRole: true },
                 where: eq(tables.guilds.id, id),

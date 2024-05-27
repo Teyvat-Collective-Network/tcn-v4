@@ -10,7 +10,7 @@ import { proc } from "../trpc.js";
 export default proc
     .input(z.object({ actor: zs.snowflake, id: z.number().int().min(1), newPassword: z.string().max(128).nullable(), password: z.string().nullable() }))
     .mutation(
-        trpcify(async ({ actor, id, newPassword, password }) => {
+        trpcify("api:edit-global-channel-password", async ({ actor, id, newPassword, password }) => {
             const entry = await db.query.globalChannels.findFirst({
                 columns: { name: true, visible: true, password: true },
                 where: eq(tables.globalChannels.id, id),

@@ -26,7 +26,7 @@ export default proc
             .nullable(),
     )
     .query(
-        trpcify(async (id) => {
+        trpcify("api:get-user", async (id) => {
             const user = await bot.users.fetch(id).catch(() => null);
             if (user === null) return null;
 

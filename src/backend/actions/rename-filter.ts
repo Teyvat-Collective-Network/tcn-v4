@@ -8,7 +8,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.input(z.object({ actor: zs.snowflake, id: z.number().int().min(1), name: z.string() })).mutation(
-    trpcify(async ({ actor, id, name }) => {
+    trpcify("api:rename-filter", async ({ actor, id, name }) => {
         const entry = await db.query.globalFilters.findFirst({ where: eq(tables.globalFilters.id, id) });
         if (!entry) return "This filter no longer exists.";
 

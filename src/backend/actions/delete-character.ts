@@ -10,7 +10,7 @@ export default proc
     .input(zs.id)
     .output(z.boolean())
     .mutation(
-        trpcify(async (id) => {
+        trpcify("api:delete-character", async (id) => {
             if (!!(await db.query.guilds.findFirst({ where: eq(tables.guilds.mascot, id) }))) return false;
 
             await db.delete(tables.characters).where(eq(tables.characters.id, id));

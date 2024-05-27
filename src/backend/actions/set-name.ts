@@ -12,7 +12,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, guild: zs.snowflake, name: z.string().trim().min(1).max(80) }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, guild, name }) => {
+        trpcify("api:set-name", async ({ actor, guild, name }) => {
             const obj = await db.query.guilds.findFirst({ columns: { name: true }, where: eq(tables.guilds.id, guild) });
             if (!obj) return "Guild not found.";
 

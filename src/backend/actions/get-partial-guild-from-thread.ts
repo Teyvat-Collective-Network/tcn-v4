@@ -10,7 +10,7 @@ export default proc
     .input(zs.snowflake)
     .output(z.object({ guild: zs.snowflake, name: z.string(), invite: z.string() }).nullable())
     .query(
-        trpcify(async (thread) => {
+        trpcify("api:get-partial-guild-from-thread", async (thread) => {
             return (
                 (await db.query.applications.findFirst({
                     columns: { guild: true, name: true, invite: true },

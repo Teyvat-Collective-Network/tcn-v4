@@ -13,7 +13,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, guild: zs.snowflake, delegated: z.boolean() }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, guild, delegated }) => {
+        trpcify("api:set-delegated", async ({ actor, guild, delegated }) => {
             const eqCheck = eq(tables.guilds.id, guild);
 
             const obj = await db.query.guilds.findFirst({ columns: { delegated: true, owner: true, advisor: true }, where: eqCheck });

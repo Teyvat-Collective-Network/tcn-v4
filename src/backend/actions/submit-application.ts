@@ -21,7 +21,7 @@ export default proc
     )
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ user, invite, experience, goals, history, additional }) => {
+        trpcify("api:submit-application", async ({ user, invite, experience, goals, history, additional }) => {
             const data = await bot.fetchInvite(invite).catch(() => null);
 
             if (!data?.guild || !!data.expiresAt || data.code === data.guild.vanityURLCode)

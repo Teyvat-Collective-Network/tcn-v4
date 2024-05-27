@@ -24,7 +24,7 @@ export default proc
     )
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ author, ids, reason, evidence, server, category, urgent }) => {
+        trpcify("api:submit-report", async ({ author, ids, reason, evidence, server, category, urgent }) => {
             const guild = await db.query.guilds.findFirst({ columns: { name: true, owner: true, advisor: true }, where: eq(tables.guilds.id, server) });
             if (!guild) return "That guild does not exist.";
 

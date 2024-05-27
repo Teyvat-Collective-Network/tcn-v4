@@ -622,3 +622,18 @@ export const files = mysqlTable("files", {
     channel: varchar("channel", { length: 20 }).notNull(),
     message: varchar("message", { length: 20 }).notNull(),
 });
+
+export const speedMetrics = mysqlTable(
+    "speed_metrics",
+    {
+        key: varchar("key", { length: 256 }).notNull(),
+        area: varchar("area", { length: 256 }).notNull(),
+        time: bigint("time", { mode: "number" }).notNull(),
+        duration: int("duration").notNull(),
+        errored: boolean("errored").notNull(),
+    },
+    (t) => ({
+        idx_key_area: index("idx_key_area").on(t.key, t.area),
+        idx_area: index("idx_area").on(t.area),
+    }),
+);

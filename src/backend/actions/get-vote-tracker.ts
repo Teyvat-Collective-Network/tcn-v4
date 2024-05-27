@@ -5,7 +5,7 @@ import trpcify from "../lib/trpcify.js";
 import { proc } from "../trpc.js";
 
 export default proc.query(
-    trpcify(async () => {
+    trpcify("api:get-vote-tracker", async () => {
         const entries = await db
             .select({ poll: tables.expectedVoters.poll, expected: tables.expectedVoters.user, actual: tables.voteTracker.user })
             .from(tables.polls)

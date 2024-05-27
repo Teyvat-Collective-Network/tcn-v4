@@ -1,4 +1,5 @@
 import { Queue, Worker } from "bullmq";
+import { trackMetrics } from "./lib/metrics.js";
 
 export const qoptions = {
     connection: { host: process.env.REDIS_HOST, port: +process.env.REDIS_PORT! },
@@ -42,14 +43,16 @@ export function makeWorker<T>(name: string, handler: (data: T) => unknown) {
     new Worker<T>(
         name,
         async ({ data }) => {
-            try {
-                if (process.env.LOG_WORKERS)
-                    console.log(`Running worker for queue ${name}. Data is ${JSON.stringify(data)}. Remaining: ${await queues.get(name)?.count()}.`);
-                await handler(data);
-            } catch (error) {
-                console.error(`Error in worker for queue ${name}. Data was ${JSON.stringify(data)}`);
-                console.error(error);
-            }
+            await trackMetrics(`worker:${name}`, async () => {
+                try {
+                    if (process.env.LOG_WORKERS)
+                        console.log(`Running worker for queue ${name}. Data is ${JSON.stringify(data)}. Remaining: ${await queues.get(name)?.count()}.`);
+                    await handler(data);
+                } catch (error) {
+                    console.error(`Error in worker for queue ${name}. Data was ${JSON.stringify(data)}`);
+                    console.error(error);
+                }
+            });
         },
         qoptions,
     );

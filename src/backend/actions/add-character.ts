@@ -9,7 +9,7 @@ export default proc
     .input(z.object({ id: zs.id, short: z.string().max(32), name: z.string().max(64), element: z.string().max(32) }))
     .output(z.boolean())
     .mutation(
-        trpcify(async ({ id, short, name, element }) => {
+        trpcify("api:add-character", async ({ id, short, name, element }) => {
             try {
                 await db.insert(tables.characters).values({ id, short: short || null, name, element });
                 return true;

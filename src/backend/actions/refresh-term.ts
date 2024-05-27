@@ -11,7 +11,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, user: zs.snowflake }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, user }) => {
+        trpcify("api:refresh-term", async ({ actor, user }) => {
             await db
                 .insert(tables.users)
                 .values({ id: user })

@@ -1,6 +1,7 @@
 import { Sticker, StickerFormatType } from "discord.js";
 import { existsSync, mkdirSync } from "fs";
 import * as path from "path";
+import { trackMetrics } from "./metrics.js";
 
 const zx = import("zx");
 
@@ -31,9 +32,11 @@ class StickerCache {
     }
 
     async fetch(sticker: Sticker): Promise<string> {
-        const sticker_path = this.path(sticker);
-        if (!existsSync(sticker_path)) await this.store(sticker);
-        return sticker_path;
+        return await trackMetrics("sticker-cache:fetch", async () => {
+            const sticker_path = this.path(sticker);
+            if (!existsSync(sticker_path)) await this.store(sticker);
+            return sticker_path;
+        });
     }
 
     path(sticker: Sticker): string {

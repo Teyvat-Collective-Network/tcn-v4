@@ -12,7 +12,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, guild: zs.snowflake, owner: z.string() }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, guild, owner }) => {
+        trpcify("api:set-owner", async ({ actor, guild, owner }) => {
             if (!owner.match(/^[1-9][0-9]{16,19}$/)) return "Invalid user ID.";
 
             const obj = await db.query.guilds.findFirst({ columns: { owner: true }, where: eq(tables.guilds.id, guild) });

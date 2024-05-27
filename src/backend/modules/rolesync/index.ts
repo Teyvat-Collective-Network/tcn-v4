@@ -215,7 +215,7 @@ export async function fixAllGuildRoles() {
     for (const guild of guilds) await fixRoles(guild).catch(() => null);
 }
 
-loop(fixAllGuildRoles, 3600000);
+loop("fix-all-guild-roles", fixAllGuildRoles, 3600000);
 
 bot.on(Events.GuildMemberUpdate, async (before, after) => {
     if (after.guild !== HQ && after.guild !== HUB) return;

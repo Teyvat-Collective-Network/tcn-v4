@@ -10,7 +10,7 @@ export default proc
     .input(zs.snowflake)
     .output(z.boolean())
     .query(
-        trpcify(async (id) => {
+        trpcify("api:has-passed-report-quiz", async (id) => {
             const entry = await db.query.users.findFirst({ columns: { reportsQuizPassed: true }, where: eq(tables.users.id, id) });
             return entry?.reportsQuizPassed ?? false;
         }),

@@ -11,7 +11,7 @@ export default proc
     .input(z.object({ id: zs.id, element: z.string().max(32) }))
     .output(z.boolean())
     .mutation(
-        trpcify(async ({ id, element }) => {
+        trpcify("api:set-character-element", async ({ id, element }) => {
             try {
                 const [{ affectedRows }] = await db.update(tables.characters).set({ element }).where(eq(tables.characters.id, id));
 

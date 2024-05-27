@@ -7,7 +7,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.input(z.object({ actor: zs.snowflake, name: z.string().max(80) })).mutation(
-    trpcify(async ({ actor, name }) => {
+    trpcify("api:create-filter", async ({ actor, name }) => {
         await db.insert(tables.globalFilters).values({ name });
         await audit(actor, "global/filter/create", null, name);
 

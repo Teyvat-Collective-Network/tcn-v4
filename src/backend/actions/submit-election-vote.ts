@@ -14,7 +14,7 @@ export default proc
     .input(z.object({ token: z.string(), ranked: zs.snowflakes, countered: zs.snowflakes }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ token, ranked, countered }) => {
+        trpcify("api:submit-election-vote", async ({ token, ranked, countered }) => {
             if (
                 ranked.length > new Set(ranked).size ||
                 countered.length > new Set(countered).size ||

@@ -24,7 +24,7 @@ export default proc
         }),
     )
     .query(
-        trpcify(async ({ actor, types, guild, target, offset, limit }) => {
+        trpcify("api:get-audit-logs", async ({ actor, types, guild, target, offset, limit }) => {
             const conditions = [
                 actor ? eq(tables.auditLogs.actor, actor) : [],
                 types ? inArray(tables.auditLogs.type, types) : [],

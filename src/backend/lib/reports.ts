@@ -4,43 +4,48 @@ import bot, { channels } from "../bot.js";
 import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 import { greyButton, template } from "./bot-lib.js";
+import { trackMetrics } from "./metrics.js";
 
 export const categories = { banshare: "Banshare", advisory: "Advisory Report", hacked: "Hacked Account Report" } as const;
 
 export async function renderHQReport(id: number) {
-    return { embeds: await renderReport(id), components: await renderReportControls(id) };
+    return await trackMetrics("reports:render-hq-report", async () => {
+        return { embeds: await renderReport(id), components: await renderReportControls(id) };
+    });
 }
 
 export async function renderReport(id: number): Promise<BaseMessageOptions["embeds"]> {
-    const report = await db.query.networkUserReports.findFirst({ where: eq(tables.networkUserReports.id, id) });
-    if (!report) return template.error(`Could not fetch report with ID ${id}.`).embeds!;
+    return await trackMetrics("reports:render-report", async () => {
+        const report = await db.query.networkUserReports.findFirst({ where: eq(tables.networkUserReports.id, id) });
+        if (!report) return template.error(`Could not fetch report with ID ${id}.`).embeds!;
 
-    const guild = await db.query.guilds.findFirst({ columns: { name: true }, where: eq(tables.guilds.id, report.server) });
+        const guild = await db.query.guilds.findFirst({ columns: { name: true }, where: eq(tables.guilds.id, report.server) });
 
-    return [
-        {
-            title: `Network User Report #${id}`,
-            color: 0x2b2d31,
-            fields: [
-                { name: "ID(s)", value: report.display },
-                report.usernames ? { name: "Username(s)", value: report.usernames } : [],
-                { name: "Reason", value: report.reason },
-                { name: "Evidence", value: report.evidence },
-                {
-                    name: "Reported By",
-                    value: `<@${report.author}> (${(await bot.users.fetch(report.author).catch(() => null))?.tag ?? "?"}) from ${
-                        guild?.name ?? `[unknown guild: \`${report.server}\`]`
-                    }`,
-                },
-                report.status === "rejected"
-                    ? []
-                    : {
-                          name: "Category",
-                          value: `[${categories[report.category] ?? "[invalid category]"}](${process.env.DOMAIN}/docs/network-user-reports#categories)`,
-                      },
-            ].flat(),
-        },
-    ];
+        return [
+            {
+                title: `Network User Report #${id}`,
+                color: 0x2b2d31,
+                fields: [
+                    { name: "ID(s)", value: report.display },
+                    report.usernames ? { name: "Username(s)", value: report.usernames } : [],
+                    { name: "Reason", value: report.reason },
+                    { name: "Evidence", value: report.evidence },
+                    {
+                        name: "Reported By",
+                        value: `<@${report.author}> (${(await bot.users.fetch(report.author).catch(() => null))?.tag ?? "?"}) from ${
+                            guild?.name ?? `[unknown guild: \`${report.server}\`]`
+                        }`,
+                    },
+                    report.status === "rejected"
+                        ? []
+                        : {
+                              name: "Category",
+                              value: `[${categories[report.category] ?? "[invalid category]"}](${process.env.DOMAIN}/docs/network-user-reports#categories)`,
+                          },
+                ].flat(),
+            },
+        ];
+    });
 }
 
 export async function renderReportControls(id: number): Promise<BaseMessageOptions["components"]> {
@@ -101,24 +106,26 @@ export async function renderReportControls(id: number): Promise<BaseMessageOptio
 }
 
 export async function updateReportsDashboard() {
-    const messages = await channels.reportsDashboard.messages.fetch({ limit: 1 }).catch(() => null);
+    return await trackMetrics("reports:update-reports-dashboard", async () => {
+        const messages = await channels.reportsDashboard.messages.fetch({ limit: 1 }).catch(() => null);
 
-    const reports = await db.query.networkUserReports.findMany({
-        columns: { message: true },
-        where: or(eq(tables.networkUserReports.status, "pending"), eq(tables.networkUserReports.status, "locked")),
+        const reports = await db.query.networkUserReports.findMany({
+            columns: { message: true },
+            where: or(eq(tables.networkUserReports.status, "pending"), eq(tables.networkUserReports.status, "locked")),
+        });
+
+        const text =
+            reports.length === 0
+                ? "No pending network user reports at this time."
+                : `The following network user reports are pending:\n${reports.map((report) => `${channels.reports.url}/${report.message}`).join("\n")}`;
+
+        if (messages)
+            try {
+                await messages.first()!.edit(text);
+                return;
+            } catch {}
+
+        messages?.first()?.delete();
+        await channels.reportsDashboard.send(text);
     });
-
-    const text =
-        reports.length === 0
-            ? "No pending network user reports at this time."
-            : `The following network user reports are pending:\n${reports.map((report) => `${channels.reports.url}/${report.message}`).join("\n")}`;
-
-    if (messages)
-        try {
-            await messages.first()!.edit(text);
-            return;
-        } catch {}
-
-    messages?.first()?.delete();
-    await channels.reportsDashboard.send(text);
 }

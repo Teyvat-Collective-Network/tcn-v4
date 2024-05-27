@@ -38,7 +38,7 @@ setInterval(async () => {
 }, 5000);
 
 export default proc.query(
-    trpcify(async () => {
+    trpcify("api:get-monitor", async () => {
         return {
             upSince: start,
             roleUpdates,

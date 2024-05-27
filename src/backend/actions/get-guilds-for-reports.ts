@@ -10,7 +10,7 @@ export default proc
     .input(zs.snowflake)
     .output(z.object({ id: zs.snowflake, name: z.string() }).array())
     .query(
-        trpcify(async (id) => {
+        trpcify("api:get-guilds-for-reports", async (id) => {
             return await db
                 .selectDistinct({ id: tables.guilds.id, name: tables.guilds.name })
                 .from(tables.guilds)

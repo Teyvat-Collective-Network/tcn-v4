@@ -12,7 +12,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, user: zs.snowflake, observer: z.boolean() }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, user, observer }) => {
+        trpcify("api:set-observer", async ({ actor, user, observer }) => {
             await db
                 .insert(tables.users)
                 .values({ id: user })

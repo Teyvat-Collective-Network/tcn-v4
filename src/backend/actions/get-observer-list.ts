@@ -7,7 +7,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.output(z.object({ id: zs.snowflake, observerSince: z.number().int().min(0) }).array()).query(
-    trpcify(async () => {
+    trpcify("api:get-observer-list", async () => {
         return await db.query.users.findMany({ columns: { id: true, observerSince: true }, where: eq(tables.users.observer, true) });
     }),
 );

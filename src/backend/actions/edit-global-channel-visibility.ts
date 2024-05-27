@@ -8,7 +8,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.input(z.object({ actor: zs.snowflake, id: z.number().int().min(1), visible: z.boolean(), password: z.string().nullable() })).mutation(
-    trpcify(async ({ actor, id, visible, password }) => {
+    trpcify("api:edit-global-channel-visibility", async ({ actor, id, visible, password }) => {
         const entry = await db.query.globalChannels.findFirst({
             columns: { name: true, visible: true, password: true },
             where: eq(tables.globalChannels.id, id),

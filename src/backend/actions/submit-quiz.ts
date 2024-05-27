@@ -9,7 +9,7 @@ export default proc
     .input(z.object({ user: zs.snowflake, answers: z.string().array() }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ user, answers }) => {
+        trpcify("api:submit-quiz", async ({ user, answers }) => {
             if (answers[0] === "A")
                 return "Q1: Banshares should not be used as a form of punishment. Please refer to the purpose subsection under the policy section.";
             else if (answers[0] !== "B") return "Q1: Unrecognized answer.";

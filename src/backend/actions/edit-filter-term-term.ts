@@ -8,7 +8,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.input(z.object({ actor: zs.snowflake, id: z.number().int().min(1), term: z.string() })).mutation(
-    trpcify(async ({ actor, id, term }) => {
+    trpcify("api:edit-filter-term-term", async ({ actor, id, term }) => {
         const entry = await db.query.globalFilterTerms.findFirst({ where: eq(tables.globalFilterTerms.id, id) });
         if (!entry) return "This filter term no longer exists.";
 

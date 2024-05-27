@@ -7,7 +7,7 @@ export default proc
     .input(z.string())
     .output(z.string().nullable())
     .query(
-        trpcify(async (uuid) => {
+        trpcify("api:get-file", async (uuid) => {
             return await getFile(uuid);
         }),
     );

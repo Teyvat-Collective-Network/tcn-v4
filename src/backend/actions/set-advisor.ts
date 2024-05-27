@@ -12,7 +12,7 @@ export default proc
     .input(z.object({ actor: zs.snowflake, guild: zs.snowflake, advisor: z.string() }))
     .output(z.string().nullable())
     .mutation(
-        trpcify(async ({ actor, guild, advisor }) => {
+        trpcify("api:set-advisor", async ({ actor, guild, advisor }) => {
             if (!advisor.match(/^([1-9][0-9]{16,19})?$/)) return "Invalid user ID.";
 
             const obj = await db.query.guilds.findFirst({ columns: { advisor: true }, where: eq(tables.guilds.id, guild) });

@@ -6,7 +6,7 @@ import zs from "../lib/zs.js";
 import { proc } from "../trpc.js";
 
 export default proc.input(zs.snowflake).query(
-    trpcify(async (id) => {
+    trpcify("api:get-guild", async (id) => {
         return (await db.query.guilds.findFirst({ where: eq(tables.guilds.id, id) })) ?? null;
     }),
 );
