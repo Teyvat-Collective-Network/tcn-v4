@@ -89,6 +89,17 @@ const autostaff = (await src.rolesync.find().toArray())
 await db.delete(tables.autoStaffRoles);
 await db.insert(tables.autoStaffRoles).values(autostaff);
 
+const staff = (await src.guilds.find().toArray()).flatMap((guild) =>
+    Object.entries(guild.users ?? {})
+        .filter(([, { staff }]) => staff)
+        .map(([user]) => ({ guild: guild.id, user })),
+);
+
+await db.delete(tables.forcedStaff);
+await db.insert(tables.forcedStaff).values(staff.map((entry) => ({ guild: entry.guild, user: entry.user, staff: true })));
+await db.delete(tables.guildStaff);
+await db.insert(tables.guildStaff).values(staff);
+
 console.log("exporting reports");
 
 const banshares = (await src.banshares.find().toArray()).sort((x, y) => x.created - y.created);
