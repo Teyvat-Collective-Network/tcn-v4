@@ -70,6 +70,9 @@ makeWorker<string>("tcn:fix-guild-staff-status", async (guild) => {
 });
 
 export async function updateAllGuildStaff() {
+    await fixUserStaffStatusQueue.drain();
+    await fixGuildStaffStatusQueue.drain();
+
     const entries = await db.query.guilds.findMany({ columns: { id: true } });
     await fixGuildStaffStatusQueue.addBulk(entries.map((entry) => ({ name: "", data: entry.id })));
 }
