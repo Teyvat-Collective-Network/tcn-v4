@@ -73,9 +73,9 @@ export default function DocsNetworkUserReports() {
                 </p>
                 <ul>
                     <li>
-                        Spamming NSFW/NSFL justifies a banshare as this violates all servers&apos; rules and Discord&apos;s Terms of Service and is an immediate
-                        threat to member safety. Letting the member join another server and repeat this behavior and be banned reactively would be
-                        irresponsible.
+                        Spamming NSFW/NSFL in a channel (note: sending an NSFW server invite in each channel is likely hacked account behavior instead)
+                        justifies a banshare as this violates all servers&apos; rules and Discord&apos;s Terms of Service and is an immediate threat to member
+                        safety. Letting the member join another server and repeat this behavior and be banned reactively would be irresponsible.
                     </li>
                     <li>Troll accounts that have little to no positive contribution or repeatedly cause trouble across many servers should be banshared.</li>
                     <li>
@@ -99,8 +99,9 @@ export default function DocsNetworkUserReports() {
                 <h3>Hacked Account Reports</h3>
                 <p>
                     Hacked account reports are for cases where it&apos;s reasonably obviouus that an account is compromised or in some way controlled by a bot.
-                    Generally, compromised accounts will not attempt to return to servers from which they are removed, so automatically kicking them from any
-                    servers they are still in is usually sufficient.
+                    Good examples include DM scammers and accounts that post fake steam links or NSFW server invites in a server. Generally, compromised
+                    accounts will not attempt to return to servers from which they are removed, so automatically kicking them from any servers they are still in
+                    is usually sufficient.
                 </p>
                 <p>
                     Even though they have a small chance to join other servers (usually, scammers just use new accounuts), the benefit to permanently banning
