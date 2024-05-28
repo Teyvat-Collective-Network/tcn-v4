@@ -48,7 +48,7 @@ export default function ReportQuiz() {
             <ol>
                 <li>Severe offenses where second chances are no longer suitable</li>
                 <li>Any rule violations that resulted in a ban</li>
-                <li>Any severe offenses or repeated bad behavior across servers</li>
+                <li>Any bad behavior that is repeated across servers</li>
             </ol>
             <ComboSelector
                 values={[
