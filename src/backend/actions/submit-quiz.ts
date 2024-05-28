@@ -17,7 +17,7 @@ export default proc
             if (answers[1] === "B")
                 return "Q2: The threshold for banshares is much higher than this. Please refer to the banshares subsection in the categories section and the report requirements in the policy section.";
             else if (answers[1] === "C")
-                return "Q3: While repeated behavior is a factor that can escalate situations to banshares, not all repeated offenses need to be banshared. Banshares should be used in matters of server safety and when a user deserves no chances to redeem themselves.";
+                return "Q2: While repeated behavior is a factor that can escalate situations to banshares, not all repeated offenses need to be banshared. Banshares should be used in matters of server safety and when a user deserves no chances to redeem themselves.";
             else if (answers[1] !== "A") return "Q2: Unrecognized answer.";
 
             if (answers[2] === "A" || answers[2] === "C")
