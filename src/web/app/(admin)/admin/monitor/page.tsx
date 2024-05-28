@@ -72,7 +72,7 @@ export default function Monitor() {
             <br />
             <Panel>
                 <div className="prose">
-                    <h2>Role Synchronizaton Queue</h2>
+                    <h2>Role Synchronization Queue</h2>
                     <LineChart
                         className="h-72"
                         data={roleUpdates.map((x) => ({ label: "", "Queue Size": x }))}
