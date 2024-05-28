@@ -15,10 +15,10 @@ import { proc } from "../trpc.js";
 
 const start = Date.now();
 
-const roleUpdates: number[] = [];
-const staffUpdates: number[] = [];
-const reportUpdates: number[] = [];
-const globalTasks: number[] = [];
+const globalTasks: number[] = new Array(60).fill(0);
+const roleUpdates: number[] = new Array(60).fill(0);
+const staffUpdates: number[] = new Array(60).fill(0);
+const reportUpdates: number[] = new Array(60).fill(0);
 
 function update(list: number[], value: number) {
     list.push(value);
@@ -26,6 +26,7 @@ function update(list: number[], value: number) {
 }
 
 setInterval(async () => {
+    update(globalTasks, await globalChatRelayQueue.count());
     update(roleUpdates, (await fixUserRolesQueue.count()) + (await fixGuildRolesQueue.count()));
     update(staffUpdates, (await fixUserStaffStatusQueue.count()) + (await fixGuildStaffStatusQueue.count()));
     update(
@@ -34,17 +35,16 @@ setInterval(async () => {
             (await db.select({ number: count() }).from(tables.reportTasks).where(eq(tables.reportTasks.status, "pending")))[0].number +
             (await reportRescindQueue.count()),
     );
-    update(globalTasks, await globalChatRelayQueue.count());
 }, 5000);
 
 export default proc.query(
     trpcify("api:get-monitor", async () => {
         return {
             upSince: start,
+            globalTasks,
             roleUpdates,
             staffUpdates,
             reportUpdates,
-            globalTasks,
         };
     }),
 );
