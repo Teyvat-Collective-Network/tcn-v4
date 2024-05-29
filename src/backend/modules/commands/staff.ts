@@ -137,7 +137,7 @@ export async function handleStaff(interaction: ChatInputCommandInteraction) {
 
         await fixUserRolesQueue.add("", user);
     } else if (key === "reset") {
-        const user = interaction.options.getUser("user", true)?.id;
+        const user = interaction.options.getUser("user", false)?.id;
 
         if (!user) await db.delete(tables.forcedStaff).where(eq(tables.forcedStaff.guild, interaction.guild.id));
         else await db.delete(tables.forcedStaff).where(and(eq(tables.forcedStaff.guild, interaction.guild.id), eq(tables.forcedStaff.user, user)));
