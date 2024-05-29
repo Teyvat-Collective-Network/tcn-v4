@@ -6,18 +6,20 @@ import globalBot from "../global-bot.js";
 import { trackMetrics } from "./metrics.js";
 
 export async function logToChannel(id: string, message: BaseMessageOptions | string, userId?: string) {
-    try {
-        if (!id) return;
+    await trackMetrics("global:log-to-channel", async () => {
+        try {
+            if (!id) return;
 
-        const channel = await globalBot.channels.fetch(id).catch(() => null);
-        if (channel?.type !== ChannelType.GuildText) return;
+            const channel = await globalBot.channels.fetch(id).catch(() => null);
+            if (channel?.type !== ChannelType.GuildText) return;
 
-        const post = await channel.send(message);
+            const post = await channel.send(message);
 
-        if (userId) await db.insert(tables.auxGlobalAuthors).values({ message: post.id, user: userId });
+            if (userId) await db.insert(tables.auxGlobalAuthors).values({ message: post.id, user: userId });
 
-        return post;
-    } catch {}
+            return post;
+        } catch {}
+    });
 }
 
 export async function getWebhook(channel: TextChannel): Promise<Webhook | null> {
