@@ -45,6 +45,7 @@ export default {
                     type: ApplicationCommandOptionType.String,
                     name: "action",
                     description: "the action to take",
+                    required: true,
                     choices: [
                         { name: "Enable", value: "enable" },
                         { name: "Disable", value: "disable" },
@@ -62,6 +63,7 @@ export default {
                     type: ApplicationCommandOptionType.String,
                     name: "action",
                     description: "the action to take",
+                    required: true,
                     choices: [
                         { name: "Enable", value: "enable" },
                         { name: "Disable", value: "disable" },
