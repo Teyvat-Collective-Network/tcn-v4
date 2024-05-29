@@ -98,7 +98,7 @@ export default function DocsNetworkUserReports() {
                 <hr className="my-8" />
                 <h3>Hacked Account Reports</h3>
                 <p>
-                    Hacked account reports are for cases where it&apos;s reasonably obviouus that an account is compromised or in some way controlled by a bot.
+                    Hacked account reports are for cases where it&apos;s reasonably obvious that an account is compromised or in some way controlled by a bot.
                     Good examples include DM scammers and accounts that post fake steam links or NSFW server invites in a server. Generally, compromised
                     accounts will not attempt to return to servers from which they are removed, so automatically kicking them from any servers they are still in
                     is usually sufficient.
