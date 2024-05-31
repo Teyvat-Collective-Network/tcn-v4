@@ -37,7 +37,7 @@ export async function getWebhook(channel: TextChannel): Promise<Webhook | null> 
         const webhooks = await channel.fetchWebhooks().catch(() => null);
 
         const webhook =
-            webhooks?.find((webhook) => !webhook.isApplicationCreated) ??
+            webhooks?.find((webhook) => !webhook.applicationId) ??
             webhooks?.find((webhook) => webhook.owner?.id === channel.client.user.id) ??
             (await channel.createWebhook({ name: "Global Chat Webhook (Please Replace)" }).catch(() => null));
 
@@ -50,7 +50,7 @@ export async function getWebhook(channel: TextChannel): Promise<Webhook | null> 
             await loadGlobalWebhooks();
             globalWebhookSet.add(webhook.id);
 
-            if (!webhook.isApplicationCreated) globalWebhookMap.set(channel.id, webhook);
+            if (!webhook.applicationId) globalWebhookMap.set(channel.id, webhook);
         }
 
         return webhook;
