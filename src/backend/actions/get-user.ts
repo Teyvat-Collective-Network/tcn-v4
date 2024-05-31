@@ -30,7 +30,12 @@ export default proc
             const user = await bot.users.fetch(id).catch(() => null);
             if (user === null) return null;
 
-            const dbUser = await db.query.users.findFirst({ columns: { observer: true }, where: eq(tables.users.id, id) });
+            const [dbUser] = await db
+                .select({ observer: tables.users.observer, guild: tables.guildStaff.guild, channel: tables.globalMods.channel })
+                .from(tables.users)
+                .leftJoin(tables.guildStaff, eq(tables.users.id, tables.guildStaff.user))
+                .leftJoin(tables.globalMods, eq(tables.users.id, tables.globalMods.user))
+                .where(eq(tables.users.id, id));
 
             const guilds = await db.query.guilds.findMany({
                 columns: { owner: true, advisor: true },
@@ -40,8 +45,8 @@ export default proc
             const owner = guilds.some((guild) => guild.owner === id);
             const advisor = guilds.some((guild) => guild.advisor === id);
             const council = owner || advisor;
-            const staff = council || !!(await db.query.guildStaff.findFirst({ where: eq(tables.guildStaff.user, id) }));
-            const globalMod = dbUser?.observer || !!(await db.query.globalMods.findFirst({ where: eq(tables.globalMods.user, id) }));
+            const staff = council || !!dbUser?.guild;
+            const globalMod = dbUser?.observer || !!dbUser?.channel;
 
             return {
                 id,
