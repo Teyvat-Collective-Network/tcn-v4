@@ -22,18 +22,22 @@ export async function logToChannel(id: string, message: BaseMessageOptions | str
     });
 }
 
-let globalWebhooks: Set<string>;
+let globalWebhookSet: Set<string>;
 
 async function loadGlobalWebhooks() {
-    globalWebhooks ??= new Set((await db.query.globalWebhookTracker.findMany()).map((x) => x.webhook));
+    globalWebhookSet ??= new Set((await db.query.globalWebhookTracker.findMany()).map((x) => x.webhook));
 }
+
+export const globalWebhookMap = new Map<string, Webhook>();
 
 export async function getWebhook(channel: TextChannel): Promise<Webhook | null> {
     return await trackMetrics("global:get-webhook", async () => {
+        if (globalWebhookMap.has(channel.id)) return globalWebhookMap.get(channel.id)!;
+
         const webhooks = await channel.fetchWebhooks().catch(() => null);
 
         const webhook =
-            webhooks?.find((webhook) => !webhook.applicationId) ??
+            webhooks?.find((webhook) => !webhook.isApplicationCreated) ??
             webhooks?.find((webhook) => webhook.owner?.id === channel.client.user.id) ??
             (await channel.createWebhook({ name: "Global Chat Webhook (Please Replace)" }).catch(() => null));
 
@@ -44,7 +48,9 @@ export async function getWebhook(channel: TextChannel): Promise<Webhook | null> 
                 .onDuplicateKeyUpdate({ set: { webhook: webhook.id } });
 
             await loadGlobalWebhooks();
-            globalWebhooks.add(webhook.id);
+            globalWebhookSet.add(webhook.id);
+
+            if (!webhook.isApplicationCreated) globalWebhookMap.set(channel.id, webhook);
         }
 
         return webhook;
@@ -56,7 +62,7 @@ export async function isGlobalWebhook(id: string | null) {
 
     return await trackMetrics("global:is-global-webhook", async () => {
         await loadGlobalWebhooks();
-        return globalWebhooks.has(id);
+        return globalWebhookSet.has(id);
     });
 }
 

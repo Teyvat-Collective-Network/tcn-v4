@@ -19,7 +19,8 @@ import globalBot from "../../global-bot.js";
 import { englishList, escapeRegex } from "../../lib.js";
 import { code } from "../../lib/bot-lib.js";
 import { addFile } from "../../lib/files.js";
-import { getWebhook, isGlobalWebhook, logDeletion, logToChannel } from "../../lib/global.js";
+import { getWebhook, globalWebhookMap, isGlobalWebhook, logDeletion, logToChannel } from "../../lib/global.js";
+import { trackMetrics } from "../../lib/metrics.js";
 import stickerCache from "../../lib/sticker-cache.js";
 import { GlobalChatRelayTask, GlobalChatTaskPriority, globalChatRelayQueue, makeWorker } from "../../queue.js";
 
@@ -697,6 +698,15 @@ globalBot.on(Events.InteractionCreate, async (interaction) => {
                 await message.edit(infoOnUserRequestMessage(names));
             } catch {}
     }
+});
+
+globalBot.on(Events.WebhooksUpdate, async (channel) => {
+    if (!globalWebhookMap.has(channel.id)) return;
+
+    await trackMetrics("global:purge-webhook", async () => {
+        const webhooks = await channel.fetchWebhooks();
+        if (webhooks.has(globalWebhookMap.get(channel.id)!.id)) globalWebhookMap.delete(channel.id);
+    });
 });
 
 function infoOnUserRequestMessage(guilds: string[]): BaseMessageOptions {
