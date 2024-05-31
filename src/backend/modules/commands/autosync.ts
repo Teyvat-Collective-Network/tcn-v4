@@ -100,7 +100,7 @@ async function purge(settings?: { location: "disabled" | "channel" | "webhook"; 
         if (!channel?.isTextBased()) return;
 
         const message = await channel.messages.fetch(settings.message);
-        await message.delete();
+        await message.delete().catch(() => null);
     } else {
         if (!settings.webhook) return;
         await fetch(`${settings.webhook}/messages/${settings.message}`, { method: "DELETE" });
