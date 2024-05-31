@@ -86,16 +86,23 @@ export const applications = mysqlTable("applications", {
     additional: varchar("additional", { length: 1024 }).notNull(),
 });
 
-export const polls = mysqlTable("polls", {
-    id: int("id").autoincrement().primaryKey(),
-    type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction", "election", "proposal", "selection"]).notNull(),
-    message: varchar("message", { length: 20 }).notNull(),
-    reminder: bigint("reminder", { mode: "number" }),
-    deadline: bigint("deadline", { mode: "number" }).notNull(),
-    closed: boolean("closed").notNull(),
-    trulyClosed: boolean("truly_closed").notNull(),
-    errored: boolean("errored").notNull().default(false),
-});
+export const polls = mysqlTable(
+    "polls",
+    {
+        id: int("id").autoincrement().primaryKey(),
+        type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction", "election", "proposal", "selection"]).notNull(),
+        message: varchar("message", { length: 20 }).notNull(),
+        reminder: bigint("reminder", { mode: "number" }),
+        deadline: bigint("deadline", { mode: "number" }).notNull(),
+        closed: boolean("closed").notNull(),
+        trulyClosed: boolean("truly_closed").notNull(),
+        errored: boolean("errored").notNull().default(false),
+    },
+    (t) => ({
+        idx_reminder: index("idx_reminder").on(t.reminder),
+        idx_deadline: index("idx_deadline").on(t.deadline),
+    }),
+);
 
 export const expectedVoters = mysqlTable(
     "expected_voters",
@@ -248,6 +255,7 @@ export const networkUserReports = mysqlTable(
     },
     (t) => ({
         idx_message: index("idx_message").on(t.message),
+        idx_status_reminded: index("idx_status_reminded").on(t.status, t.reminded),
     }),
 );
 
