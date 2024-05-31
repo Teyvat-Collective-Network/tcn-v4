@@ -22,6 +22,12 @@ export async function logToChannel(id: string, message: BaseMessageOptions | str
     });
 }
 
+let globalWebhooks: Set<string>;
+
+async function loadGlobalWebhooks() {
+    globalWebhooks ??= new Set((await db.query.globalWebhookTracker.findMany()).map((x) => x.webhook));
+}
+
 export async function getWebhook(channel: TextChannel): Promise<Webhook | null> {
     return await trackMetrics("global:get-webhook", async () => {
         const webhooks = await channel.fetchWebhooks().catch(() => null);
@@ -31,11 +37,15 @@ export async function getWebhook(channel: TextChannel): Promise<Webhook | null> 
             webhooks?.find((webhook) => webhook.owner?.id === channel.client.user.id) ??
             (await channel.createWebhook({ name: "Global Chat Webhook (Please Replace)" }).catch(() => null));
 
-        if (webhook)
+        if (webhook) {
             await db
                 .insert(tables.globalWebhookTracker)
                 .values({ webhook: webhook.id })
                 .onDuplicateKeyUpdate({ set: { webhook: webhook.id } });
+
+            await loadGlobalWebhooks();
+            globalWebhooks.add(webhook.id);
+        }
 
         return webhook;
     });
@@ -45,7 +55,8 @@ export async function isGlobalWebhook(id: string | null) {
     if (!id) return false;
 
     return await trackMetrics("global:is-global-webhook", async () => {
-        return !!(await db.query.globalWebhookTracker.findFirst({ where: eq(tables.globalWebhookTracker.webhook, id) }));
+        await loadGlobalWebhooks();
+        return globalWebhooks.has(id);
     });
 }
 
