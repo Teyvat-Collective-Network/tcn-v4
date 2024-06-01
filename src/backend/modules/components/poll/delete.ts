@@ -45,7 +45,7 @@ export default async function (interaction: ButtonInteraction, type: string) {
         }
     }
 
-    interaction.message.delete();
+    interaction.message.delete().catch(() => null);
 
     const data = await db.query.polls.findFirst({ where: eq(tables.polls.id, id) });
     await db.delete(tables.polls).where(eq(tables.polls.id, id));

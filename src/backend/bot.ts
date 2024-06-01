@@ -21,7 +21,11 @@ export const HQ = await bot.guilds.fetch(process.env.HQ!);
 export const HUB = await bot.guilds.fetch(process.env.HUB!);
 
 async function get<T extends Channel>(key: string) {
-    return (await bot.channels.fetch(process.env[`CH_${key}`]!)) as T;
+    try {
+        return (await bot.channels.fetch(process.env[`CH_${key}`]!)) as T;
+    } catch {
+        throw `Failed to get channel: ${key}`;
+    }
 }
 
 export const channels = {

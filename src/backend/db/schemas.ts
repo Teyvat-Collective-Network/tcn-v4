@@ -644,5 +644,6 @@ export const speedMetrics = mysqlTable(
         idx_key_area_duration: index("idx_key_area").on(t.key, t.area, t.duration),
         idx_area_duration: index("idx_area").on(t.area, t.duration),
         idx_duration: index("idx_duration").on(t.duration),
+        idx_time: index("idx_time").on(t.time),
     }),
 );

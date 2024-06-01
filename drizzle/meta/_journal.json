@@ -71,6 +71,20 @@
       "when": 1717183941102,
       "tag": "0009_stale_supreme_intelligence",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1717211125723,
+      "tag": "0010_chief_vargas",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1717212542469,
+      "tag": "0011_omniscient_polaris",
+      "breakpoints": true
     }
   ]
 }
