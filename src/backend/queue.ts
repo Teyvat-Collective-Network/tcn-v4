@@ -12,7 +12,7 @@ export type ReportRescindTask = { id: number; guild: string; channel: string; me
 export type FixUserStaffStatusTask = { guild: string; user: string };
 
 export type GlobalChatRelayTask =
-    | { type: "post"; id: number; guild: string; channel: string }
+    | { type: "post"; id: number; locations: { guild: string; location: string }[] }
     | { type: "start-delete"; objects: { ref: number; guild: string; channel: string; message: string }[] }
     | { type: "delete"; guild: string; channel: string; messages: string[] }
     | { type: "start-edit"; ref: number; guild: string; channel: string; message: string; content?: string; embeds?: any; attachments: any }
