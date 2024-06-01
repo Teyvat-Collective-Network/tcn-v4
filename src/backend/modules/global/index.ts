@@ -480,75 +480,84 @@ makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
 
         const webhooks: Webhook[] = [];
 
-        for (const { guild: guildId, location } of data.locations) {
-            const guild = await globalBot.guilds.fetch(guildId).catch(() => null);
-            if (!guild) continue;
+        await trackMetrics("global:relay:get-webhooks", async () => {
+            for (const { guild: guildId, location } of data.locations) {
+                const guild = await globalBot.guilds.fetch(guildId).catch(() => null);
+                if (!guild) continue;
 
-            const channel = await guild.channels.fetch(location).catch(() => null);
-            if (channel?.type !== ChannelType.GuildText) continue;
+                const channel = await guild.channels.fetch(location).catch(() => null);
+                if (channel?.type !== ChannelType.GuildText) continue;
 
-            if (
-                !channel
-                    .permissionsFor(globalBot.user!)
-                    ?.has(PermissionFlagsBits.ReadMessageHistory | PermissionFlagsBits.ManageWebhooks | PermissionFlagsBits.ManageMessages)
-            )
-                continue;
+                if (
+                    !channel
+                        .permissionsFor(globalBot.user!)
+                        ?.has(PermissionFlagsBits.ReadMessageHistory | PermissionFlagsBits.ManageWebhooks | PermissionFlagsBits.ManageMessages)
+                )
+                    continue;
 
-            const webhook = await getWebhook(channel);
-            if (!webhook) continue;
+                const webhook = await getWebhook(channel);
+                if (!webhook) continue;
 
-            webhooks.push(webhook);
-        }
+                webhooks.push(webhook);
+            }
+        });
 
         if (webhooks.length === 0) return;
 
         const prefixes = new Map<string, string>();
 
         if (message.replyTo !== null) {
-            const references = await db
-                .select({
-                    replyUsername: tables.globalMessages.replyUsername,
-                    guild: tables.globalMessageInstances.guild,
-                    channel: tables.globalMessageInstances.channel,
-                    message: tables.globalMessageInstances.message,
-                })
-                .from(tables.globalMessages)
-                .leftJoin(tables.globalMessageInstances, eq(tables.globalMessages.id, tables.globalMessageInstances.ref))
-                .where(eq(tables.globalMessages.id, message.replyTo));
+            await trackMetrics("global:relay:get-references", async () => {
+                const references = await db
+                    .select({
+                        replyUsername: tables.globalMessages.replyUsername,
+                        guild: tables.globalMessageInstances.guild,
+                        channel: tables.globalMessageInstances.channel,
+                        message: tables.globalMessageInstances.message,
+                    })
+                    .from(tables.globalMessages)
+                    .leftJoin(tables.globalMessageInstances, eq(tables.globalMessages.id, tables.globalMessageInstances.ref))
+                    .where(eq(tables.globalMessages.id, message.replyTo!));
 
-            if (references[0].guild)
-                for (const reference of references) {
-                    if (reference.guild === message.originGuild) continue;
+                if (references[0].guild)
+                    for (const reference of references) {
+                        if (reference.guild === message.originGuild) continue;
 
-                    prefixes.set(
-                        reference.guild!,
-                        `${process.env.EMOJI_GLOBAL_REPLY} ${reference.replyUsername ? `${reference.replyUsername}: ` : ""}https://discord.com/channels/${
-                            reference.guild
-                        }/${reference.channel}/${reference.message}\n`,
-                    );
-                }
+                        prefixes.set(
+                            reference.guild!,
+                            `${process.env.EMOJI_GLOBAL_REPLY} ${reference.replyUsername ? `${reference.replyUsername}: ` : ""}https://discord.com/channels/${
+                                reference.guild
+                            }/${reference.channel}/${reference.message}\n`,
+                        );
+                    }
+            });
         }
 
         const posts: Message[] = [];
 
-        for (const webhook of webhooks)
-            try {
-                posts.push(
-                    await webhook.send({
-                        username: message.username,
-                        avatarURL: message.avatar,
-                        content:
-                            (message.replyTo === null ? "" : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**`) +
-                            message.content,
-                        embeds: message.embeds as any,
-                        files: message.attachments as any,
-                    }),
-                );
-            } catch {}
+        await trackMetrics("global:relay:send", async () => {
+            for (const webhook of webhooks)
+                try {
+                    posts.push(
+                        await webhook.send({
+                            username: message.username,
+                            avatarURL: message.avatar,
+                            content:
+                                (message.replyTo === null
+                                    ? ""
+                                    : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**`) + message.content,
+                            embeds: message.embeds as any,
+                            files: message.attachments as any,
+                        }),
+                    );
+                } catch {}
+        });
 
-        await db
-            .insert(tables.globalMessageInstances)
-            .values(posts.map((post) => ({ ref: message.id, guild: post.guild!.id, channel: post.channel.id, message: post.id })));
+        await trackMetrics("global:relay:insert-instances", async () => {
+            await db
+                .insert(tables.globalMessageInstances)
+                .values(posts.map((post) => ({ ref: message.id, guild: post.guild!.id, channel: post.channel.id, message: post.id })));
+        });
     } else if (data.type === "start-delete") {
         const instances = await db.query.globalMessageInstances.findMany({
             where: inArray(
