@@ -430,7 +430,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
                         ? [
                               {
                                   title: "Old Attachments",
-                                  description: (instance.attachments as any[])
+                                  description: ((instance.attachments as any[]) ?? [])
                                       .map((attachment: any) => `[${escapeMarkdown(attachment.name)}](${attachment.attachment})`)
                                       .join("\n"),
                                   color: 0x2b2d31,
