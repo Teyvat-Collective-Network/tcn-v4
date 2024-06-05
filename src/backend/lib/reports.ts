@@ -125,7 +125,11 @@ export async function updateReportsDashboard() {
                 return;
             } catch {}
 
-        messages?.first()?.delete();
+        messages
+            ?.first()
+            ?.delete()
+            .catch(() => null);
+
         await channels.reportsDashboard.send(text);
     });
 }

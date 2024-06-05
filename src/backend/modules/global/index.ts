@@ -98,7 +98,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
     if (banned) {
         message.author.send("You are banned from that global channel and cannot send messages to it.");
-        message.delete();
+        message.delete().catch(() => null);
         return;
     }
 
@@ -154,7 +154,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
             let match = message.content.match(re)?.[0] ?? null;
 
             if (match) {
-                message.delete();
+                message.delete().catch(() => null);
                 message.author.send(`Your message was blocked by the global chat filter (the filtered term was: ${code(match)}).`);
 
                 if (channel.logs)
@@ -179,7 +179,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
             match = username.match(re)?.[0] ?? null;
 
             if (match) {
-                message.delete();
+                message.delete().catch(() => null);
 
                 message.author.send(
                     `Your message was blocked by the global chat filter due to your display name (the filtered term was: ${code(
@@ -298,7 +298,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
             .catch(() => null);
 
         response?.update({});
-        reply.delete();
+        reply.delete().catch(() => null);
 
         if (response?.customId !== "create-info-on-user") return;
 
@@ -411,7 +411,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
 
     if (!after.content && embedsAfter.length === 0 && after.attachments.size === 0 && after.stickers.size === 0) {
         logDeletion(after.guild, instance);
-        after.delete();
+        after.delete().catch(() => null);
         return;
     }
 

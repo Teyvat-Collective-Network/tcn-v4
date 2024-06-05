@@ -71,7 +71,7 @@ export async function syncPartnerLists() {
 
         if (entry) {
             const message = await channels.hubPartnerList.messages.fetch(entry.message).catch(() => null);
-            message?.delete();
+            message?.delete().catch(() => null);
         }
 
         const [hubData, data] = await getHubAndNormalPartnerList();
@@ -87,7 +87,7 @@ export async function syncPartnerLists() {
 
         if (hqEntry) {
             const message = await channels.hqPartnerList.messages.fetch(hqEntry.message).catch(() => null);
-            message?.delete();
+            message?.delete().catch(() => null);
         }
 
         const hqMessage = await channels.hqPartnerList.send(data);
