@@ -562,6 +562,7 @@ export const globalMessages = mysqlTable(
     },
     (t) => ({
         idx_author: index("idx_author").on(t.author),
+        idx_origin_message: index("idx_origin_message").on(t.originMessage),
     }),
 );
 

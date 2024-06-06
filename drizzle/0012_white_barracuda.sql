@@ -1,0 +1,1 @@
+CREATE INDEX `idx_origin_message` ON `global_messages` (`origin_message`);
