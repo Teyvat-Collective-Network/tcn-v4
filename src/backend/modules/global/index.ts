@@ -723,10 +723,12 @@ globalBot.on(Events.InteractionCreate, async (interaction) => {
 globalBot.on(Events.WebhooksUpdate, async (channel) => {
     if (!globalWebhookMap.has(channel.id)) return;
 
-    await trackMetrics("global:purge-webhook", async () => {
-        const webhooks = await channel.fetchWebhooks();
-        if (webhooks.has(globalWebhookMap.get(channel.id)!.id)) globalWebhookMap.delete(channel.id);
-    });
+    if (globalWebhookMap.get(channel.id)!.applicationId) globalWebhookMap.delete(channel.id);
+    else
+        await trackMetrics("global:purge-webhook", async () => {
+            const webhooks = await channel.fetchWebhooks();
+            if (webhooks.has(globalWebhookMap.get(channel.id)!.id)) globalWebhookMap.delete(channel.id);
+        });
 });
 
 function infoOnUserRequestMessage(guilds: string[]): BaseMessageOptions {

@@ -49,8 +49,7 @@ export async function getWebhook(channel: TextChannel): Promise<Webhook | null> 
 
             await loadGlobalWebhooks();
             globalWebhookSet.add(webhook.id);
-
-            if (!webhook.applicationId) globalWebhookMap.set(channel.id, webhook);
+            globalWebhookMap.set(channel.id, webhook);
         }
 
         return webhook;
