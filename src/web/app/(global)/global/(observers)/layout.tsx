@@ -1,12 +1,14 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { redirect, usePathname } from "next/navigation";
 import React from "react";
-import getUser from "../../../../lib/get-user";
+import { useUserContext } from "../../../../context/user";
 
-export default async function GlobalAdminLayout({ children }: React.PropsWithChildren) {
-    const user = await getUser();
+export default function GlobalAdminLayout({ children }: React.PropsWithChildren) {
+    const user = useUserContext();
+    const pathname = usePathname();
 
-    if (!user) return redirect(`/auth/login?${new URLSearchParams({ redirect: headers().get("host") || "/admin" })}`);
+    if (!user) return redirect(`/auth/login?${new URLSearchParams({ redirect: pathname || "/admin" })}`);
     if (!user.observer) return redirect("/");
 
     return children;

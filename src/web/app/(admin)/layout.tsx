@@ -1,13 +1,15 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { redirect, usePathname } from "next/navigation";
 import React from "react";
 import { Nav } from "../../components/nav";
-import getUser from "../../lib/get-user";
+import { useUserContext } from "../../context/user";
 
-export default async function AdminLayout({ children }: React.PropsWithChildren) {
-    const user = await getUser();
+export default function AdminLayout({ children }: React.PropsWithChildren) {
+    const user = useUserContext();
+    const pathname = usePathname();
 
-    if (!user) return redirect(`/auth/login?${new URLSearchParams({ redirect: headers().get("host") || "/admin" })}`);
+    if (!user) return redirect(`/auth/login?${new URLSearchParams({ redirect: pathname || "/admin" })}`);
     if (!user.observer) return redirect("/");
 
     return <Nav root="/admin">{children}</Nav>;

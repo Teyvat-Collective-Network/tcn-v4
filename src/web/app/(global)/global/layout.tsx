@@ -1,13 +1,15 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { redirect, usePathname } from "next/navigation";
 import React from "react";
 import { Nav } from "../../../components/nav";
-import getUser from "../../../lib/get-user";
+import { useUserContext } from "../../../context/user";
 
-export default async function GlobalLayout({ children }: React.PropsWithChildren) {
-    const user = await getUser();
+export default function GlobalLayout({ children }: React.PropsWithChildren) {
+    const user = useUserContext();
+    const pathname = usePathname();
 
-    if (!user) return redirect(`/auth/login?${new URLSearchParams({ redirect: headers().get("host") || "/global" })}`);
+    if (!user) return redirect(`/auth/login?${new URLSearchParams({ redirect: pathname || "/global" })}`);
     if (!user.globalMod) return redirect("/");
 
     return <Nav root="/global">{children}</Nav>;
