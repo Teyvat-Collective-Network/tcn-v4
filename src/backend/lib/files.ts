@@ -6,10 +6,10 @@ import { db } from "../db/db.js";
 import tables from "../db/tables.js";
 import { trackMetrics } from "./metrics.js";
 
-export async function addFile(url: string) {
+export async function addFile(url: string, content: string) {
     return await trackMetrics("fn:add-file", async () => {
         try {
-            const { id } = await channels.fileDump.send({ files: [{ attachment: url }] });
+            const { id } = await channels.fileDump.send({ content, files: [{ attachment: url }] });
 
             while (true) {
                 const uuid = crypto.randomUUID();
@@ -23,10 +23,6 @@ export async function addFile(url: string) {
             return url;
         }
     });
-}
-
-export async function mapFiles(files: { name: string; url: string }[]) {
-    return await Promise.all(files.map(async ({ name, url }) => ({ name, url: await addFile(url) })));
 }
 
 export async function getFile(uuid: string) {

@@ -208,7 +208,11 @@ globalBot.on(Events.MessageCreate, async (message) => {
         } catch {}
 
     const attachments = await Promise.all(
-        message.attachments.map(async (attachment) => ({ name: attachment.name, attachment: await addFile(attachment.url), sticker: false })),
+        message.attachments.map(async (attachment) => ({
+            name: attachment.name,
+            attachment: await addFile(attachment.url, `Triggered by sending of ${message.url} by ${message.author} in ${message.guild!.name}`),
+            sticker: false,
+        })),
     );
 
     for (const sticker of message.stickers.values()) {
@@ -463,7 +467,11 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
         attachments: attachmentsUpdated
             ? [
                   ...(await Promise.all(
-                      after.attachments.map(async (attachment) => ({ name: attachment.name, attachment: await addFile(attachment.url), sticker: false })),
+                      after.attachments.map(async (attachment) => ({
+                          name: attachment.name,
+                          attachment: await addFile(attachment.url, `Triggered by edit of ${after.url} sent by ${after.author} in ${after.guild!.name}`),
+                          sticker: false,
+                      })),
                   )),
                   ...(instance.attachments as any[]).filter((attachment) => attachment.sticker),
               ]
