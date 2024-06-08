@@ -1,4 +1,4 @@
-import { Channel, Client, Events, ForumChannel, Guild, IntentsBitField, TextChannel } from "discord.js";
+import { Channel, Client, Events, ForumChannel, Guild, IntentsBitField, TextChannel, VoiceChannel } from "discord.js";
 import "dotenv/config";
 
 const Intents = IntentsBitField.Flags;
@@ -42,6 +42,10 @@ export const channels = {
     hubPartnerList: await get<TextChannel>("HUB_PARTNER_LIST"),
     fileDump: await get<TextChannel>("FILE_DUMP"),
     globalModLogs: await get<TextChannel>("HUB_GLOBAL_MOD_LOGS"),
+    statsMembers: await get<VoiceChannel>("STATS_MEMBERS"),
+    statsServers: await get<VoiceChannel>("STATS_SERVERS"),
+    statsQuorum60: await get<VoiceChannel>("STATS_QUORUM_60"),
+    statsQuorum75: await get<VoiceChannel>("STATS_QUORUM_75"),
 };
 
 async function getRole(guild: Guild, key: string) {

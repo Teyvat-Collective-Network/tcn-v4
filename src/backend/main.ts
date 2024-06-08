@@ -10,6 +10,7 @@ import "./modules/polls";
 import "./modules/reports";
 import "./modules/rolesync";
 import "./modules/staffsync";
+import "./modules/statchannels";
 import { appRouter } from "./server.js";
 
 process.on("uncaughtException", (error) => {
