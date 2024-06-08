@@ -18,7 +18,7 @@ export default function GlobalChannelDiagnose({ params: { id: raw } }: { params:
     const [channel, setChannel] = useState<{ name: string } | null | undefined>(null);
     const [connections, setConnections] = useState<{ guild: string; guildName: string | null; location: string }[]>([]);
     const [locationNames, setLocationNames] = useState<Record<string, string>>({});
-    const [locationUsers, setLocationUsers] = useState<Record<string, { id: string; name: string }[]>>({});
+    const [locationUsers, setLocationUsers] = useState<Record<string, { id: string; name: string; bot: boolean }[]>>({});
     const [query, setQuery] = useState<string>("");
 
     useEffect(() => {
@@ -119,7 +119,9 @@ export default function GlobalChannelDiagnose({ params: { id: raw } }: { params:
                                                                         <Mention>
                                                                             <FaAt /> {user.name}
                                                                         </Mention>
-                                                                        <code>{user.id}</code>
+                                                                        <code>
+                                                                            {user.id} {user.bot ? "[bot]" : ""}
+                                                                        </code>
                                                                     </span>
                                                                 </li>
                                                             ))}

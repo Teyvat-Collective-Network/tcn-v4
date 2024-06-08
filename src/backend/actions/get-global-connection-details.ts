@@ -13,7 +13,7 @@ export default proc.input(zs.snowflake).query(
         return {
             name: channel.name,
             guildName: channel.guild.name,
-            users: channel.members.map((member) => ({ id: member.id, name: member.user.displayName })),
+            users: channel.members.map((member) => ({ id: member.id, name: member.user.displayName, bot: member.user.bot })),
         };
     }),
 );
