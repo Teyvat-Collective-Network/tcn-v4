@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaAt } from "react-icons/fa6";
+import { FaAt, FaEye } from "react-icons/fa6";
 import { Loading } from "../../../../../../components/loading";
+import { Button } from "../../../../../../components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "../../../../../../components/ui/dialog";
 import Mention from "../../../../../../components/ui/mention";
 import { Prose } from "../../../../../../components/ui/prose";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../../components/ui/table";
@@ -94,18 +96,29 @@ export default function GlobalChannelDiagnose({ params: { id: raw } }: { params:
                             </TableCell>
                             <TableCell>
                                 {location in locationUsers ? (
-                                    <ul>
-                                        {locationUsers[location].map((user) => (
-                                            <li key={user.id}>
-                                                <span className="flex items-center gap-2">
-                                                    <Mention>
-                                                        <FaAt /> {user.name}
-                                                    </Mention>
-                                                    <code>{user.id}</code>
-                                                </span>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button variant="secondary">
+                                                <FaEye />
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <Prose>
+                                                <ul>
+                                                    {locationUsers[location].map((user) => (
+                                                        <li key={user.id}>
+                                                            <span className="flex items-center gap-2">
+                                                                <Mention>
+                                                                    <FaAt /> {user.name}
+                                                                </Mention>
+                                                                <code>{user.id}</code>
+                                                            </span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </Prose>
+                                        </DialogContent>
+                                    </Dialog>
                                 ) : (
                                     <Loading size={20}>Loading users...</Loading>
                                 )}
