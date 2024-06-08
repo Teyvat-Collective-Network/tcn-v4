@@ -5,6 +5,7 @@ import { FaAt, FaEye } from "react-icons/fa6";
 import { Loading } from "../../../../../../components/loading";
 import { Button } from "../../../../../../components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../../../../../../components/ui/dialog";
+import { Input } from "../../../../../../components/ui/input";
 import Mention from "../../../../../../components/ui/mention";
 import { Prose } from "../../../../../../components/ui/prose";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../../components/ui/table";
@@ -17,6 +18,7 @@ export default function GlobalChannelDiagnose({ params: { id: raw } }: { params:
     const [connections, setConnections] = useState<{ guild: string; guildName: string | null; location: string }[]>([]);
     const [locationNames, setLocationNames] = useState<Record<string, string>>({});
     const [locationUsers, setLocationUsers] = useState<Record<string, { id: string; name: string }[]>>({});
+    const [query, setQuery] = useState<string>("");
 
     useEffect(() => {
         if (isNaN(id) || id <= 0) return;
@@ -71,6 +73,8 @@ export default function GlobalChannelDiagnose({ params: { id: raw } }: { params:
                 Diagnosing global channel <code>{channel.name}</code>
             </h1>
             <h2>Connections</h2>
+            <p>Filter for channels visible to a user:</p>
+            <Input value={query} onChange={({ currentTarget: { value } }) => setQuery(value)} placeholder="User ID" />
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -80,51 +84,53 @@ export default function GlobalChannelDiagnose({ params: { id: raw } }: { params:
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {connections.map(({ guild, guildName, location }) => (
-                        <TableRow key={guild}>
-                            <TableCell>
-                                <span className="flex items-center gap-2">
-                                    {guildName === null ? <Loading size={20}>Loading guild name...</Loading> : guildName}
-                                    <code>{guild}</code>
-                                </span>
-                            </TableCell>
-                            <TableCell>
-                                <span className="flex items-center gap-2">
-                                    {location in locationNames ? `#${locationNames[location]}` : <Loading size={20}>Loading channel name...</Loading>}
-                                    <code>{location}</code>
-                                </span>
-                            </TableCell>
-                            <TableCell>
-                                {location in locationUsers ? (
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Button variant="secondary">
-                                                <FaEye />
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <Prose>
-                                                <ul>
-                                                    {locationUsers[location].map((user) => (
-                                                        <li key={user.id}>
-                                                            <span className="flex items-center gap-2">
-                                                                <Mention>
-                                                                    <FaAt /> {user.name}
-                                                                </Mention>
-                                                                <code>{user.id}</code>
-                                                            </span>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </Prose>
-                                        </DialogContent>
-                                    </Dialog>
-                                ) : (
-                                    <Loading size={20}>Loading users...</Loading>
-                                )}
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {connections
+                        .filter((conn) => query === "" || (locationUsers[conn.location] ?? []).some((user) => user.id === query))
+                        .map(({ guild, guildName, location }) => (
+                            <TableRow key={guild}>
+                                <TableCell>
+                                    <span className="flex items-center gap-2">
+                                        {guildName === null ? <Loading size={20}>Loading guild name...</Loading> : guildName}
+                                        <code>{guild}</code>
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    <span className="flex items-center gap-2">
+                                        {location in locationNames ? `#${locationNames[location]}` : <Loading size={20}>Loading channel name...</Loading>}
+                                        <code>{location}</code>
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    {location in locationUsers ? (
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button variant="secondary">
+                                                    <FaEye />
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <Prose>
+                                                    <ul>
+                                                        {locationUsers[location].map((user) => (
+                                                            <li key={user.id}>
+                                                                <span className="flex items-center gap-2">
+                                                                    <Mention>
+                                                                        <FaAt /> {user.name}
+                                                                    </Mention>
+                                                                    <code>{user.id}</code>
+                                                                </span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </Prose>
+                                            </DialogContent>
+                                        </Dialog>
+                                    ) : (
+                                        <Loading size={20}>Loading users...</Loading>
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                        ))}
                 </TableBody>
             </Table>
         </Prose>
