@@ -301,7 +301,6 @@ globalBot.on(Events.MessageCreate, async (message) => {
             })
             .catch(() => null);
 
-        response?.update({});
         reply.delete().catch(() => null);
 
         if (response?.customId !== "create-info-on-user") return;
