@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaEye, FaEyeSlash, FaPencil, FaPlus, FaTrash } from "react-icons/fa6";
+import { FaEye, FaEyeSlash, FaPencil, FaPlus, FaTrash, FaWaveSquare } from "react-icons/fa6";
 import { Button } from "../../../../../components/ui/button";
 import { ComboMultiSelector } from "../../../../../components/ui/combo-selector";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../components/ui/table";
@@ -187,6 +187,11 @@ export default function GlobalChannelsClient({
                                         !
                                     </Button>
                                 )}
+                                <a href={`/global/channels/${channel.id}`}>
+                                    <Button variant="secondary" className="flex items-center gap-2">
+                                        <FaWaveSquare /> Diagnose
+                                    </Button>
+                                </a>
                             </TableCell>
                         </TableRow>
                     ))}

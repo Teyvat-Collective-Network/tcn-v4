@@ -22,7 +22,9 @@ import getElectionHistory from "./actions/get-election-history.js";
 import getFile from "./actions/get-file.js";
 import getFilter from "./actions/get-filter.js";
 import getFilters from "./actions/get-filters.js";
+import getGlobalChannel from "./actions/get-global-channel.js";
 import getGlobalChannels from "./actions/get-global-channels.js";
+import getGlobalConnectionDetails from "./actions/get-global-connection-details.js";
 import getGuild from "./actions/get-guild.js";
 import getGuildsForDropdown from "./actions/get-guilds-for-dropdown.js";
 import getGuildsForReports from "./actions/get-guilds-for-reports.js";
@@ -87,7 +89,9 @@ export const appRouter = router({
     getFile,
     getFilter,
     getFilters,
+    getGlobalChannel,
     getGlobalChannels,
+    getGlobalConnectionDetails,
     getGuild,
     getGuildsForDropdown,
     getGuildsForReports,
