@@ -8,6 +8,7 @@ export default proc.input(zs.snowflake).query(
     trpcify("api:get-global-connection-details", async (id) => {
         const channel = await bot.channels.fetch(id).catch(() => null);
         if (channel?.type !== ChannelType.GuildText) return null;
+        await channel.guild.members.fetch();
 
         return {
             name: channel.name,
