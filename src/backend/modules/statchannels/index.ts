@@ -8,7 +8,7 @@ loop(
     async function () {
         await trackMetrics("stat-channels", async () => {
             const guilds = await db.query.guilds.findMany({ columns: { owner: true, advisor: true } });
-            const members = new Set([guilds.flatMap((g) => [g.owner, ...(g.advisor ? [g.advisor] : [])])]);
+            const members = new Set(guilds.flatMap((g) => [g.owner, ...(g.advisor ? [g.advisor] : [])]));
 
             await channels.statsMembers.setName(`Members: ${members.size}`);
             await channels.statsServers.setName(`Servers: ${guilds.length}`);
