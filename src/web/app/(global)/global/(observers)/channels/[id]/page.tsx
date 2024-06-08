@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from "../../../../../../componen
 import { Input } from "../../../../../../components/ui/input";
 import Mention from "../../../../../../components/ui/mention";
 import { Prose } from "../../../../../../components/ui/prose";
+import { ScrollArea } from "../../../../../../components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../../components/ui/table";
 import { getGlobalChannel, getGlobalConnectionDetails } from "./actions";
 
@@ -109,20 +110,22 @@ export default function GlobalChannelDiagnose({ params: { id: raw } }: { params:
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent>
-                                                <Prose>
-                                                    <ul>
-                                                        {locationUsers[location].map((user) => (
-                                                            <li key={user.id}>
-                                                                <span className="flex items-center gap-2">
-                                                                    <Mention>
-                                                                        <FaAt /> {user.name}
-                                                                    </Mention>
-                                                                    <code>{user.id}</code>
-                                                                </span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </Prose>
+                                                <ScrollArea className="max-h-[80vh]">
+                                                    <Prose>
+                                                        <ul>
+                                                            {locationUsers[location].map((user) => (
+                                                                <li key={user.id}>
+                                                                    <span className="flex items-center gap-2">
+                                                                        <Mention>
+                                                                            <FaAt /> {user.name}
+                                                                        </Mention>
+                                                                        <code>{user.id}</code>
+                                                                    </span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </Prose>
+                                                </ScrollArea>
                                             </DialogContent>
                                         </Dialog>
                                     ) : (
