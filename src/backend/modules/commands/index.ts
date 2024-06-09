@@ -14,14 +14,26 @@ import polls, { handlePoll } from "./polls.js";
 import reports, { handleReports } from "./reports.js";
 import staff, { handleStaff } from "./staff.js";
 import testing, { handleTesting } from "./testing.js";
+import whois, { autocompleteServer, handleWhois } from "./whois.js";
 
-await bot.application.commands.set([reports, staff, admin, partnerList, autosync]);
+await bot.application.commands.set([reports, staff, admin, partnerList, autosync, whois]);
 await HQ.commands.set([application, ...elections, ...testing, polls, invite]);
 await HUB.commands.set([]);
 
 await globalBot.application.commands.set([...global]);
 
 bot.on(Events.InteractionCreate, async (interaction) => {
+    if (interaction.isAutocomplete()) {
+        return autocompleteServer(interaction).catch((error) => {
+            if (typeof error !== "string") {
+                const uuid = crypto.randomUUID();
+                console.error(uuid);
+                console.error(error);
+                channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> An error occurred handling an autocomplete for whois (logged under \`${uuid}\`).`);
+            }
+        });
+    }
+
     if (!interaction.isCommand()) return;
 
     try {
@@ -56,6 +68,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 case "invite":
                     await handleInvite(interaction);
+                    break;
+                case "whois":
+                    await handleWhois(interaction);
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";
