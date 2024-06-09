@@ -4,7 +4,7 @@ import "dotenv/config";
 const Intents = IntentsBitField.Flags;
 
 const client = new Client({
-    intents: Intents.Guilds | Intents.GuildMessages | Intents.MessageContent | Intents.GuildMembers,
+    intents: Intents.Guilds | Intents.GuildMessages | Intents.MessageContent | Intents.GuildMembers | Intents.GuildInvites,
     allowedMentions: { parse: [] },
     sweepers: { messages: { interval: 3600000, lifetime: 60000 } },
 });
