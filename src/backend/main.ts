@@ -5,6 +5,7 @@ import "./modules/applications";
 import "./modules/commands";
 import "./modules/components";
 import "./modules/global";
+import "./modules/invite-sweeper";
 import "./modules/issue-detector";
 import "./modules/polls";
 import "./modules/reports";
