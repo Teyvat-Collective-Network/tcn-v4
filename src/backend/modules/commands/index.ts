@@ -8,6 +8,7 @@ import application, { handleApplication } from "./application.js";
 import autosync, { handleAutosync } from "./autosync.js";
 import elections, { handleElectionMarkAsStatement, handleElections } from "./elections.js";
 import global, { autocompleteGlobalChannel, handleGlobal, handleGlobalAuthor } from "./global.js";
+import invite, { handleInvite } from "./invite.js";
 import partnerList, { handlePartnerList } from "./partner-list.js";
 import polls, { handlePoll } from "./polls.js";
 import reports, { handleReports } from "./reports.js";
@@ -15,7 +16,7 @@ import staff, { handleStaff } from "./staff.js";
 import testing, { handleTesting } from "./testing.js";
 
 await bot.application.commands.set([reports, staff, admin, partnerList, autosync]);
-await HQ.commands.set([application, ...elections, ...testing, polls]);
+await HQ.commands.set([application, ...elections, ...testing, polls, invite]);
 await HUB.commands.set([]);
 
 await globalBot.application.commands.set([...global]);
@@ -52,6 +53,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 case "autosync":
                     await handleAutosync(interaction);
+                    break;
+                case "invite":
+                    await handleInvite(interaction);
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";
