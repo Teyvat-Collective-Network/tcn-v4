@@ -56,7 +56,7 @@ loop(
                 const message = await channels.reports.messages.fetch(report.message).catch(() => null);
                 if (message) continue;
 
-                const { id } = await channels.reports.send(await renderHQReport(report.id));
+                const { id } = await channels.reports.send(await renderHQReport(report.id, false));
 
                 await db.update(tables.networkUserReports).set({ message: id }).where(eq(tables.networkUserReports.id, report.id));
                 await db.update(tables.auditEntryTargets).set({ target: id }).where(eq(tables.auditEntryTargets.target, report.message));
@@ -77,7 +77,7 @@ bot.on(Events.MessageDelete, async (message) => {
     });
     if (!report || (report.status !== "pending" && report.status !== "locked")) return;
 
-    const { id } = await channels.reports.send(await renderHQReport(report.id));
+    const { id } = await channels.reports.send(await renderHQReport(report.id, false));
     await db.update(tables.networkUserReports).set({ message: id }).where(eq(tables.networkUserReports.id, report.id));
     await db.update(tables.auditEntryTargets).set({ target: id }).where(eq(tables.auditEntryTargets.target, message.id));
 

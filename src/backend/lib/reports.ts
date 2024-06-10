@@ -1,4 +1,4 @@
-import { BaseMessageOptions, ButtonStyle, ComponentType } from "discord.js";
+import { BaseMessageOptions, ButtonStyle, ComponentType, MessageCreateOptions } from "discord.js";
 import { eq, or } from "drizzle-orm";
 import bot, { channels } from "../bot.js";
 import { db } from "../db/db.js";
@@ -8,9 +8,20 @@ import { trackMetrics } from "./metrics.js";
 
 export const categories = { banshare: "Banshare", advisory: "Advisory Report", hacked: "Hacked Account Report" } as const;
 
-export async function renderHQReport(id: number) {
+export async function renderHQReport(id: number, allowPings: boolean): Promise<MessageCreateOptions> {
     return await trackMetrics("reports:render-hq-report", async () => {
-        return { embeds: await renderReport(id), components: await renderReportControls(id) };
+        const entry = allowPings
+            ? await db.query.networkUserReports.findFirst({ columns: { urgent: true }, where: eq(tables.networkUserReports.id, id) })
+            : { urgent: false };
+
+        if (!entry) return template.error("Error: Report Not Found");
+
+        return {
+            content: allowPings ? `<@&${process.env.ROLE_REPORTS_PING}>${entry.urgent ? ` <@&${process.env.ROLE_OBSERVERS}> (**[urgent]**)` : ""}` : "",
+            embeds: await renderReport(id),
+            components: await renderReportControls(id),
+            allowedMentions: { roles: [process.env.ROLE_REPORTS_PING!, process.env.ROLE_OBSERVERS!] },
+        };
     });
 }
 

@@ -98,7 +98,7 @@ export default proc
             let message: Message;
 
             try {
-                message = await channels.reports.send(await renderHQReport(insertId));
+                message = await channels.reports.send(await renderHQReport(insertId, true));
             } catch (error) {
                 channels.logs.send(`<@&${process.env.ROLE_TECH_TEAM}> Error posting network user report : ${error}`);
                 console.error(error);
@@ -107,13 +107,6 @@ export default proc
 
             await db.update(tables.networkUserReports).set({ message: message.id }).where(eq(tables.networkUserReports.id, insertId));
             updateReportsDashboard();
-
-            const role = urgent ? process.env.ROLE_OBSERVERS! : process.env.ROLE_REPORTS_PING!;
-
-            channels.observerManagement.send({
-                content: `<@&${role}> [A network user report](<${message.url}>) was just submitted for review.`,
-                allowedMentions: { roles: [role] },
-            });
 
             return null;
         }),
