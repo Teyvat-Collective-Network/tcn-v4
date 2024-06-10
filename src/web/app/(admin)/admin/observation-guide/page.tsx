@@ -1,4 +1,4 @@
-import { FaComments, FaHashtag } from "react-icons/fa6";
+import { FaAt, FaComments, FaHashtag } from "react-icons/fa6";
 import Mention from "../../../../components/ui/mention";
 import { Prose } from "../../../../components/ui/prose";
 
@@ -95,7 +95,11 @@ export default function ObservationGuide() {
                 <Mention>
                     <FaHashtag /> reports
                 </Mention>{" "}
-                in HQ and update the status of the candidate&apos;s post in{" "}
+                in HQ (make sure you ping{" "}
+                <Mention>
+                    <FaAt /> Observation Reports Ping
+                </Mention>
+                ) and update the status of the candidate&apos;s post in{" "}
                 <Mention>
                     <FaComments /> applicants
                 </Mention>{" "}
