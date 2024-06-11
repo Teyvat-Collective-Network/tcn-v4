@@ -19,9 +19,15 @@ async function check() {
 
         const expected = new Set<string>();
 
-        for (const { owner, advisor } of guilds) {
+        for (const { id, owner, advisor } of guilds) {
             expected.add(owner);
             if (advisor) expected.add(advisor);
+
+            const guild = await bot.guilds.fetch(id).catch(() => null);
+            if (guild === null) continue;
+
+            if (guild.ownerId !== owner)
+                alerts.push(`Server owner for **${escapeMarkdown(guild.name)}** (\`${guild.id}\`) should be <@${guild.ownerId}> but is set as <@${owner}>.`);
         }
 
         for (const member of (await HQ.members.fetch()).values())
