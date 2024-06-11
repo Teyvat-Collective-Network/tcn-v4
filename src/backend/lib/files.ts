@@ -33,7 +33,7 @@ export async function getFile(uuid: string) {
         try {
             const ch =
                 entry.channel === channels.fileDump?.id ? channels.fileDump : (channels.fileDump = (await bot.channels.fetch(entry.channel)) as TextChannel);
-            const message = await ch.messages.fetch({ message: entry.message, force: true });
+            const message = await ch.messages.fetch({ message: entry.message });
             return message.attachments.first()!.url;
         } catch (error) {
             console.error(error);
