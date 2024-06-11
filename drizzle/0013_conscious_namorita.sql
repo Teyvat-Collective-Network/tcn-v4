@@ -1,0 +1,1 @@
+ALTER TABLE `global_channels` ADD `priority` enum('low','normal','high') DEFAULT 'normal' NOT NULL;

@@ -462,6 +462,7 @@ export const globalChannels = mysqlTable("global_channels", {
     important: boolean("important").notNull().default(false),
     infoOnUserPlugin: boolean("info_on_user_plugin").notNull().default(false),
     logs: varchar("logs", { length: 20 }),
+    priority: mysqlEnum("priority", ["low", "normal", "high"]).notNull().default("normal"),
 });
 
 export const globalConnections = mysqlTable(

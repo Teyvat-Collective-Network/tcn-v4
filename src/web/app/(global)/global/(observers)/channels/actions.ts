@@ -34,3 +34,7 @@ export async function editGlobalChannelName(id: number, name: string, password: 
 export async function setChannelFilters(channel: number, filters: number[], password: string | null) {
     return await withUserId(async (actor) => await api.setFilters.mutate({ actor, channel, filters, password }));
 }
+
+export async function setChannelPriority(channel: number, priority: "high" | "normal" | "low") {
+    return await withUserId(async (actor) => await api.setPriority.mutate({ actor, channel, priority }));
+}

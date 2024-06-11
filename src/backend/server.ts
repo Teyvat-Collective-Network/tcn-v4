@@ -58,6 +58,7 @@ import setMascot from "./actions/set-mascot.js";
 import setName from "./actions/set-name.js";
 import setObserver from "./actions/set-observer.js";
 import setOwner from "./actions/set-owner.js";
+import setPriority from "./actions/set-priority.js";
 import submitApplication from "./actions/submit-application.js";
 import submitElectionVote from "./actions/submit-election-vote.js";
 import submitQuiz from "./actions/submit-quiz.js";
@@ -125,6 +126,7 @@ export const appRouter = router({
     setName,
     setObserver,
     setOwner,
+    setPriority,
     submitApplication,
     submitElectionVote,
     submitQuiz,

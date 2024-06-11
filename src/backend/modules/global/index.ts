@@ -77,7 +77,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
     if (!connection) return;
 
     const channel = await db.query.globalChannels.findFirst({
-        columns: { id: true, panic: true, logs: true, infoOnUserPlugin: true },
+        columns: { id: true, panic: true, logs: true, infoOnUserPlugin: true, priority: true },
         where: eq(tables.globalChannels.id, connection.channel),
     });
 
@@ -267,7 +267,18 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
     if (process.env.VERBOSE) console.log(`[GLOBAL] Relaying message to ${connections.length - 1} guild(s).`);
 
-    await globalChatRelayQueue.add("", { type: "post", id: insertId, locations: connections }, { priority: GlobalChatTaskPriority.Post });
+    await globalChatRelayQueue.add(
+        "",
+        { type: "post", id: insertId, locations: connections },
+        {
+            priority:
+                channel.priority === "low"
+                    ? GlobalChatTaskPriority.PostLowPriority
+                    : channel.priority === "normal"
+                    ? GlobalChatTaskPriority.PostMediumPriority
+                    : GlobalChatTaskPriority.PostHighPriority,
+        },
+    );
 
     if (channel.infoOnUserPlugin && message.content.match(/info.*on.*[1-9][0-9]{16,19}/im)) {
         const reply = await message.reply({
@@ -308,7 +319,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
         const now = await db.query.globalMessages.findFirst({ where: eq(tables.globalMessages.id, insertId) });
         if (!now || now.deleted) return;
 
-        await globalChatRelayQueue.add("", { type: "start-info-on-user", ref: insertId }, { priority: GlobalChatTaskPriority.Post });
+        await globalChatRelayQueue.add("", { type: "start-info-on-user", ref: insertId }, { priority: GlobalChatTaskPriority.PostHighPriority });
     }
 });
 

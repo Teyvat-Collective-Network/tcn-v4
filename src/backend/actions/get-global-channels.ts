@@ -5,7 +5,7 @@ import { proc } from "../trpc.js";
 export default proc.query(
     trpcify("api:get-global-channels", async () => {
         const channels = await db.query.globalChannels.findMany({
-            columns: { id: true, name: true, visible: true, password: true, protected: true, logs: true },
+            columns: { id: true, name: true, visible: true, password: true, protected: true, logs: true, priority: true },
         });
 
         const filters = await db.query.globalAppliedFilters.findMany();

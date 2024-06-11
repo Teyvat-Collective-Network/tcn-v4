@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaPencil, FaPlus, FaTrash, FaWaveSquare } from "react-icons/fa6";
 import { Button } from "../../../../../components/ui/button";
-import { ComboMultiSelector } from "../../../../../components/ui/combo-selector";
+import { ComboMultiSelector, ComboSelector } from "../../../../../components/ui/combo-selector";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../components/ui/table";
 import {
     createChannel,
@@ -14,6 +14,7 @@ import {
     getChannels,
     getFilters,
     setChannelFilters,
+    setChannelPriority,
 } from "./actions";
 
 export default function GlobalChannelsClient({
@@ -28,6 +29,7 @@ export default function GlobalChannelsClient({
         hasPassword: boolean;
         logs: string | null;
         filters: number[];
+        priority: string;
     }[];
     filters: { id: number; name: string }[];
 }) {
@@ -73,6 +75,7 @@ export default function GlobalChannelsClient({
                         <TableHead>ID</TableHead>
                         <TableHead className="whitespace-nowrap">Channel Name</TableHead>
                         <TableHead>Visibility</TableHead>
+                        <TableHead>Priority</TableHead>
                         <TableHead>Applied Filters</TableHead>
                         <TableHead />
                     </TableRow>
@@ -106,6 +109,22 @@ export default function GlobalChannelsClient({
                                 {channel.name}
                             </TableCell>
                             <TableCell>{channel.visible ? "Public" : "Private"}</TableCell>
+                            <TableCell>
+                                <ComboSelector
+                                    values={[
+                                        { value: "high", label: "High" },
+                                        { value: "normal", label: "Normal" },
+                                        { value: "low", label: "Low" },
+                                    ]}
+                                    value={channel.priority}
+                                    setValue={async (priority) => {
+                                        if (priority === null) return;
+                                        const error = await setChannelPriority(channel.id, priority as any);
+                                        if (error) alert(error);
+                                        reload();
+                                    }}
+                                ></ComboSelector>
+                            </TableCell>
                             <TableCell>
                                 <ComboMultiSelector
                                     values={filters.map((filter) => ({ label: filter.name, value: `${filter.id}` }))}

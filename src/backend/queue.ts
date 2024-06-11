@@ -61,5 +61,7 @@ export function makeWorker<T>(name: string, handler: (data: T) => unknown) {
 export enum GlobalChatTaskPriority {
     Delete = 1,
     Edit,
-    Post,
+    PostHighPriority,
+    PostMediumPriority,
+    PostLowPriority,
 }
