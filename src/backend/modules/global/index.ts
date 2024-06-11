@@ -543,21 +543,24 @@ makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
         const posts: Message[] = [];
 
         await trackMetrics("global:relay:send", async () => {
-            for (const webhook of webhooks)
-                try {
-                    posts.push(
-                        await webhook.send({
-                            username: message.username,
-                            avatarURL: message.avatar,
-                            content:
-                                (message.replyTo === null
-                                    ? ""
-                                    : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]** `) + message.content,
-                            embeds: message.embeds as any,
-                            files: message.attachments as any,
-                        }),
-                    );
-                } catch {}
+            await Promise.all(
+                webhooks.map(async (webhook) => {
+                    try {
+                        posts.push(
+                            await webhook.send({
+                                username: message.username,
+                                avatarURL: message.avatar,
+                                content:
+                                    (message.replyTo === null
+                                        ? ""
+                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]** `) + message.content,
+                                embeds: message.embeds as any,
+                                files: message.attachments as any,
+                            }),
+                        );
+                    } catch {}
+                }),
+            );
         });
 
         await trackMetrics("global:relay:insert-instances", async () => {
