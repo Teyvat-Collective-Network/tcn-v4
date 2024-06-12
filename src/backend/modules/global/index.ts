@@ -483,7 +483,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
                           sticker: false,
                       })),
                   )),
-                  ...(instance.attachments as any[]).filter((attachment) => attachment.sticker),
+                  ...((instance.attachments as any[]) ?? []).filter((attachment) => attachment.sticker),
               ]
             : undefined,
     });
