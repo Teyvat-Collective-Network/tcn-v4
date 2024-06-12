@@ -678,25 +678,24 @@ makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
             .innerJoin(tables.globalMessages, eq(tables.globalMessageInstances.ref, tables.globalMessages.id))
             .where(eq(tables.globalMessages.id, data.ref));
 
-        const messages: Message[] = [];
+        const messages = await Promise.all(
+            instances.map(async (instance) => {
+                try {
+                    const guild = await globalBot.guilds.fetch(instance.guild);
+                    const channel = await guild.channels.fetch(instance.channel);
+                    if (channel?.type !== ChannelType.GuildText) return [];
 
-        for (const instance of instances)
-            try {
-                const guild = await globalBot.guilds.fetch(instance.guild).catch(() => null);
-                if (!guild) continue;
+                    const message = await channel.messages.fetch(instance.message);
+                    return await message.reply({ ...infoOnUserRequestMessage([]), flags: MessageFlags.SuppressNotifications });
+                } catch {}
 
-                const channel = await guild.channels.fetch(instance.channel).catch(() => null);
-                if (channel?.type !== ChannelType.GuildText) continue;
-
-                const message = await channel.messages.fetch(instance.message).catch(() => null);
-                if (!message) continue;
-
-                messages.push(await message.reply({ ...infoOnUserRequestMessage([]), flags: MessageFlags.SuppressNotifications }));
-            } catch {}
+                return [];
+            }),
+        );
 
         await db
             .insert(tables.globalInfoOnUserRequestInstances)
-            .values(messages.map((message) => ({ ref: data.ref, guild: message.guild!.id, channel: message.channel.id, message: message.id })));
+            .values(messages.flat().map((message) => ({ ref: data.ref, guild: message.guild!.id, channel: message.channel.id, message: message.id })));
     }
 });
 
@@ -725,19 +724,18 @@ globalBot.on(Events.InteractionCreate, async (interaction) => {
 
         const instances = await db.query.globalInfoOnUserRequestInstances.findMany({ where: eq(tables.globalInfoOnUserRequestInstances.ref, data.ref) });
 
-        for (const instance of instances)
-            try {
-                const guild = await globalBot.guilds.fetch(instance.guild).catch(() => null);
-                if (!guild) continue;
+        await Promise.all(
+            instances.map(async (instance) => {
+                try {
+                    const guild = await globalBot.guilds.fetch(instance.guild);
+                    const channel = await guild.channels.fetch(instance.channel).catch(() => null);
+                    if (channel?.type !== ChannelType.GuildText) return;
 
-                const channel = await guild.channels.fetch(instance.channel).catch(() => null);
-                if (channel?.type !== ChannelType.GuildText) continue;
-
-                const message = await channel.messages.fetch(instance.message).catch(() => null);
-                if (!message) continue;
-
-                await message.edit(infoOnUserRequestMessage(names));
-            } catch {}
+                    const message = await channel.messages.fetch(instance.message);
+                    await message.edit(infoOnUserRequestMessage(names));
+                } catch {}
+            }),
+        );
     }
 });
 
