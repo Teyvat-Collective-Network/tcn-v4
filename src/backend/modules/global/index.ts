@@ -564,7 +564,7 @@ makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
                                 content:
                                     (message.replyTo === null
                                         ? ""
-                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]** `) + message.content,
+                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**\n`) + message.content,
                                 embeds: message.embeds as any,
                                 files: message.attachments as any,
                             }),
