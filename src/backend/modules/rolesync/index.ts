@@ -228,6 +228,11 @@ export async function fixAllUserRoles() {
 
 loop("fix-all-user-roles", fixAllUserRoles, 86400000);
 
+bot.on(Events.GuildMemberAdd, async (member) => {
+    if (member.guild !== HQ && member.guild !== HUB) return;
+    await fixUserRolesQueue.add("", member.id);
+});
+
 bot.on(Events.GuildMemberUpdate, async (before, after) => {
     if (after.guild !== HQ && after.guild !== HUB) return;
 
