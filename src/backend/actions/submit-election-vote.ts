@@ -50,7 +50,7 @@ export default proc
             if (!poll) throw "Poll not found (invalid ID in URL).";
             if (poll.closed) throw "This poll is already closed.";
 
-            const candidates = poll.candidates as string[];
+            const candidates = (poll.candidates as string[]).filter((candidate) => candidate !== data.user);
 
             if ([...ranked, ...countered].some((id) => !candidates.includes(id))) throw "Invalid candidate provided. This is likely a bug.";
 
