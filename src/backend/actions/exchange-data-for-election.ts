@@ -64,7 +64,7 @@ export default proc
                     error: null,
                     wave: poll.wave,
                     seats: poll.seats,
-                    candidates: poll.candidates as string[],
+                    candidates: (poll.candidates as string[]).filter((candidate) => candidate !== data.user),
                     ranked: vote.ranked,
                     countered: vote.countered,
                     token: jwt.sign({ type: "election-vote", id, user: data.user, time: Date.now() }, process.env.JWT_SECRET!),
