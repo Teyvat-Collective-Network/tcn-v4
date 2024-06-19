@@ -84,7 +84,7 @@ bot.on(Events.MessageDelete, async (message) => {
     await updateReportsDashboard();
 });
 
-makeWorker<ReportPublishTask>("tcn:report-publish", async ({ id, guild }) => {
+makeWorker<ReportPublishTask>("report-publish", async ({ id, guild }) => {
     const report = await db.query.networkUserReports.findFirst({
         columns: { id: true, status: true, category: true },
         where: eq(tables.networkUserReports.id, id),
@@ -146,7 +146,7 @@ makeWorker<ReportPublishTask>("tcn:report-publish", async ({ id, guild }) => {
     await reportActionQueue.add("", null);
 });
 
-makeWorker("tcn:report-action", async () => {
+makeWorker("report-action", async () => {
     while (true) {
         const [task] = await db
             .select({
@@ -302,7 +302,7 @@ makeWorker("tcn:report-action", async () => {
     }
 });
 
-makeWorker<ReportRescindTask>("tcn:report-rescind", async ({ id, explanation, ...data }) => {
+makeWorker<ReportRescindTask>("report-rescind", async ({ id, explanation, ...data }) => {
     const settings = await db.query.reportSettings.findFirst({
         columns: { channel: true },
         where: eq(tables.reportSettings.guild, data.guild),

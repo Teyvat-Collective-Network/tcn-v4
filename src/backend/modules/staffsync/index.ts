@@ -6,7 +6,7 @@ import tables from "../../db/tables.js";
 import { loop } from "../../lib/loop.js";
 import { FixUserStaffStatusTask, fixGuildStaffStatusQueue, fixUserRolesQueue, fixUserStaffStatusQueue, makeWorker } from "../../queue.js";
 
-makeWorker<FixUserStaffStatusTask>("tcn:fix-user-staff-status", async ({ guild, user }) => {
+makeWorker<FixUserStaffStatusTask>("fix-user-staff-status", async ({ guild, user }) => {
     const isStaff = !!(await db.query.guildStaff.findFirst({ where: and(eq(tables.guildStaff.guild, guild), eq(tables.guildStaff.user, user)) }));
 
     const force = await db.query.forcedStaff.findFirst({
@@ -36,7 +36,7 @@ makeWorker<FixUserStaffStatusTask>("tcn:fix-user-staff-status", async ({ guild, 
     await fixUserRolesQueue.add("", user);
 });
 
-makeWorker<string>("tcn:fix-guild-staff-status", async (guild) => {
+makeWorker<string>("fix-guild-staff-status", async (guild) => {
     const obj = await bot.guilds.fetch(guild);
     await obj.roles.fetch();
     await obj.members.fetch();
