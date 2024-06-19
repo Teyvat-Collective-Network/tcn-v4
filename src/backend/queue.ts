@@ -15,8 +15,7 @@ export type GlobalChatRelayTask =
     | { type: "post"; id: number; locations: { guild: string; location: string }[] }
     | { type: "start-delete"; objects: { ref: number; guild: string; channel: string; message: string }[] }
     | { type: "delete"; guild: string; channel: string; messages: string[] }
-    | { type: "start-edit"; ref: number; guild: string; channel: string; message: string; content?: string; embeds?: any; attachments: any }
-    | { type: "edit"; ref: number; guild: string; channel: string; message: string }
+    | { type: "edit"; ref: number; guild: string; channel: string; message: string; content?: string; embeds?: any; attachments: any }
     | { type: "start-info-on-user"; ref: number };
 
 export const queues = new Map<string, Queue<unknown>>();

@@ -498,7 +498,7 @@ export async function handleGlobal(interaction: ChatInputCommandInteraction) {
             allowedMentions: { roles: [process.env.ROLE_OBSERVERS!] },
         });
 
-        for (const job of await globalChatRelayQueue.getJobs()) if (["post", "start-edit", "edit"].includes(job.data.type)) await job.remove();
+        for (const job of await globalChatRelayQueue.getJobs()) if (["post", "edit", "edit"].includes(job.data.type)) await job.remove();
 
         await res.editReply(template.ok("This channel is now in panic mode. Observers have been alerted. You may continue deleting messages."));
 

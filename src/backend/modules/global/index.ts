@@ -13,7 +13,6 @@ import {
     escapeMarkdown,
 } from "discord.js";
 import { and, eq, inArray, not } from "drizzle-orm";
-import { alias } from "drizzle-orm/mysql-core";
 import { fstatSync, openSync } from "fs";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -25,6 +24,7 @@ import { getWebhook, globalWebhookMap, isGlobalWebhook, logDeletion, logToChanne
 import { trackMetrics } from "../../lib/metrics.js";
 import stickerCache from "../../lib/sticker-cache.js";
 import { GlobalChatRelayTask, GlobalChatTaskPriority, globalChatRelayQueue, makeWorker } from "../../queue.js";
+import { augmentGlobalMessageContent } from "./lib.js";
 
 const panicAlertCooldown = new Map<string, number>();
 
@@ -467,27 +467,31 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
 
     if (process.env.VERBOSE) console.log("[GLOBAL] Triggering edit.");
 
-    await globalChatRelayQueue.add("", {
-        type: "start-edit",
-        ref: instance.id,
-        guild: after.guild!.id,
-        channel: after.channel.id,
-        message: after.id,
-        content: contentUpdated ? after.content || "" : undefined,
-        embeds: embedsUpdated ? embedsAfter : undefined,
-        attachments: attachmentsUpdated
-            ? [
-                  ...(await Promise.all(
-                      after.attachments.map(async (attachment) => ({
-                          name: attachment.name,
-                          attachment: await addFile(attachment.url, `Triggered by edit of ${after.url} sent by ${after.author} in ${after.guild!.name}`),
-                          sticker: false,
-                      })),
-                  )),
-                  ...((instance.attachments as any[]) ?? []).filter((attachment) => attachment.sticker),
-              ]
-            : undefined,
-    });
+    await globalChatRelayQueue.add(
+        "",
+        {
+            type: "edit",
+            ref: instance.id,
+            guild: after.guild!.id,
+            channel: after.channel.id,
+            message: after.id,
+            content: contentUpdated ? after.content || "" : undefined,
+            embeds: embedsUpdated ? embedsAfter : undefined,
+            attachments: attachmentsUpdated
+                ? [
+                      ...(await Promise.all(
+                          after.attachments.map(async (attachment) => ({
+                              name: attachment.name,
+                              attachment: await addFile(attachment.url, `Triggered by edit of ${after.url} sent by ${after.author} in ${after.guild!.name}`),
+                              sticker: false,
+                          })),
+                      )),
+                      ...((instance.attachments as any[]) ?? []).filter((attachment) => attachment.sticker),
+                  ]
+                : undefined,
+        },
+        { priority: GlobalChatTaskPriority.Edit },
+    );
 });
 
 makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
@@ -553,47 +557,16 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
         }
 
         const posts: Message[] = [];
-        const messageInstances = new Map<string, Map<string, string>>();
 
-        await trackMetrics("global:relay:find-instances", async () => {
-            for (const match of message.content.matchAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/(\d+)/g))
-                try {
-                    const id = match[2];
-                    if (messageInstances.has(id)) return;
-
-                    const source = alias(tables.globalMessageInstances, "source");
-
-                    const instances = await db
-                        .select({
-                            guild: tables.globalMessageInstances.guild,
-                            channel: tables.globalMessageInstances.channel,
-                            message: tables.globalMessageInstances.message,
-                        })
-                        .from(tables.globalMessageInstances)
-                        .innerJoin(source, eq(tables.globalMessageInstances.ref, source.ref))
-                        .where(eq(source.message, id));
-
-                    messageInstances.set(
-                        id,
-                        new Map(
-                            instances.map((instance) => [
-                                instance.guild,
-                                `https://discord.com/channels/${instance.guild}/${instance.channel}/${instance.message}`,
-                            ]),
-                        ),
-                    );
-                } catch {}
-        });
+        const augmentedContent = await augmentGlobalMessageContent(
+            message.content,
+            webhooks.map((webhook) => webhook.guildId),
+        );
 
         await trackMetrics("global:relay:send", async () => {
             await Promise.all(
                 webhooks.map(async (webhook) => {
                     try {
-                        const content = message.content.replaceAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/\d+/g, (match) => {
-                            const id = match.split("/").at(-1)!;
-                            return messageInstances.get(id)?.get(webhook.guildId) ?? match;
-                        });
-
                         posts.push(
                             await webhook.send({
                                 username: message.username,
@@ -601,7 +574,8 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
                                 content:
                                     (message.replyTo === null
                                         ? ""
-                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**\n`) + content,
+                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**\n`) +
+                                    augmentedContent.get(webhook.guildId)!,
                                 embeds: message.embeds as any,
                                 files: message.attachments as any,
                             }),
@@ -636,7 +610,6 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
 
         for (const job of jobs)
             if (job.data.type === "post" && ids.has(job.data.id)) await job.remove();
-            else if (job.data.type === "start-edit" && ids.has(job.data.ref)) await job.remove();
             else if (job.data.type === "edit" && ids.has(job.data.ref)) await job.remove();
             else if (job.data.type === "delete" && job.data.channel in instanceMap) {
                 const messages = instanceMap[job.data.channel].map((instance) => instance.message);
@@ -663,7 +636,7 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
 
         if (data.messages.length === 1) await channel.messages.delete(data.messages[0]).catch(() => null);
         else for (let i = 0; i < data.messages.length; i += 100) await channel.bulkDelete(data.messages.slice(i, i + 100)).catch(() => null);
-    } else if (data.type === "start-edit") {
+    } else if (data.type === "edit") {
         await db
             .update(tables.globalMessages)
             .set({ content: data.content, embeds: data.embeds, attachments: data.attachments })
@@ -671,38 +644,43 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
 
         const instances = await db.query.globalMessageInstances.findMany({ where: eq(tables.globalMessageInstances.ref, data.ref) });
 
-        await globalChatRelayQueue.addBulk(
-            instances.map((instance) => ({
-                name: "",
-                data: { type: "edit", ref: instance.ref, guild: instance.guild, channel: instance.channel, message: instance.message },
-                opts: { priority: GlobalChatTaskPriority.Edit },
-            })),
+        const augmentedContent = await augmentGlobalMessageContent(
+            data.content ?? "",
+            instances.map((instance) => instance.guild),
         );
-    } else if (data.type === "edit") {
-        const guild = await globalBot.guilds.fetch(data.guild).catch(() => null);
-        if (!guild) return;
 
-        const channel = await guild.channels.fetch(data.channel).catch(() => null);
-        if (channel?.type !== ChannelType.GuildText) return;
+        await Promise.all(
+            instances.map(async (instance) => {
+                try {
+                    const guild = await globalBot.guilds.fetch(instance.guild).catch(() => null);
+                    if (!guild) return;
 
-        const message = await channel.messages.fetch(data.message).catch(() => null);
-        if (!message) return;
+                    const channel = await guild.channels.fetch(instance.channel).catch(() => null);
+                    if (channel?.type !== ChannelType.GuildText) return;
 
-        const webhook = await message.fetchWebhook().catch(() => null);
-        if (!webhook) return;
+                    const message = await channel.messages.fetch(instance.message).catch(() => null);
+                    if (!message) return;
 
-        const entry = await db.query.globalMessages.findFirst({
-            columns: { content: true, embeds: true, attachments: true },
-            where: eq(tables.globalMessages.id, data.ref),
-        });
+                    const webhook = await message.fetchWebhook().catch(() => null);
+                    if (!webhook) return;
 
-        if (!entry) return;
+                    const entry = await db.query.globalMessages.findFirst({
+                        columns: { content: true, embeds: true, attachments: true },
+                        where: eq(tables.globalMessages.id, instance.ref),
+                    });
 
-        await webhook.editMessage(message.id, {
-            content: message.content === entry.content ? undefined : entry.content || null,
-            embeds: entry.embeds as any,
-            files: entry.attachments as any,
-        });
+                    if (!entry) return;
+
+                    const content = augmentedContent.get(instance.guild)!;
+
+                    await webhook.editMessage(message.id, {
+                        content: message.content === content ? undefined : content || null,
+                        embeds: entry.embeds as any,
+                        files: entry.attachments as any,
+                    });
+                } catch {}
+            }),
+        );
     } else if (data.type === "start-info-on-user") {
         const instances = await db
             .select({
