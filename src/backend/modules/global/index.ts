@@ -13,6 +13,7 @@ import {
     escapeMarkdown,
 } from "discord.js";
 import { and, eq, inArray, not } from "drizzle-orm";
+import { alias } from "drizzle-orm/mysql-core";
 import { fstatSync, openSync } from "fs";
 import { db } from "../../db/db.js";
 import tables from "../../db/tables.js";
@@ -552,11 +553,47 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
         }
 
         const posts: Message[] = [];
+        const messageInstances = new Map<string, Map<string, string>>();
+
+        await trackMetrics("global:relay:find-instances", async () => {
+            for (const match of message.content.matchAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/(\d+)/g))
+                try {
+                    const id = match[2];
+                    if (messageInstances.has(id)) return;
+
+                    const source = alias(tables.globalMessageInstances, "source");
+
+                    const instances = await db
+                        .select({
+                            guild: tables.globalMessageInstances.guild,
+                            channel: tables.globalMessageInstances.channel,
+                            message: tables.globalMessageInstances.message,
+                        })
+                        .from(tables.globalMessageInstances)
+                        .innerJoin(source, eq(tables.globalMessageInstances.ref, source.ref))
+                        .where(eq(source.message, id));
+
+                    messageInstances.set(
+                        id,
+                        new Map(
+                            instances.map((instance) => [
+                                instance.guild,
+                                `https://discord.com/channels/${instance.guild}/${instance.channel}/${instance.message}`,
+                            ]),
+                        ),
+                    );
+                } catch {}
+        });
 
         await trackMetrics("global:relay:send", async () => {
             await Promise.all(
                 webhooks.map(async (webhook) => {
                     try {
+                        const content = message.content.replaceAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/\d+/g, (match) => {
+                            const id = match.split("/").at(-1)!;
+                            return messageInstances.get(id)?.get(webhook.guildId) ?? match;
+                        });
+
                         posts.push(
                             await webhook.send({
                                 username: message.username,
@@ -564,7 +601,7 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
                                 content:
                                     (message.replyTo === null
                                         ? ""
-                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**\n`) + message.content,
+                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**\n`) + content,
                                 embeds: message.embeds as any,
                                 files: message.attachments as any,
                             }),
