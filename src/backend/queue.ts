@@ -22,26 +22,26 @@ export type GlobalChatRelayTask =
 export const queues = new Map<string, Queue<unknown>>();
 
 function createQueue<T>(name: string) {
-    const queue = new Queue<T>(name, qoptions);
+    const queue = new Queue<T>(`${process.env.QUEUE_PREFIX}:${name}`, qoptions);
     queues.set(name, queue);
     return queue;
 }
 
-export const dmReminderQueue = createQueue<DMReminderTask>("tcn:dm-reminders");
-export const repostDeletedApplicationThreadsQueue = createQueue("tcn:repost-deleted-application-threads");
-export const repostDeletedOpenPollsQueue = createQueue("tcn:repost-deleted-open-polls");
-export const fixGuildRolesQueue = createQueue<string>("tcn:fix-guild-roles");
-export const fixUserRolesQueue = createQueue<string>("tcn:fix-user-roles");
-export const fixUserStaffStatusQueue = createQueue<FixUserStaffStatusTask>("tcn:fix-user-staff-status");
-export const fixGuildStaffStatusQueue = createQueue<string>("tcn:fix-guild-staff-status");
-export const reportPublishQueue = createQueue<ReportPublishTask>("tcn:report-publish");
-export const reportActionQueue = createQueue<null>("tcn:report-action");
-export const reportRescindQueue = createQueue<ReportRescindTask>("tcn:report-rescind");
-export const globalChatRelayQueue = createQueue<GlobalChatRelayTask>("tcn:global-chat-relay");
+export const dmReminderQueue = createQueue<DMReminderTask>("dm-reminders");
+export const repostDeletedApplicationThreadsQueue = createQueue("repost-deleted-application-threads");
+export const repostDeletedOpenPollsQueue = createQueue("repost-deleted-open-polls");
+export const fixGuildRolesQueue = createQueue<string>("fix-guild-roles");
+export const fixUserRolesQueue = createQueue<string>("fix-user-roles");
+export const fixUserStaffStatusQueue = createQueue<FixUserStaffStatusTask>("fix-user-staff-status");
+export const fixGuildStaffStatusQueue = createQueue<string>("fix-guild-staff-status");
+export const reportPublishQueue = createQueue<ReportPublishTask>("report-publish");
+export const reportActionQueue = createQueue<null>("report-action");
+export const reportRescindQueue = createQueue<ReportRescindTask>("report-rescind");
+export const globalChatRelayQueue = createQueue<GlobalChatRelayTask>("global-chat-relay");
 
 export function makeWorker<T>(name: string, handler: (data: T) => unknown) {
     new Worker<T>(
-        name,
+        `${process.env.QUEUE_PREFIX}:${name}`,
         async ({ data }) => {
             await trackMetrics(`worker:${name}`, async () => {
                 try {

@@ -489,7 +489,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
     });
 });
 
-makeWorker<GlobalChatRelayTask>("tcn:global-chat-relay", async (data) => {
+makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
     if (data.type === "post") {
         const message = await db.query.globalMessages.findFirst({ where: eq(tables.globalMessages.id, data.id) });
 

@@ -52,7 +52,7 @@ loop(
     10000,
 );
 
-makeWorker<DMReminderTask>("tcn:dm-reminders", async ({ id, url, user }) => {
+makeWorker<DMReminderTask>("dm-reminders", async ({ id, url, user }) => {
     const link = `[poll #${id}](<${url}>)`;
 
     try {
@@ -268,7 +268,7 @@ async function repostDeletedOpenPolls() {
     }
 }
 
-makeWorker("tcn:repost-deleted-open-polls", repostDeletedOpenPolls);
+makeWorker("repost-deleted-open-polls", repostDeletedOpenPolls);
 
 loop("full-trigger-repost-deleted-open-polls", async () => repostDeletedOpenPollsQueue.add("", null), 300000);
 bot.on(Events.MessageDelete, (message) => void (message.channel === channels.voteHere && repostDeletedOpenPollsQueue.add("", null)));

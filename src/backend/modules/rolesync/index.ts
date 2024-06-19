@@ -98,7 +98,7 @@ async function fixRoles(guild: { id: string; roleColor: number; roleName: string
     });
 }
 
-makeWorker<string>("tcn:fix-guild-roles", async (id) => {
+makeWorker<string>("fix-guild-roles", async (id) => {
     const guild = await db.query.guilds.findFirst({
         columns: { id: true, roleColor: true, roleName: true, hqRole: true, hubRole: true, owner: true, advisor: true },
         where: eq(tables.guilds.id, id),
@@ -107,7 +107,7 @@ makeWorker<string>("tcn:fix-guild-roles", async (id) => {
     if (guild) await fixRoles(guild);
 });
 
-makeWorker<string>("tcn:fix-user-roles", async (id) => {
+makeWorker<string>("fix-user-roles", async (id) => {
     const hqMember = await HQ.members.fetch(id).catch(() => null);
     const hubMember = await HUB.members.fetch(id).catch(() => null);
 
