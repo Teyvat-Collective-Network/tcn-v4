@@ -49,7 +49,7 @@ export async function createApplicationThread(
                         title: "New Application",
                         description: `<@${user}> applied for **${escapeMarkdown(name)}**. The server has ${
                             invite.memberCount
-                        } members and was created on ${timeinfo(guild.createdAt)}}.`,
+                        } members and was created on ${timeinfo(guild.createdAt)}.`,
                         color: 0x2b2d31,
                         fields: [
                             { name: "Prior Experience", value: experience || "N/A" },
