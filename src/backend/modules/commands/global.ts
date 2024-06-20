@@ -448,7 +448,13 @@ export async function handleGlobal(interaction: ChatInputCommandInteraction) {
 
         await db.insert(tables.globalModLogs).values({ user: user.id, actor: interaction.user.id, action: key, reason });
 
-        if (key === "ban") await db.insert(tables.globalBans).values({ channel: channel.id, user: user.id });
+        if (key === "ban")
+            await db
+                .insert(tables.globalBans)
+                .values({ channel: channel.id, user: user.id })
+                .catch(() => {
+                    throw "Could not ban this user; they may have already been banned just now.";
+                });
         else if (key === "unban") await db.delete(tables.globalBans).where(and(eq(tables.globalBans.channel, channel.id), eq(tables.globalBans.user, user.id)));
 
         await res.editReply(template.ok(`${Keyed} ${user}.`));
