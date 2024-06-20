@@ -527,39 +527,10 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
 
         if (webhooks.length === 0) return;
 
-        const prefixes = new Map<string, string>();
-
-        if (message.replyTo !== null) {
-            await trackMetrics("global:relay:get-references", async () => {
-                const references = await db
-                    .select({
-                        replyUsername: tables.globalMessages.replyUsername,
-                        guild: tables.globalMessageInstances.guild,
-                        channel: tables.globalMessageInstances.channel,
-                        message: tables.globalMessageInstances.message,
-                    })
-                    .from(tables.globalMessages)
-                    .leftJoin(tables.globalMessageInstances, eq(tables.globalMessages.id, tables.globalMessageInstances.ref))
-                    .where(eq(tables.globalMessages.id, message.replyTo!));
-
-                if (references[0].guild)
-                    for (const reference of references) {
-                        if (reference.guild === message.originGuild) continue;
-
-                        prefixes.set(
-                            reference.guild!,
-                            `${process.env.EMOJI_GLOBAL_REPLY} ${reference.replyUsername ? `${reference.replyUsername}: ` : ""}https://discord.com/channels/${
-                                reference.guild
-                            }/${reference.channel}/${reference.message}\n`,
-                        );
-                    }
-            });
-        }
-
         const posts: Message[] = [];
 
         const augmentedContent = await augmentGlobalMessageContent(
-            message.content,
+            message,
             webhooks.map((webhook) => webhook.guildId),
         );
 
@@ -571,11 +542,7 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
                             await webhook.send({
                                 username: message.username,
                                 avatarURL: message.avatar,
-                                content:
-                                    (message.replyTo === null
-                                        ? ""
-                                        : prefixes.get(webhook.guildId) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**\n`) +
-                                    augmentedContent.get(webhook.guildId)!,
+                                content: augmentedContent.get(webhook.guildId)!,
                                 embeds: message.embeds as any,
                                 files: message.attachments as any,
                             }),
@@ -642,10 +609,13 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
             .set({ content: data.content, embeds: data.embeds, attachments: data.attachments })
             .where(eq(tables.globalMessages.id, data.ref));
 
+        const message = await db.query.globalMessages.findFirst({ where: eq(tables.globalMessages.id, data.ref) });
+        if (!message) return;
+
         const instances = await db.query.globalMessageInstances.findMany({ where: eq(tables.globalMessageInstances.ref, data.ref) });
 
         const augmentedContent = await augmentGlobalMessageContent(
-            data.content ?? "",
+            message,
             instances.map((instance) => instance.guild),
         );
 
