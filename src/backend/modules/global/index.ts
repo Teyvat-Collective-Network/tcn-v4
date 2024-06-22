@@ -156,7 +156,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
             if (match) {
                 message.delete().catch(() => null);
-                message.author.send(`Your message was blocked by the global chat filter (the filtered term was: ${code(match)}).`);
+                await message.author.send(`Your message was blocked by the global chat filter (the filtered term was: ${code(match)}).`).catch(() => null);
 
                 if (channel.logs)
                     await logToChannel(
@@ -182,11 +182,13 @@ globalBot.on(Events.MessageCreate, async (message) => {
             if (match) {
                 message.delete().catch(() => null);
 
-                message.author.send(
-                    `Your message was blocked by the global chat filter due to your display name (the filtered term was: ${code(
-                        match,
-                    )}). You can bypass this by using \`/global nickname\`.`,
-                );
+                await message.author
+                    .send(
+                        `Your message was blocked by the global chat filter due to your display name (the filtered term was: ${code(
+                            match,
+                        )}). You can bypass this by using \`/global nickname\`.`,
+                    )
+                    .catch(() => null);
 
                 if (channel.logs)
                     await logToChannel(
