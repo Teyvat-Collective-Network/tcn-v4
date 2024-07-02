@@ -54,9 +54,8 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                         <div className="flex flex-col gap-2 prose">
                             <h2>Genshin Impact Tavern</h2>
                             <p>
-                                The TCN is partnered with Genshin Impact Tavern, a multifaceted Discord Community Server for Genshin Impact! Check out their
-                                RPG-like experience through a custom bot, which lets you earn Mora that can be used to redeem official merchandise, their
-                                Cat&apos;s Tail Gathering TCG tournament, and more! <i>Genshin Impact Tavern is an officially endorsed server.</i>
+                                The TCN is partnered with the Genshin Impact Tavern, where Genshin community events are hosted. Official merch and other rewards
+                                can be earned through your efforts being a member of the server! <i>Genshin Impact Tavern is an officially endorsed server.</i>
                             </p>
                             <a href="https://discord.gg/genshinimpacttavern">
                                 <Button>Join Server</Button>

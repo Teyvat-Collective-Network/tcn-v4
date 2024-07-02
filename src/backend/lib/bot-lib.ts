@@ -196,7 +196,7 @@ export async function displayPartnerList(excludeHub: boolean): Promise<BaseMessa
                         },
                         {
                             name: "Genshin Impact Tavern",
-                            value: "The TCN is partnered with the [Genshin Impact Tavern](https://discord.gg/genshinimpacttavern), an official community server for Genshin! Check out their RPG-like experience where you can redeem official merch, their Cat's Tail Gathering TCG tournament, and more!",
+                            value: "The TCN is partnered with the [Genshin Impact Tavern](https://discord.gg/genshinimpacttavern), an official community server for Genshin community events are hosted. Official merch and other rewards can be earned through your efforts being a member of the server!",
                         },
                         {
                             name: "Daedalus",
