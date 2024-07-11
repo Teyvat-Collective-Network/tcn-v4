@@ -4,6 +4,10 @@ import getUser from "../../../../lib/get-user";
 import { api } from "../../../../lib/trpc";
 import { withUserId } from "../../../../lib/with-user";
 
+export async function syncPartnerLists() {
+    return await api.syncPartnerLists.mutate();
+}
+
 export async function getCharacters() {
     return await api.getCharacters.query();
 }

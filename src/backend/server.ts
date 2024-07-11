@@ -64,6 +64,7 @@ import submitElectionVote from "./actions/submit-election-vote.js";
 import submitQuiz from "./actions/submit-quiz.js";
 import submitReport from "./actions/submit-report.js";
 import swapRepresentatives from "./actions/swap-representatives.js";
+import syncPartnerLists from "./actions/sync-partner-lists.js";
 import validateInvite from "./actions/validate-invite.js";
 import { router } from "./trpc.js";
 
@@ -132,6 +133,7 @@ export const appRouter = router({
     submitQuiz,
     submitReport,
     swapRepresentatives,
+    syncPartnerLists,
     validateInvite,
 });
 

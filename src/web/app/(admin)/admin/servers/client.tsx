@@ -20,6 +20,7 @@ import {
     setMascot,
     setOwner,
     swapRepresentatives,
+    syncPartnerLists,
     validateInvite,
 } from "./actions";
 
@@ -79,6 +80,20 @@ export default function AdminServersClient({
                         <FaPlus /> Add Server
                     </Button>
                 </a>
+                <Button
+                    variant="outline"
+                    className="flex items-center gap-2"
+                    onClick={async () => {
+                        try {
+                            await syncPartnerLists();
+                            alert("OK!");
+                        } catch {
+                            alert("Error!");
+                        }
+                    }}
+                >
+                    <FaRotateRight /> Sync Partner Lists
+                </Button>
             </div>
             <br />
             <hr />
