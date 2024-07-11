@@ -7,7 +7,12 @@ import { proc } from "../trpc.js";
 
 export default proc
     .input(z.string())
-    .output(z.union([z.string(), z.object({ id: zs.snowflake, name: z.string(), image: z.string().nullable() })]))
+    .output(
+        z.union([
+            z.string(),
+            z.object({ id: zs.snowflake, name: z.string(), image: z.string().nullable(), memberCount: z.number(), serverCreatedAt: z.number() }),
+        ]),
+    )
     .query(
         trpcify("api:get-invite", async (query) => {
             const invite = await bot.fetchInvite(query).catch(() => null);
@@ -17,6 +22,12 @@ export default proc
 
             const guild = invite!.guild!;
 
-            return { id: guild.id, name: guild.name, image: guild.iconURL({ extension: "png", forceStatic: true, size: 256 }) };
+            return {
+                id: guild.id,
+                name: guild.name,
+                image: guild.iconURL({ extension: "png", forceStatic: true, size: 256 }),
+                memberCount: invite!.memberCount,
+                serverCreatedAt: guild.createdTimestamp,
+            };
         }),
     );

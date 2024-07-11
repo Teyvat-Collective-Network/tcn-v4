@@ -19,7 +19,13 @@ export default function Apply() {
     const [history, setHistory] = useState<string>("");
     const [additional, setAdditional] = useState<string>("");
 
-    const [inviteData, setInviteData] = useState<{ id: string; name: string; image: string | null }>({ id: "", name: "", image: "" });
+    const [inviteData, setInviteData] = useState<{ id: string; name: string; image: string | null; memberCount: number; serverCreatedAt: number }>({
+        id: "",
+        name: "",
+        image: "",
+        memberCount: 0,
+        serverCreatedAt: 0,
+    });
     const [submitting, setSubmitting] = useState<boolean>(false);
 
     async function confirmInvite() {
@@ -116,7 +122,19 @@ export default function Apply() {
                             </span>
                             <Button onClick={() => setState("consented")}>Change Server</Button>
                         </div>
-                        <br />
+                        {inviteData.memberCount >= 300 ? null : (
+                            <>
+                                <Panel highlight>
+                                    <h3 className="mt-0">Warning!</h3>
+                                    <p>
+                                        Your server has fewer than 300 members. We <b>strongly encourage</b> you to wait until your server has 300 members
+                                        before applying, as we expect servers to be established enough for us to review. If you believe your server is
+                                        established enough and ready for our assessment, you may apply anyway.
+                                    </p>
+                                </Panel>
+                                <br />
+                            </>
+                        )}
                         <Panel>
                             <h3 className="mt-4">
                                 Do you have prior experience running a Discord server or similar communities in a position of management or moderation (e.g.
