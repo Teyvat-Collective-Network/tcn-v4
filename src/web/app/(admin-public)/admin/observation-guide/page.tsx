@@ -13,6 +13,15 @@ export default function ObservationGuide() {
                 Remember that you can ask for help at any time! Only one observer watches a server, but we are a team, and you can ask any questions you have to
                 ensure a smooth observation period.
             </p>
+            <p>
+                For writing the report, which may be easier if you fill it out throughout and take notes rather than trying to remember everything at the end,
+                you may find it helpful to use{" "}
+                <a href="https://docs.google.com/document/d/1jtrIt7_C5GAXdrtkH4G2XBXNVqw4knU_pGoIF-Qbt2w" className="link" target="_blank">
+                    this template
+                </a>
+                . You do not have to follow a template or any particular format. (Make sure you make a copy and do not edit the template unless that is your
+                intention!)
+            </p>
             <h2>Before You Observe</h2>
             <p>Ensure the following:</p>
             <ul>
