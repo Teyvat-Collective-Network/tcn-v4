@@ -126,7 +126,7 @@ export async function handleElections(interaction: ChatInputCommandInteraction) 
             Date.now(),
         )} to ${timeinfo(Date.now() + 604800000)}`;
 
-        const mainText = `Another wave of felections is upon us! ${longReason}\n\nPlease nominate people who you would like to be candidates for the upcoming election. Please try to avoid repeating nominations to avoid clutter. Additionally, you are welcome to nominate yourself.\n\nNominations and statements will be open until ${timeinfo(
+        const mainText = `Another wave of elections is upon us! ${longReason}\n\nPlease nominate people who you would like to be candidates for the upcoming election. Please try to avoid repeating nominations to avoid clutter. Additionally, you are welcome to nominate yourself.\n\nNominations and statements will be open until ${timeinfo(
             Date.now() + 604800000,
         )}. If you are nominated, please either indicate that you wish to decline your nomination or provide a campaign statement (there is no required format for this; it is just an opportunity to advertise yourself as a candidate) in this channel.\n\n**Important:** To discuss things related to the election or elections in general, please use the pinned discussion post and keep this channel strictly for nominations, statements, and declining.\n\nThank you!`;
 
