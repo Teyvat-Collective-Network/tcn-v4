@@ -436,6 +436,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
         await logToChannel(
             instance.logs,
             {
+                content: `Message from <@${instance.author}> (webhook username: **${escapeMarkdown(instance.username)}**) edited`,
                 embeds: [
                     ...(instance.content === (after.content || "")
                         ? []
