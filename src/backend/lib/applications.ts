@@ -43,7 +43,7 @@ export async function createApplicationThread(
         return await channels.applicants.threads.create({
             name: name.slice(0, 80),
             message: {
-                content: `${invite}`,
+                content: `${invite} — \`${guild.id}\``,
                 embeds: [
                     {
                         title: "New Application",
