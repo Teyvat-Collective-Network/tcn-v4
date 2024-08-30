@@ -18,6 +18,11 @@ export default function Join() {
                 .
             </p>
             <p>
+                We also have some additional requirements. Your server must have at least 100 members <b>and</b> be at least 2 weeks old. It must also have at
+                least 500 members <b>or</b> be at least 4 weeks old. The server age requirements are defined by your last rebranding, so if you switched from
+                one character mains server to another, you must wait 2 (or 4) weeks.
+            </p>
+            <p>
                 Please read through this page before applying! We want to make sure you are a good fit for us, but we also want to make sure we are a good fit
                 for you and what your goals for your server are. If you haven&apos;t already, we recommend reading our{" "}
                 <a href="/about" className="link">

@@ -26,6 +26,9 @@ export default function Apply() {
         memberCount: 0,
         serverCreatedAt: 0,
     });
+
+    const serverAgeInDays = (Date.now() - inviteData.serverCreatedAt) / 86400000;
+
     const [submitting, setSubmitting] = useState<boolean>(false);
 
     async function confirmInvite() {
@@ -122,75 +125,83 @@ export default function Apply() {
                             </span>
                             <Button onClick={() => setState("consented")}>Change Server</Button>
                         </div>
-                        {inviteData.memberCount >= 300 ? null : (
+                        {inviteData.memberCount < 100 || serverAgeInDays < 14 || (inviteData.memberCount < 500 && serverAgeInDays < 28) ? (
                             <>
                                 <Panel highlight>
-                                    <h3 className="mt-0">Warning!</h3>
+                                    <h3 className="mt-0">Notice!</h3>
                                     <p>
-                                        Your server has fewer than 300 members. We <b>strongly encourage</b> you to wait until your server has 300 members
-                                        before applying, as we expect servers to be established enough for us to review. If you believe your server is
-                                        established enough and ready for our assessment, you may apply anyway.
+                                        Your server must have 100 members <b>and</b> be at least 2 weeks old before you can apply to the TCN. Additionally, your
+                                        server must either have 500 members <b>or</b> be 4 weeks old. Please come back when you meet these requirements! (Server
+                                        age is considered since your server&apos;s last rebranding.)
                                     </p>
                                 </Panel>
                                 <br />
                             </>
+                        ) : (
+                            <>
+                                <Panel>
+                                    <p>
+                                        Your server meets our membership requirements. We also require your server to be at least{" "}
+                                        {inviteData.memberCount < 500 ? "4 weeks old since you have fewer than 500 members" : "2 weeks old"} (as defined by the
+                                        last rebranding).
+                                    </p>
+                                    <h3 className="mt-4">
+                                        Do you have prior experience running a Discord server or similar communities in a position of management or moderation
+                                        (e.g. forums, guilds, clans, etc.)?
+                                    </h3>
+                                    <p>
+                                        You do not have to have been the owner of the server / forum / etc.; any position of management or moderation is of
+                                        interest. Feel free to talk about the experience of multiple people who are in charge of the server.
+                                    </p>
+                                    <Textarea
+                                        value={experience}
+                                        onChange={({ currentTarget: { value } }) => setExperience(value)}
+                                        rows={4}
+                                        className={experience.length > 1024 ? "border-2 border-destructive" : ""}
+                                    />
+                                    <p className="text-xs">{experience.length} / 1024</p>
+                                    <hr className="my-8" />
+                                    <h3>What are your short- and long-term goals for your server/community?</h3>
+                                    <Textarea
+                                        placeholder="Required"
+                                        value={goals}
+                                        onChange={({ currentTarget: { value } }) => setGoals(value)}
+                                        rows={4}
+                                        className={goals.length > 1024 ? "border-2 border-destructive" : ""}
+                                    />
+                                    <p className="text-xs">{goals.length} / 1024</p>
+                                    <hr className="my-8" />
+                                    <h3>Please give us a rough outline of your server&apos;s history.</h3>
+                                    <p>
+                                        For example, if your server has ever rebranded, please list its former identities. Additionally, what inspired/motivated
+                                        you to start the server, and what notable events or changes have occurred or what troubles have you had to overcome?
+                                    </p>
+                                    <Textarea
+                                        placeholder="Required"
+                                        value={history}
+                                        onChange={({ currentTarget: { value } }) => setHistory(value)}
+                                        rows={4}
+                                        className={history.length > 1024 ? "border-2 border-destructive" : ""}
+                                    />
+                                    <p className="text-xs">{history.length} / 1024</p>
+                                </Panel>
+                                <br />
+                                <Panel>
+                                    <h3 className="mt-4">Any additional questions or comments you&apos;d like to include?</h3>
+                                    <Textarea
+                                        value={additional}
+                                        onChange={({ currentTarget: { value } }) => setAdditional(value)}
+                                        rows={4}
+                                        className={additional.length > 1024 ? "border-2 border-destructive" : ""}
+                                    />
+                                    <p className="text-xs">{additional.length} / 1024</p>
+                                </Panel>
+                                <br />
+                                <Button disabled={submitting} onClick={submit}>
+                                    Submit!
+                                </Button>
+                            </>
                         )}
-                        <Panel>
-                            <h3 className="mt-4">
-                                Do you have prior experience running a Discord server or similar communities in a position of management or moderation (e.g.
-                                forums, guilds, clans, etc.)?
-                            </h3>
-                            <p>
-                                You do not have to have been the owner of the server / forum / etc.; any position of management or moderation is of interest.
-                                Feel free to talk about the experience of multiple people who are in charge of the server.
-                            </p>
-                            <Textarea
-                                value={experience}
-                                onChange={({ currentTarget: { value } }) => setExperience(value)}
-                                rows={4}
-                                className={experience.length > 1024 ? "border-2 border-destructive" : ""}
-                            />
-                            <p className="text-xs">{experience.length} / 1024</p>
-                            <hr className="my-8" />
-                            <h3>What are your short- and long-term goals for your server/community?</h3>
-                            <Textarea
-                                placeholder="Required"
-                                value={goals}
-                                onChange={({ currentTarget: { value } }) => setGoals(value)}
-                                rows={4}
-                                className={goals.length > 1024 ? "border-2 border-destructive" : ""}
-                            />
-                            <p className="text-xs">{goals.length} / 1024</p>
-                            <hr className="my-8" />
-                            <h3>Please give us a rough outline of your server&apos;s history.</h3>
-                            <p>
-                                For example, if your server has ever rebranded, please list its former identities. Additionally, what inspired/motivated you to
-                                start the server, and what notable events or changes have occurred or what troubles have you had to overcome?
-                            </p>
-                            <Textarea
-                                placeholder="Required"
-                                value={history}
-                                onChange={({ currentTarget: { value } }) => setHistory(value)}
-                                rows={4}
-                                className={history.length > 1024 ? "border-2 border-destructive" : ""}
-                            />
-                            <p className="text-xs">{history.length} / 1024</p>
-                        </Panel>
-                        <br />
-                        <Panel>
-                            <h3 className="mt-4">Any additional questions or comments you&apos;d like to include?</h3>
-                            <Textarea
-                                value={additional}
-                                onChange={({ currentTarget: { value } }) => setAdditional(value)}
-                                rows={4}
-                                className={additional.length > 1024 ? "border-2 border-destructive" : ""}
-                            />
-                            <p className="text-xs">{additional.length} / 1024</p>
-                        </Panel>
-                        <br />
-                        <Button disabled={submitting} onClick={submit}>
-                            Submit!
-                        </Button>
                     </>
                 ) : null}
             </Prose>
