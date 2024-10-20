@@ -555,11 +555,12 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
             );
         });
 
-        await trackMetrics("global:relay:insert-instances", async () => {
-            await db
-                .insert(tables.globalMessageInstances)
-                .values(posts.map((post) => ({ ref: message.id, guild: post.guild!.id, channel: post.channel.id, message: post.id })));
-        });
+        if (posts.length > 0)
+            await trackMetrics("global:relay:insert-instances", async () => {
+                await db
+                    .insert(tables.globalMessageInstances)
+                    .values(posts.map((post) => ({ ref: message.id, guild: post.guild!.id, channel: post.channel.id, message: post.id })));
+            });
     } else if (data.type === "start-delete") {
         const instances = await db.query.globalMessageInstances.findMany({
             where: inArray(
