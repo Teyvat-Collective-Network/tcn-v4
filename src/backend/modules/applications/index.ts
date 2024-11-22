@@ -9,6 +9,7 @@ import { reloadApplicationPolls } from "../../lib/polls.js";
 import { makeWorker, repostDeletedApplicationThreadsQueue } from "../../queue.js";
 
 async function repostDeletedApplicationThreads() {
+    return; // this feature is broken, but I am keeping the code around for reference
     const applications = await db.query.applications.findMany();
 
     for (const { thread, ...application } of applications) {
