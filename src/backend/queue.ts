@@ -21,7 +21,7 @@ export type GlobalChatRelayTask =
 export const queues = new Map<string, Queue<unknown>>();
 
 function createQueue<T>(name: string) {
-    const queue = new Queue<T>(`${process.env.QUEUE_PREFIX}:${name}`, qoptions);
+    const queue = new Queue<T>(`${process.env.QUEUE_PREFIX}_${name}`, qoptions);
     queues.set(name, queue);
     return queue;
 }
@@ -40,7 +40,7 @@ export const globalChatRelayQueue = createQueue<GlobalChatRelayTask>("global-cha
 
 export function makeWorker<T>(name: string, handler: (data: T) => unknown) {
     new Worker<T>(
-        `${process.env.QUEUE_PREFIX}:${name}`,
+        `${process.env.QUEUE_PREFIX}_${name}`,
         async ({ data }) => {
             await trackMetrics(`worker:${name}`, async () => {
                 try {
