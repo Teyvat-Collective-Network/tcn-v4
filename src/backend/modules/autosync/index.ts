@@ -26,7 +26,7 @@ export async function syncPartnerList(
         if (!entry.channel) throw "Invalid configuration.";
 
         const channel = await bot.channels.fetch(entry.channel);
-        if (!channel?.isTextBased()) throw "Channel could not be fetched. Please check permissions or set the channel again.";
+        if (!channel?.isTextBased() || channel.partial) throw "Channel could not be fetched. Please check permissions or set the channel again.";
 
         const message = entry.message ? await channel.messages.fetch(entry.message).catch(() => null) : null;
 
