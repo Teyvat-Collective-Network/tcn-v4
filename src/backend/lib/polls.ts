@@ -501,6 +501,7 @@ export async function renderComponents(id: number, type: string, disabled: boole
                                           poll.mode === "pre-approve" ? { label: "Pre-Approve", value: "preapprove", emoji: "🟨" } : [],
                                           { label: "Reject", value: "reject", emoji: "🟥" },
                                           { label: "Extend Observation", value: "extend", emoji: "🟪" },
+                                          { label: "Abstain", value: "abstain", emoji: "➖" },
                                           {
                                               label: poll.mode === "normal" ? "Add Pre-Approve Option" : "Remove Pre-Approve Option",
                                               value: poll.mode === "normal" ? "add-preapprove" : "remove-preapprove",
@@ -526,6 +527,13 @@ export async function renderComponents(id: number, type: string, disabled: boole
                                       label: "Pre-Approve",
                                       disabled,
                                   },
+                                  {
+                                      type: ComponentType.Button,
+                                      customId: ":poll/induction/button:abstain",
+                                      style: ButtonStyle.Secondary,
+                                      label: "Abstain",
+                                      disabled,
+                                  },
                               ]
                             : [
                                   {
@@ -540,6 +548,13 @@ export async function renderComponents(id: number, type: string, disabled: boole
                                       customId: ":poll/induction/button:extend",
                                       style: ButtonStyle.Primary,
                                       label: "Extend Observation",
+                                      disabled,
+                                  },
+                                  {
+                                      type: ComponentType.Button,
+                                      customId: ":poll/induction/button:abstain",
+                                      style: ButtonStyle.Secondary,
+                                      label: "Abstain",
                                       disabled,
                                   },
                               ],
