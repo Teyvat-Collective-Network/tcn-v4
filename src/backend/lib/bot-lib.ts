@@ -67,6 +67,21 @@ export async function ensureCouncil(interaction: RepliableInteraction) {
     if (!(await isCouncil(interaction.user.id))) throw "Permission denied: you must be a voter.";
 }
 
+export async function ensureGlobalMod(interaction: RepliableInteraction) {
+    const [channel] = await db
+        .select({ id: tables.globalChannels.id })
+        .from(tables.globalConnections)
+        .innerJoin(tables.globalChannels, eq(tables.globalConnections.channel, tables.globalChannels.id))
+        .where(eq(tables.globalConnections.location, interaction.channel!.id));
+
+    if (!channel) throw "This channel is not connected to a global channel.";
+    if (
+        !(await isObserver(interaction.user.id)) &&
+        !(await db.query.globalMods.findFirst({ where: and(eq(tables.globalMods.channel, channel.id), eq(tables.globalMods.user, interaction.user.id)) }))
+    )
+        throw "Permission denied: you must be an observer or global chat mod of this channel.";
+}
+
 export async function ensureTCN(interaction: RepliableInteraction) {
     if (!interaction.guild) throw "This command can only be used in a server.";
     if (!(await db.query.guilds.findFirst({ columns: { id: true }, where: eq(tables.guilds.id, interaction.guild.id) })))
