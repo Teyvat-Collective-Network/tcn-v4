@@ -1,0 +1,1 @@
+ALTER TABLE `polls` MODIFY COLUMN `type` enum('decline-observation','cancel-observation','induction','election','proposal','selection','proposal-major','selection-major') NOT NULL;
