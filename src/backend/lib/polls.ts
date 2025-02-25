@@ -403,7 +403,7 @@ export async function renderResults(id: number, type: string): Promise<string> {
             return `This election was won by ${englishList(winners.map((id) => `<@${id}>`))} and also resulted in a tie ${
                 ties.length === 2 ? "between" : "amongst"
             } ${englishList(ties.map((id) => `<@${id}>`))}.`;
-    } else if (type === "proposal") {
+    } else if (type === "proposal" || type === "proposal-major") {
         const { verdict, accept, reject, abstain } = await getProposalResults(id);
 
         return verdict === "tie"
@@ -411,7 +411,7 @@ export async function renderResults(id: number, type: string): Promise<string> {
             : verdict === "accept"
             ? `The council voted ${accept} : ${reject} to accept this proposal. ${abstainInfo(abstain)}`
             : `The council voted ${reject} : ${accept} to reject this proposal. ${abstainInfo(abstain)}`;
-    } else if (type === "selection") {
+    } else if (type === "selection" || type === "selection-major") {
         const { results, abstain } = await getSelectionResults(id);
 
         return `${Object.entries(results)
@@ -605,28 +605,28 @@ export async function renderComponents(id: number, type: string, disabled: boole
             ];
     }
 
-    if (type === "proposal")
+    if (type === "proposal" || type === "proposal-major")
         return [
             {
                 type: ComponentType.ActionRow,
                 components: [
                     {
                         type: ComponentType.Button,
-                        customId: ":poll/proposal:accept",
+                        customId: `:poll/proposal:accept:${type === "proposal-major" ? "major" : "minor"}`,
                         style: ButtonStyle.Success,
                         label: "Accept",
                         disabled,
                     },
                     {
                         type: ComponentType.Button,
-                        customId: ":poll/proposal:reject",
+                        customId: `:poll/proposal:reject:${type === "proposal-major" ? "major" : "minor"}`,
                         style: ButtonStyle.Danger,
                         label: "Reject",
                         disabled,
                     },
                     {
                         type: ComponentType.Button,
-                        customId: ":poll/proposal:abstain",
+                        customId: `:poll/proposal:abstain:${type === "proposal-major" ? "major" : "minor"}`,
                         style: ButtonStyle.Secondary,
                         label: "Abstain",
                         disabled,
@@ -635,7 +635,7 @@ export async function renderComponents(id: number, type: string, disabled: boole
             },
         ];
 
-    if (type === "selection") {
+    if (type === "selection" || type === "selection-major") {
         const poll = await db.query.selectionPolls.findFirst({
             columns: { options: true, minimum: true, maximum: true },
             where: eq(tables.selectionPolls.ref, id),
@@ -648,7 +648,7 @@ export async function renderComponents(id: number, type: string, disabled: boole
                     components: [
                         {
                             type: ComponentType.StringSelect,
-                            customId: ":poll/selection/menu",
+                            customId: `:poll/selection/menu:${type === "selection-major" ? "major" : "minor"}`,
                             options: (poll.options as string[]).map((option) => ({ label: option, value: option })),
                             minValues: poll.minimum,
                             maxValues: poll.maximum,
@@ -661,7 +661,7 @@ export async function renderComponents(id: number, type: string, disabled: boole
                     components: [
                         {
                             type: ComponentType.Button,
-                            customId: ":poll/selection/abstain",
+                            customId: `:poll/selection/abstain:${type === "selection-major" ? "major" : "minor"}`,
                             style: ButtonStyle.Secondary,
                             label: "Abstain",
                             disabled,
@@ -771,7 +771,7 @@ export async function renderVote(id: number, user: string, type: string): Promis
                 .join("\n")}\n\n${countered.length > 0 ? `You also voted against ${englishList(countered.map((id) => `<@${id}>`))}. ` : ""}${
                 candidates.length === countered.length + ranked.length ? "" : "You abstained for all other candidates."
             }`;
-    } else if (type === "proposal") {
+    } else if (type === "proposal" || type === "proposal-major") {
         const vote = await db.query.proposalVotes.findFirst({
             columns: { vote: true },
             where: and(eq(tables.proposalVotes.ref, id), eq(tables.proposalVotes.user, user)),
@@ -784,7 +784,7 @@ export async function renderVote(id: number, user: string, type: string): Promis
             reject: "You have voted to reject this proposal.",
             abstain: "You have abstained on this proposal.",
         }[vote.vote];
-    } else if (type === "selection") {
+    } else if (type === "selection" || type === "selection-major") {
         const poll = await db.query.selectionPolls.findFirst({ columns: { options: true }, where: eq(tables.selectionPolls.ref, id) });
         if (!poll) return "Error fetching selection poll data.";
 
