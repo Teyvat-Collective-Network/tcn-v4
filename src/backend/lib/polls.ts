@@ -9,7 +9,7 @@ import { template } from "./bot-lib.js";
 import { trackMetrics } from "./metrics.js";
 
 export const unrestrictedTypes: string[] = ["election"];
-export const majorTypes: string[] = ["cancel-observation"];
+export const majorTypes: string[] = ["cancel-observation", "proposal-major", "selection-major"];
 
 export async function verifyTypeAndFetchPollID(message: string, type: string): Promise<number> {
     const poll = await db.query.polls.findFirst({ columns: { id: true, type: true }, where: eq(tables.polls.message, message) });
@@ -25,7 +25,7 @@ export async function registerVote(id: number, user: string) {
 }
 
 export async function newPoll(
-    type: "decline-observation" | "cancel-observation" | "induction" | "election" | "proposal" | "selection",
+    type: "decline-observation" | "cancel-observation" | "induction" | "election" | "proposal" | "proposal-major" | "selection" | "selection-major",
     fn: (ref: number) => Promise<Message>,
     config?: { reminder?: number; deadline?: number },
 ) {
@@ -128,12 +128,12 @@ export async function renderDescription(id: number, type: string): Promise<strin
         if (!data) return `Failed to fetch poll #${id} (type: ${type}).`;
 
         return `Please vote in the Wave ${data.wave} Election.`;
-    } else if (type === "proposal") {
+    } else if (type === "proposal" || type === "proposal-major") {
         const data = await db.query.proposalPolls.findFirst({ columns: { question: true }, where: eq(tables.proposalPolls.ref, id) });
         if (!data) return `Failed to fetch poll #${id} (type: ${type}).`;
 
         return data.question;
-    } else if (type === "selection") {
+    } else if (type === "selection" || type === "selection-major") {
         const data = await db.query.selectionPolls.findFirst({ columns: { question: true }, where: eq(tables.selectionPolls.ref, id) });
         if (!data) return `Failed to fetch poll #${id} (type: ${type}).`;
 

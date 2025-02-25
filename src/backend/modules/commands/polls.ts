@@ -21,6 +21,11 @@ export default {
                     description: "the question / proposal",
                     required: true,
                 },
+                {
+                    type: ApplicationCommandOptionType.Boolean,
+                    name: "major",
+                    description: "if true, quorum = 75%",
+                },
             ],
         },
         {
@@ -60,6 +65,11 @@ export default {
                             maxLength: 100,
                         } as const),
                 ),
+                {
+                    type: ApplicationCommandOptionType.Boolean,
+                    name: "major",
+                    description: "if true, quorum = 75%",
+                },
             ],
         },
     ],
@@ -73,11 +83,12 @@ export async function handlePoll(interaction: ChatInputCommandInteraction) {
 
     if (key === "proposal") {
         const question = interaction.options.getString("question", true);
+        const major = interaction.options.getBoolean("major") ?? false;
         const res = await promptConfirm(interaction, "Start a proposal vote?");
 
         await res.update(template.info("Setting up poll..."));
 
-        const { message: poll } = await newPoll("proposal", async (ref) => {
+        const { message: poll } = await newPoll(major ? "proposal-major" : "proposal", async (ref) => {
             await db.insert(tables.proposalPolls).values({ ref, question });
             return await channels.voteHere.send(await renderPoll(ref));
         });
@@ -98,11 +109,13 @@ export async function handlePoll(interaction: ChatInputCommandInteraction) {
         if (minimum > options.length) throw "Minimum allowed options is greater than the number of options provided.";
         if (minimum > maximum) throw "Minimum is greater than maximum.";
 
+        const major = interaction.options.getBoolean("major") ?? false;
+
         const res = await promptConfirm(interaction, "Start a selection vote?");
 
         await res.update(template.info("Setting up poll..."));
 
-        const { message: poll } = await newPoll("selection", async (ref) => {
+        const { message: poll } = await newPoll(major ? "selection-major" : "selection", async (ref) => {
             await db.insert(tables.selectionPolls).values({ ref, question, minimum, maximum, options });
             return await channels.voteHere.send(await renderPoll(ref));
         });

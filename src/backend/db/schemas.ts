@@ -90,7 +90,16 @@ export const polls = mysqlTable(
     "polls",
     {
         id: int("id").autoincrement().primaryKey(),
-        type: mysqlEnum("type", ["decline-observation", "cancel-observation", "induction", "election", "proposal", "selection"]).notNull(),
+        type: mysqlEnum("type", [
+            "decline-observation",
+            "cancel-observation",
+            "induction",
+            "election",
+            "proposal",
+            "selection",
+            "proposal-major",
+            "selection-major",
+        ]).notNull(),
         message: varchar("message", { length: 20 }).notNull(),
         reminder: bigint("reminder", { mode: "number" }),
         deadline: bigint("deadline", { mode: "number" }).notNull(),
