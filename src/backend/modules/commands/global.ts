@@ -18,7 +18,7 @@ import globalBot from "../../global-bot.js";
 import { fuzzy } from "../../lib.js";
 import { isObserver } from "../../lib/api-lib.js";
 import { audit } from "../../lib/audit.js";
-import { cmdKey, ensureObserver, ensureTCN, promptConfirm, template } from "../../lib/bot-lib.js";
+import { cmdKey, ensureGlobalMod, ensureObserver, ensureTCN, promptConfirm, template } from "../../lib/bot-lib.js";
 import { logToChannel } from "../../lib/global.js";
 import { fixUserRolesQueue, globalChatRelayQueue } from "../../queue.js";
 
@@ -226,6 +226,39 @@ export default [
                                 channelTypes: [ChannelType.GuildText],
                             },
                         ],
+                    },
+                ],
+            },
+            {
+                type: ApplicationCommandOptionType.Subcommand,
+                name: "delete",
+                description: "delete a message",
+                options: [
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "message",
+                        description: "the URL or ID of the message",
+                        required: true,
+                    },
+                ],
+            },
+            {
+                type: ApplicationCommandOptionType.Subcommand,
+                name: "get-copy",
+                description: "get a copy of a message in a different server",
+                options: [
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "message",
+                        description: "the URL or ID of the message",
+                        required: true,
+                    },
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "server",
+                        description: "the ID of the server you want a copy in (default: origin)",
+                        minLength: 17,
+                        maxLength: 20,
                     },
                 ],
             },
@@ -639,16 +672,55 @@ export async function handleGlobal(interaction: ChatInputCommandInteraction) {
                     : `Global chat moderators for **${escapeMarkdown(channel.name)}**:\n${mods.map((mod) => `- <@${mod.user}>`).join("\n")}`,
             ),
         );
+    } else if (key === "delete") {
+        await ensureGlobalMod(interaction);
+
+        const id = interaction.options.getString("message", true).match(/\b[1-9][0-9]{16,19}$/)?.[0];
+        if (!id) throw "Invalid message URL or ID.";
+
+        const message = await interaction.channel!.messages.fetch(id).catch(() => {
+            throw "Could not fetch that message in this channel.";
+        });
+
+        await message.delete();
+
+        await interaction.editReply(template.ok("Message Deleted"));
+    } else if (key === "get-copy") {
+        const id = interaction.options.getString("message", true).match(/\b[1-9][0-9]{16,19}$/)?.[0];
+        if (!id) throw "Invalid message URL or ID.";
+
+        const message = await getMessage(id);
+        if (!message) throw "Could not fetch that message in this channel.";
+
+        const guild = interaction.options.getString("server") ?? message.origin;
+
+        const instance = await db.query.globalMessageInstances.findFirst({
+            where: and(eq(tables.globalMessageInstances.ref, message.id), eq(tables.globalMessageInstances.guild, guild)),
+        });
+
+        if (!instance) throw `Could not fetch a copy of this message in guild \`${guild}\`.`;
+
+        await interaction.editReply(`https://discord.com/channels/${instance.guild}/${instance.channel}/${instance.message}`);
     }
 }
 
-export async function getAuthor(id: string) {
-    const [data] = await db
-        .select({ author: tables.globalMessages.author })
+export async function getMessage(id: string) {
+    const data = await db
+        .select({
+            id: tables.globalMessages.id,
+            author: tables.globalMessages.author,
+            channel: tables.globalMessages.channel,
+            origin: tables.globalMessages.originGuild,
+        })
         .from(tables.globalMessageInstances)
         .innerJoin(tables.globalMessages, eq(tables.globalMessageInstances.ref, tables.globalMessages.id))
         .where(eq(tables.globalMessageInstances.message, id));
 
+    return data.at(0);
+}
+
+export async function getAuthor(id: string) {
+    const data = await getMessage(id);
     let author = data?.author;
 
     if (!data) {
@@ -658,9 +730,8 @@ export async function getAuthor(id: string) {
         author = aux.user;
     }
 
-    const user = await globalBot.users.fetch(author).catch(() => null);
-
-    return user ? `This message was sent by ${user} (${user.tag}).` : `This message was sent by a user who could not be fetched with ID \`${data.author}\`.`;
+    const user = await globalBot.users.fetch(author!).catch(() => null);
+    return user ? `This message was sent by ${user} (${user.tag}).` : `This message was sent by a user who could not be fetched with ID \`${author}\`.`;
 }
 
 export async function handleGlobalAuthor(interaction: MessageContextMenuCommandInteraction) {
