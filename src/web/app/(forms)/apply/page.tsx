@@ -130,9 +130,12 @@ export default function Apply() {
                                 <Panel highlight>
                                     <h3 className="mt-0">Notice!</h3>
                                     <p>
-                                        Your server must have 100 members <b>and</b> be at least 2 weeks old before you can apply to the TCN. Additionally, your
-                                        server must either have 500 members <b>or</b> be 4 weeks old. Please come back when you meet these requirements! (Server
-                                        age is considered since your server&apos;s last rebranding.)
+                                        Your server must meet <strong>one</strong> of the following requirements before you can apply to the TCN:
+                                        <ul>
+                                            <li>Your server must have 500 members and be at least 2 weeks old.</li>
+                                            <li>Your server must have 100 members and be at least 4 weeks old.</li>
+                                        </ul>
+                                        Please come back when you meet the requirements! (Note that if your server was ever rebranded, the date of the last rebrand is used to determine server age.)
                                     </p>
                                 </Panel>
                                 <br />
