@@ -1,6 +1,6 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { api } from "./trpc";
 import { User } from "./types";
 
@@ -9,6 +9,15 @@ export async function getToken(): Promise<string | undefined> {
 }
 
 export async function getId(token?: string): Promise<string | null> {
+    const auth = headers().get("Authorization");
+
+    if (auth?.startsWith("Bearer"))
+        try {
+            const jwt = auth.slice(7);
+            const user = await api.validateApiKey.query(jwt);
+            if (user) return user;
+        } catch {}
+
     token ??= await getToken();
     if (!token) return null;
 

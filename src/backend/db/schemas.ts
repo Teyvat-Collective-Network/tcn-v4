@@ -658,3 +658,8 @@ export const speedMetrics = mysqlTable(
         idx_time: index("idx_time").on(t.time),
     }),
 );
+
+export const apiKeys = mysqlTable("api_keys", {
+    user: varchar("user", { length: 20 }).primaryKey(),
+    token: varchar("token", { length: 256 }).notNull(),
+});

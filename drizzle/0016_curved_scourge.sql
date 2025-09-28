@@ -1,0 +1,1 @@
+ALTER TABLE `api_keys` MODIFY COLUMN `token` varchar(256) NOT NULL;

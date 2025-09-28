@@ -4,6 +4,7 @@ import addCharacter from "./actions/add-character.js";
 import addGuild from "./actions/add-guild.js";
 import addTermToFilter from "./actions/add-term-to-filter.js";
 import changeCharacterId from "./actions/change-character-id.js";
+import checkStaff from "./actions/check-staff.js";
 import createFilter from "./actions/create-filter.js";
 import createGlobalChannel from "./actions/create-global-channel.js";
 import deleteCharacter from "./actions/delete-character.js";
@@ -35,6 +36,7 @@ import getMonitor from "./actions/get-monitor.js";
 import getObserverList from "./actions/get-observer-list.js";
 import getPartialGuildFromThread from "./actions/get-partial-guild-from-thread.js";
 import getPartnerList from "./actions/get-partner-list.js";
+import getPastReports from "./actions/get-past-reports.js";
 import getServerCount from "./actions/get-server-count.js";
 import getServerListForAdmin from "./actions/get-server-list-for-admin.js";
 import getTag from "./actions/get-tag.js";
@@ -65,6 +67,7 @@ import submitQuiz from "./actions/submit-quiz.js";
 import submitReport from "./actions/submit-report.js";
 import swapRepresentatives from "./actions/swap-representatives.js";
 import syncPartnerLists from "./actions/sync-partner-lists.js";
+import validateApiKey from "./actions/validate-api-key.js";
 import validateInvite from "./actions/validate-invite.js";
 import { router } from "./trpc.js";
 
@@ -73,6 +76,7 @@ export const appRouter = router({
     addGuild,
     addTermToFilter,
     changeCharacterId,
+    checkStaff,
     createFilter,
     createGlobalChannel,
     deleteCharacter,
@@ -104,6 +108,7 @@ export const appRouter = router({
     getObserverList,
     getPartialGuildFromThread,
     getPartnerList,
+    getPastReports,
     getServerCount,
     getServerListForAdmin,
     getTag,
@@ -134,6 +139,7 @@ export const appRouter = router({
     submitReport,
     swapRepresentatives,
     syncPartnerLists,
+    validateApiKey,
     validateInvite,
 });
 

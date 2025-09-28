@@ -4,6 +4,7 @@ import bot, { HQ, HUB, channels } from "../../bot.js";
 import globalBot from "../../global-bot.js";
 import { reply, template } from "../../lib/bot-lib.js";
 import admin, { handleAdmin } from "./admin.js";
+import apiKey, { handleAPIKey } from "./api-key.js";
 import application, { handleApplication } from "./application.js";
 import autosync, { handleAutosync } from "./autosync.js";
 import elections, { handleElectionMarkAsStatement, handleElections } from "./elections.js";
@@ -16,7 +17,7 @@ import staff, { handleStaff } from "./staff.js";
 import testing, { handleTesting } from "./testing.js";
 import whois, { autocompleteServer, handleWhois } from "./whois.js";
 
-await bot.application.commands.set([reports, staff, admin, partnerList, autosync, whois]);
+await bot.application.commands.set([reports, staff, admin, partnerList, autosync, whois, apiKey]);
 await HQ.commands.set([application, ...elections, ...testing, polls, invite]);
 await HUB.commands.set([]);
 
@@ -71,6 +72,9 @@ bot.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 case "whois":
                     await handleWhois(interaction);
+                    break;
+                case "api-key":
+                    await handleAPIKey(interaction);
                     break;
                 default:
                     throw "Unrecognized command; it may not yet be implemented.";
