@@ -23,6 +23,7 @@ export default proc
     .query(
         trpcify("api:get-past-reports", async (user) => {
             const entries = await db.query.reportIds.findMany({ where: eq(tables.reportIds.user, user) });
+            if (entries.length === 0) return [];
 
             return await db
                 .select({
