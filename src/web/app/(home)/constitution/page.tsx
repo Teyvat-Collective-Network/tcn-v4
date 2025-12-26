@@ -172,7 +172,7 @@ export default function Constituution() {
             </Section>
             <ul>
                 <li>
-                    Any council member may become an observer through election. There may be up to 8 observers at any time. Observers have a term length of 6
+                    Any council member may become an observer through election. There may be up to 6 observers at any time. Observers have a term length of 6
                     months and must be re-elected to continue serving their position.
                     <ul>
                         <li>The term length is 6 calendar months, meaning each term ends on the same day-of-month as it started.</li>
