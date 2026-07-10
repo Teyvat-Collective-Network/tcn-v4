@@ -91,7 +91,7 @@ export default function PartnersClient({ servers }: { servers: { id: string; mas
                                 <Panel key={id} className="flex items-center gap-8">
                                     <Image className="rounded-full" src={image} alt={`${name} Icon`} width={100} height={100} />
                                     <div className="flex flex-col gap-2">
-                                        <a href={`/server/${id}`} className="link text-xl font-semibold">
+                                        <a href={`https://discord.gg/${invite}`} target="_blank" className="link text-xl font-semibold">
                                             {name}
                                         </a>
                                         <a href={`https://discord.gg/${invite}`} target="_blank">
