@@ -66,12 +66,12 @@ export default function Join() {
                 </p>
                 <h3>Rejection</h3>
                 <p>
-                    If your application is rejected, don&apos; worry &mdash; we&apos;ve had many servers rejected for various reasons that improved and were
-                    later accepted into the network. If possible, we&apos;ll inform you why we didn&apops;t accept your application and how to improve or fix
+                    If your application is rejected, don&apos;t worry &mdash; we&apos;ve had many servers rejected for various reasons that improved and were
+                    later accepted into the network. If possible, we&apos;ll inform you why we didn&apos;t accept your application and how to improve or fix
                     any issues.
                 </p>
                 <p>
-                    You may re-apply in 3 weeks if we&apos;ve given you a reason and our expectations once you&apos; addressed the concerns. If you need help,
+                    You may re-apply in 3 weeks if we&apos;ve given you a reason and our expectations once you&apos;ve addressed the concerns. If you need help,
                     feel free to reach out to us &mdash; we&apos;re interested in supporting the wider Genshin Impact community beyond just our own servers.
                 </p>
             </Panel>
@@ -91,7 +91,7 @@ export default function Join() {
                 add any Discord bot to your server.
             </p>
             <p>
-                Otherwise, we don&apos; restrict how you should run your server or force you to follow a specific structure (in fact, there is no &quot;TCN
+                Otherwise, we don&apos;t restrict how you should run your server or force you to follow a specific structure (in fact, there is no &quot;TCN
                 structure/template&quot;, even if people wanted it). We only uphold common sense expectations such as keeping your environment safe and
                 welcoming, and otherwise we seek to offer you resources and help in achieving your vision for your server and community.
             </p>
