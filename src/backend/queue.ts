@@ -12,10 +12,10 @@ export type ReportRescindTask = { id: number; guild: string; channel: string; me
 export type FixUserStaffStatusTask = { guild: string; user: string };
 
 export type GlobalChatRelayTask =
-    | { type: "post"; id: number; locations: { guild: string; location: string }[] }
+    | { type: "post"; id: number; locations: { guild: string; location: string }[], content: string }
     | { type: "start-delete"; objects: { ref: number; guild: string; channel: string; message: string }[] }
     | { type: "delete"; guild: string; channel: string; messages: string[] }
-    | { type: "edit"; ref: number; guild: string; channel: string; message: string; content?: string; embeds?: any; attachments: any }
+    | { type: "edit"; ref: number; guild: string; channel: string; message: string; content: string; embeds?: any; attachments: any }
     | { type: "start-info-on-user"; ref: number };
 
 export const queues = new Map<string, Queue<unknown>>();

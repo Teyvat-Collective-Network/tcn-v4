@@ -67,7 +67,8 @@ export async function isGlobalWebhook(id: string | null) {
 
 export async function logDeletion(
     guild: Guild,
-    instance: { id: number; content: string; embeds: any; attachments: any; logs: string | null; author: string; username: string },
+    instance: { id: number; embeds: any; attachments: any; logs: string | null; author: string; username: string },
+    content: string,
 ) {
     await trackMetrics("global:log-deletion", async () => {
         const embeds: any = instance.embeds ?? [];
@@ -93,7 +94,7 @@ export async function logDeletion(
                     embeds: [
                         {
                             title: "Message Deleted",
-                            description: instance.content,
+                            description: content,
                         },
                         ...(embeds.length > 9 ? [] : embeds),
                     ],

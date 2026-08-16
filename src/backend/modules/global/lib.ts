@@ -6,7 +6,7 @@ import { trackMetrics } from "../../lib/metrics.js";
 
 type Message = Exclude<Awaited<ReturnType<typeof db.query.globalMessages.findFirst>>, undefined>;
 
-export async function augmentGlobalMessageContent(message: Message, guilds: string[]): Promise<Map<string, string>> {
+export async function augmentGlobalMessageContent(message: Message, content: string, guilds: string[]): Promise<Map<string, string>> {
     const results = new Map<string, string>();
 
     const prefixes = new Map<string, string>();
@@ -41,7 +41,7 @@ export async function augmentGlobalMessageContent(message: Message, guilds: stri
     const messageInstances = new Map<string, Map<string, string>>();
 
     await trackMetrics("global:relay:find-instances", async () => {
-        for (const match of message.content.matchAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/(\d+)/g))
+        for (const match of content.matchAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/(\d+)/g))
             try {
                 const id = match[2];
                 if (messageInstances.has(id)) return;
@@ -72,7 +72,7 @@ export async function augmentGlobalMessageContent(message: Message, guilds: stri
             guild,
             `${
                 message.replyTo === null ? "" : prefixes.get(guild) ?? `${process.env.EMOJI_GLOBAL_REPLY} **[original not found]**\n`
-            }${message.content.replaceAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/\d+/g, (match) => {
+            }${content.replaceAll(/https:\/\/(\w+\.)?discord\.com\/channels\/\d+\/\d+\/\d+/g, (match) => {
                 const id = match.split("/").at(-1)!;
                 return messageInstances.get(id)?.get(guild) ?? match;
             })}`,

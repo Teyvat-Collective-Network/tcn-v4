@@ -272,7 +272,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
     await globalChatRelayQueue.add(
         "",
-        { type: "post", id: insertId, locations: connections },
+        { type: "post", id: insertId, locations: connections, content: message.content },
         {
             priority:
                 channel.priority === "low"
@@ -344,7 +344,7 @@ globalBot.on(Events.MessageDelete, async (message) => {
 
     if (!instance) return;
 
-    await logDeletion(message.guild!, instance);
+    await logDeletion(message.guild!, instance, message.content);
 
     if (process.env.VERBOSE) console.log("[GLOBAL] Triggering deletion.");
 
@@ -427,7 +427,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
     if (!instance || instance.deleted || instance.panic) return;
 
     if (!after.content && embedsAfter.length === 0 && after.attachments.size === 0 && after.stickers.size === 0) {
-        logDeletion(after.guild, instance);
+        logDeletion(after.guild, instance, before.content);
         after.delete().catch(() => null);
         return;
     }
@@ -478,7 +478,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
             guild: after.guild!.id,
             channel: after.channel.id,
             message: after.id,
-            content: contentUpdated ? after.content || "" : undefined,
+            content: after.content || "",
             embeds: embedsUpdated ? embedsAfter : undefined,
             attachments: attachmentsUpdated
                 ? [
@@ -533,7 +533,8 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
         const posts: Message[] = [];
 
         const augmentedContent = await augmentGlobalMessageContent(
-            message,
+					message,
+					data.content,
             webhooks.map((webhook) => webhook.guildId),
         );
 
@@ -619,7 +620,8 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
         const instances = await db.query.globalMessageInstances.findMany({ where: eq(tables.globalMessageInstances.ref, data.ref) });
 
         const augmentedContent = await augmentGlobalMessageContent(
-            message,
+					message,
+					data.content,
             instances.map((instance) => instance.guild),
         );
 
