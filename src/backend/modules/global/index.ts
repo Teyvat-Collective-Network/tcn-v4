@@ -253,9 +253,9 @@ globalBot.on(Events.MessageCreate, async (message) => {
         originChannel: message.channel.id,
         originMessage: message.id,
         time: Date.now(),
-        content: message.content,
-        embeds: getEmbeds(message),
-        attachments,
+        content: "",
+        embeds: "[]",
+        attachments: "[]",
         username,
         replyUsername,
         avatar: user.displayAvatarURL({ extension: "png", size: 256 }),
@@ -272,7 +272,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
     await globalChatRelayQueue.add(
         "",
-        { type: "post", id: insertId, locations: connections, content: message.content },
+        { type: "post", id: insertId, locations: connections, content: message.content, embeds: message.embeds, attachments: message.attachments },
         {
             priority:
                 channel.priority === "low"
@@ -479,7 +479,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
             channel: after.channel.id,
             message: after.id,
             content: after.content || "",
-            embeds: embedsUpdated ? embedsAfter : undefined,
+            embeds: embedsAfter,
             attachments: attachmentsUpdated
                 ? [
                       ...(await Promise.all(
@@ -547,8 +547,8 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
                                 username: message.username,
                                 avatarURL: message.avatar,
                                 content: augmentedContent.get(webhook.guildId)!,
-                                embeds: message.embeds as any,
-                                files: message.attachments as any,
+                                embeds: data.embeds as any,
+                                files: data.attachments as any,
                             }),
                         );
                     } catch {}
@@ -609,11 +609,6 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
         if (data.messages.length === 1) await channel.messages.delete(data.messages[0]).catch(() => null);
         else for (let i = 0; i < data.messages.length; i += 100) await channel.bulkDelete(data.messages.slice(i, i + 100)).catch(() => null);
     } else if (data.type === "edit") {
-        await db
-            .update(tables.globalMessages)
-            .set({ content: data.content, embeds: data.embeds, attachments: data.attachments })
-            .where(eq(tables.globalMessages.id, data.ref));
-
         const message = await db.query.globalMessages.findFirst({ where: eq(tables.globalMessages.id, data.ref) });
         if (!message) return;
 
