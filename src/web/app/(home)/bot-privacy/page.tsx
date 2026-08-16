@@ -7,7 +7,7 @@ export default function BotPrivacyPolicy() {
 		<Prose>
 			<h1>TCN Bot Privacy Policy</h1>
 			<p>
-				TCN runs some bots, which help administrate the network and provide functionality to member servers. Note that the use ob these bots in member servers is
+				TCN runs some bots, which help administrate the network and provide functionality to member servers. Note that the use of these bots in member servers is
 				optional, so the information here about information collected about users may not apply to you.
 			</p>
 			<p>
@@ -16,7 +16,7 @@ export default function BotPrivacyPolicy() {
 			</p>
 			<p>
 				TCN operates two bots: a TCN bot that helps with network administration and server convenience, and a global chat bot that operates the global chat channels
-				on participating servers and propagates messages.
+				on participating servers.
 			</p>
 			<h2>What information is collected?</h2>
 			<p>
