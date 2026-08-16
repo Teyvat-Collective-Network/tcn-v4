@@ -441,7 +441,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
                     ...(instance.content === (after.content || "")
                         ? []
                         : [
-                              { title: "Message Updated (Before)", description: instance.content, color: 0x2b2d31 },
+                              { title: "Message Updated (Before)", description: before.content, color: 0x2b2d31 },
                               { title: "Message Updated (After)", description: after.content || "", color: 0x2b2d31 },
                           ]),
                     ...(attachmentsUpdated
@@ -617,7 +617,7 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
         const augmentedContent = await augmentGlobalMessageContent(
 					message,
 					data.content,
-            instances.map((instance) => instance.guild),
+          instances.map((instance) => instance.guild),
         );
 
         await Promise.all(
@@ -646,8 +646,8 @@ makeWorker<GlobalChatRelayTask>("global-chat-relay", async (data) => {
 
                     await webhook.editMessage(message.id, {
                         content: message.content === content ? undefined : content || null,
-                        embeds: entry.embeds as any,
-                        files: entry.attachments as any,
+                        embeds: data.embeds as any,
+                        files: data.attachments as any,
                     });
                 } catch {}
             }),
