@@ -23,6 +23,7 @@ import {
     FaList,
     FaMoon,
     FaPhone,
+    FaRegFileLine,
     FaScrewdriverWrench,
     FaServer,
     FaSun,
@@ -61,6 +62,7 @@ export function Menu({ root }: { root: string }) {
             ["/contact", "Contact Us", FaPhone],
             ["/quickstart", "Quickstart", FaBookBookmark],
             ["/docs", "Documentation", FaBook],
+            ["/bot-privacy", "Bot Privacy Policy", FaRegFileLine],
         );
 
     if (root === "/forms") links.push(["/apply", "Apply to Join", FaDoorOpen], ["/report", "Submit a Network User Report", FaTowerBroadcast]);
