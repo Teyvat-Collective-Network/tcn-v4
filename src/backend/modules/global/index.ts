@@ -271,7 +271,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
     await globalChatRelayQueue.add(
         "",
-        { type: "post", id: insertId, locations: connections, content: message.content, embeds: message.embeds, attachments: message.attachments },
+        { type: "post", id: insertId, locations: connections, content: message.content, embeds: message.embeds, attachments: attachments },
         {
             priority:
                 channel.priority === "low"
