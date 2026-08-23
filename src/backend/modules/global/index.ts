@@ -215,6 +215,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
             name: attachment.name,
             attachment: await addFile(attachment.url, `Triggered by sending of ${message.url} by ${message.author} in ${message.guild!.name}`),
             sticker: false,
+            is_spoiler: attachment.is_spoiler,
         })),
     );
 
@@ -487,6 +488,7 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
                               name: attachment.name,
                               attachment: await addFile(attachment.url, `Triggered by edit of ${after.url} sent by ${after.author} in ${after.guild!.name}`),
                               sticker: false,
+                              is_spoiler: attachment.is_spoiler,
                           })),
                       )),
                       ...((instance.attachments as any[]) ?? []).filter((attachment) => attachment.sticker),
