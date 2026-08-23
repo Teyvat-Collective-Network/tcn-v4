@@ -116,7 +116,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
     if (message.stickers.size + message.attachments.size > 10) {
         message.reply({
             content:
-                "Stickers must be converted to files and a message may only contain 10 messages. Please send only 10 files and stickers combined per message.",
+                "Stickers must be converted to files and a message may only contain 10 attachments. Please send only 10 files and stickers combined per message.",
             components: deleteButton,
             flags: MessageFlags.SuppressNotifications,
         });
