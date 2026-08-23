@@ -212,10 +212,8 @@ globalBot.on(Events.MessageCreate, async (message) => {
 
     const attachments = await Promise.all(
         message.attachments.map(async (attachment) => ({
-            name: attachment.name,
+            name: attachment.flags.has(8) && !attachment.name.startsWith("SPOILER_") ? `SPOILER_${attachment.name}` : attachment.name,
             attachment: await addFile(attachment.url, `Triggered by sending of ${message.url} by ${message.author} in ${message.guild!.name}`),
-            sticker: false,
-            is_spoiler: attachment.is_spoiler,
         })),
     );
 
@@ -225,7 +223,7 @@ globalBot.on(Events.MessageCreate, async (message) => {
             if (!path) throw null;
             if (fstatSync(openSync(path, "r")).size === 0) throw null;
 
-            attachments.push({ name: `${sticker.name}.${stickerCache.ext(sticker)}`, attachment: path, sticker: true });
+            attachments.push({ name: `${sticker.name}.${stickerCache.ext(sticker)}`, attachment: path });
         } catch {
             message.reply({
                 content:
@@ -485,10 +483,8 @@ globalBot.on(Events.MessageUpdate, async (before, after) => {
                 ? [
                       ...(await Promise.all(
                           after.attachments.map(async (attachment) => ({
-                              name: attachment.name,
+                              name: attachment.flags.has(8) && !attachment.name.startsWith("SPOILER_") ? `SPOILER_${attachment.name}` : attachment.name,
                               attachment: await addFile(attachment.url, `Triggered by edit of ${after.url} sent by ${after.author} in ${after.guild!.name}`),
-                              sticker: false,
-                              is_spoiler: attachment.is_spoiler,
                           })),
                       )),
                       ...((instance.attachments as any[]) ?? []).filter((attachment) => attachment.sticker),
